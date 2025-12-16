@@ -23,17 +23,30 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   void _checkGameOver() {
     if (game.isGameOver) {
       Future.delayed(const Duration(milliseconds: 300), () {
-        _showGameOverDialog();
+        _handleRoundEnd();
       });
     }
   }
 
-  void _showGameOverDialog() {
+  void _handleRoundEnd() {
+    // Atualiza pontuação
+    game.updateScore();
+
+    // Verifica se chegou ao fim dos 5 rounds
+    if (game.isAllRoundsFinished) {
+      _showFinalScoreDialog();
+    } else {
+      _showRoundEndDialog();
+    }
+  }
+
+  void _showRoundEndDialog() {
     String message;
     if (game.winner != null) {
-      message = 'Jogador ${game.winner == Player.x ? 'X' : 'O'} venceu!';
+      message =
+          'Jogador ${game.winner == Player.x ? 'X' : 'O'} venceu este round!';
     } else {
-      message = 'Empate!';
+      message = 'Empate neste round!';
     }
 
     showDialog(
@@ -41,13 +54,96 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Fim de Jogo'),
-          content: Text(message),
+          title: Text('Round ${game.currentRound} - Fim'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(message),
+              const SizedBox(height: 16),
+              Text(
+                'Placar: X: ${game.scoreX} | O: ${game.scoreO}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Próximo: Round ${game.currentRound + 1}/${TicTacToeGame.maxRounds}',
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _resetGame();
+                _nextRound();
+              },
+              child: const Text('Próximo Round'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showFinalScoreDialog() {
+    String winnerMessage;
+    final Player? overallWinner = game.overallWinner;
+    if (overallWinner == Player.x) {
+      winnerMessage = 'Jogador X venceu o jogo!';
+    } else if (overallWinner == Player.o) {
+      winnerMessage = 'Jogador O venceu o jogo!';
+    } else {
+      winnerMessage = 'Empate! Ninguém venceu.';
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Fim do Jogo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                winnerMessage,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Placar Final:',
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Jogador X: ${game.scoreX}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Jogador O: ${game.scoreO}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetAll();
               },
               child: const Text('Jogar Novamente'),
             ),
@@ -57,9 +153,15 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     );
   }
 
-  void _resetGame() {
+  void _nextRound() {
     setState(() {
-      game.reset();
+      game.nextRound();
+    });
+  }
+
+  void _resetAll() {
+    setState(() {
+      game.resetAll();
     });
   }
 
@@ -70,8 +172,8 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _resetGame,
-            tooltip: 'Reiniciar Jogo',
+            onPressed: _resetAll,
+            tooltip: 'Reiniciar Tudo',
           ),
         ],
       ),
@@ -79,6 +181,45 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Informações do jogo
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                children: [
+                  Text(
+                    'Round ${game.currentRound}/${TicTacToeGame.maxRounds}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'X: ${game.scoreX}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Text(
+                        'O: ${game.scoreO}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             // Indicador de jogador atual
             Container(
               padding: const EdgeInsets.all(16),

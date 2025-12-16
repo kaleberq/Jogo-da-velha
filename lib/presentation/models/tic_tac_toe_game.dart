@@ -5,18 +5,64 @@ class TicTacToeGame {
   Player currentPlayer;
   Player? winner;
   bool isGameOver;
+  int scoreX;
+  int scoreO;
+  int currentRound;
+  static const int maxRounds = 5;
 
   TicTacToeGame()
     : board = List.generate(3, (_) => List.generate(3, (_) => Player.none)),
       currentPlayer = Player.x,
       winner = null,
-      isGameOver = false;
+      isGameOver = false,
+      scoreX = 0,
+      scoreO = 0,
+      currentRound = 1;
 
   void reset() {
     board = List.generate(3, (_) => List.generate(3, (_) => Player.none));
     currentPlayer = Player.x;
     winner = null;
     isGameOver = false;
+  }
+
+  void resetAll() {
+    reset();
+    scoreX = 0;
+    scoreO = 0;
+    currentRound = 1;
+  }
+
+  void updateScore() {
+    if (winner == Player.x) {
+      scoreX++;
+    } else if (winner == Player.o) {
+      scoreO++;
+    }
+  }
+
+  void nextRound() {
+    // Salva o vencedor do round anterior
+    final Player? previousWinner = winner;
+
+    currentRound++;
+    reset();
+
+    // Se houve um vencedor, ele começa o próximo round
+    if (previousWinner != null) {
+      currentPlayer = previousWinner;
+    }
+  }
+
+  bool get isAllRoundsFinished => currentRound >= maxRounds;
+
+  Player? get overallWinner {
+    if (scoreX > scoreO) {
+      return Player.x;
+    } else if (scoreO > scoreX) {
+      return Player.o;
+    }
+    return null;
   }
 
   bool makeMove(int row, int col) {
