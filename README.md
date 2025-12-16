@@ -30,16 +30,3 @@ O jogo da velha (também conhecido como Tic-Tac-Toe) é um jogo de estratégia s
 - Popular como jogo de papel e lápis
 
 É um jogo clássico usado para ensinar programação e lógica, incluindo em Flutter para criar interfaces e gerenciar estado.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
