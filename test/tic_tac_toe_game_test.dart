@@ -6,7 +6,7 @@ void main() {
     late TicTacToeGame game;
 
     setUp(() {
-      game = TicTacToeGame();
+      game = TicTacToeGame(maxRounds: 5);
       // Define X como jogador inicial para consistência nos testes
       game.currentPlayer = Player.x;
     });
@@ -22,7 +22,7 @@ void main() {
 
       test('deve inicializar com um jogador aleatório (X ou O)', () {
         // Cria um novo jogo para testar a aleatoriedade
-        final newGame = TicTacToeGame();
+        final newGame = TicTacToeGame(maxRounds: 5);
         expect(
           newGame.currentPlayer == Player.x ||
               newGame.currentPlayer == Player.o,
@@ -121,7 +121,11 @@ void main() {
         expect(game.scoreO, 0);
         expect(game.currentRound, 1);
         expect(game.board[0][0], Player.none);
-        expect(game.currentPlayer, Player.x);
+        // O jogador inicial é escolhido aleatoriamente após resetAll
+        expect(
+          game.currentPlayer == Player.x || game.currentPlayer == Player.o,
+          true,
+        );
       });
     });
 

@@ -11,9 +11,16 @@ class TicTacToeScreen extends StatefulWidget {
 }
 
 class _TicTacToeScreenState extends State<TicTacToeScreen> {
-  final TicTacToeGame game = TicTacToeGame();
+  late TicTacToeGame game;
   String? _roundEndMessage;
   Player? _roundWinner;
+  int _maxRounds = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    game = TicTacToeGame(maxRounds: _maxRounds);
+  }
 
   void _onCellTap(int row, int col) {
     if (game.makeMove(row, col)) {
@@ -142,11 +149,95 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     });
   }
 
+  void _showSettingsDialog() {
+    int tempMaxRounds = _maxRounds;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Configurações'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Número de Rounds:'),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: tempMaxRounds > 1
+                            ? () {
+                                setDialogState(() {
+                                  tempMaxRounds--;
+                                });
+                              }
+                            : null,
+                      ),
+                      Text(
+                        '$tempMaxRounds',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: tempMaxRounds < 20
+                            ? () {
+                                setDialogState(() {
+                                  tempMaxRounds++;
+                                });
+                              }
+                            : null,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Escolha entre 1 e 20 rounds',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _maxRounds = tempMaxRounds;
+                      game = TicTacToeGame(maxRounds: _maxRounds);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Salvar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: _showSettingsDialog,
+            tooltip: 'Configurações',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetAll,
@@ -167,7 +258,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'Round ${game.currentRound}/${TicTacToeGame.maxRounds}',
+                        'Round ${game.currentRound}/${game.maxRounds}',
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -11,16 +11,17 @@ class TicTacToeGame {
   int scoreX;
   int scoreO;
   int currentRound;
-  static const int maxRounds = 5;
+  int maxRounds;
 
-  TicTacToeGame()
+  TicTacToeGame({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => Player.none)),
       currentPlayer = _randomPlayer(),
       winner = null,
       isGameOver = false,
       scoreX = 0,
       scoreO = 0,
-      currentRound = 1;
+      currentRound = 1,
+      maxRounds = maxRounds ?? 5;
 
   void reset() {
     board = List.generate(3, (_) => List.generate(3, (_) => Player.none));
