@@ -96,6 +96,63 @@ class TicTacToeGame {
     return true;
   }
 
+  // Fazer movimento de um jogador específico (usado em multiplayer)
+  bool makeMoveWithPlayer(int row, int col, Player player) {
+    if (isGameOver || board[row][col] != Player.none || player == Player.none) {
+      return false;
+    }
+
+    board[row][col] = player;
+    currentPlayer = player == Player.x ? Player.o : Player.x;
+
+    if (_checkWinnerWithPlayer(row, col, player)) {
+      winner = player;
+      isGameOver = true;
+      return true;
+    }
+
+    if (_checkDraw()) {
+      isGameOver = true;
+      return true;
+    }
+
+    return true;
+  }
+
+  bool _checkWinnerWithPlayer(int row, int col, Player player) {
+    // Verifica linha
+    if (board[row][0] == player &&
+        board[row][1] == player &&
+        board[row][2] == player) {
+      return true;
+    }
+
+    // Verifica coluna
+    if (board[0][col] == player &&
+        board[1][col] == player &&
+        board[2][col] == player) {
+      return true;
+    }
+
+    // Verifica diagonal principal
+    if (row == col &&
+        board[0][0] == player &&
+        board[1][1] == player &&
+        board[2][2] == player) {
+      return true;
+    }
+
+    // Verifica diagonal secundária
+    if (row + col == 2 &&
+        board[0][2] == player &&
+        board[1][1] == player &&
+        board[2][0] == player) {
+      return true;
+    }
+
+    return false;
+  }
+
   bool _checkWinner(int row, int col) {
     // Verifica linha
     if (board[row][0] == currentPlayer &&

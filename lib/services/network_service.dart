@@ -143,8 +143,13 @@ class NetworkService {
   }
 
   // Enviar movimento do jogo
-  void sendMove(int row, int col) {
-    final data = jsonEncode({'type': 'move', 'row': row, 'col': col});
+  void sendMove(int row, int col, String player) {
+    final data = jsonEncode({
+      'type': 'move',
+      'row': row,
+      'col': col,
+      'player': player,
+    });
     sendMessage(data);
   }
 

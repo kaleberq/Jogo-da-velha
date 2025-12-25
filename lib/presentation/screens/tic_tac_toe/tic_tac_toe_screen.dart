@@ -98,8 +98,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
           case 'move':
             final row = data['row'] as int;
             final col = data['col'] as int;
+            final playerStr = data['player'] as String;
+            final player = playerStr == 'x' ? Player.x : Player.o;
             setState(() {
-              game.makeMove(row, col);
+              game.makeMoveWithPlayer(row, col, player);
               _isMyTurn = true;
               _checkGameOver();
             });
@@ -178,10 +180,17 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       return;
     }
 
+    // Em modo online, guarda o jogador atual ANTES de fazer o movimento
+    final playerWhoMoved = _isOnlineMode ? game.currentPlayer : null;
+
     if (game.makeMove(row, col)) {
       // Em modo online, envia o movimento para o outro jogador
-      if (_isOnlineMode) {
-        widget.networkService!.sendMove(row, col);
+      if (_isOnlineMode && playerWhoMoved != null) {
+        widget.networkService!.sendMove(
+          row,
+          col,
+          playerWhoMoved == Player.x ? 'x' : 'o',
+        );
         _isMyTurn = false;
       }
       setState(() {});
