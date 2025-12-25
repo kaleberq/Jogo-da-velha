@@ -7,6 +7,8 @@ void main() {
 
     setUp(() {
       game = TicTacToeGame();
+      // Define X como jogador inicial para consistência nos testes
+      game.currentPlayer = Player.x;
     });
 
     group('Inicialização', () {
@@ -18,8 +20,14 @@ void main() {
         }
       });
 
-      test('deve inicializar com jogador X como atual', () {
-        expect(game.currentPlayer, Player.x);
+      test('deve inicializar com um jogador aleatório (X ou O)', () {
+        // Cria um novo jogo para testar a aleatoriedade
+        final newGame = TicTacToeGame();
+        expect(
+          newGame.currentPlayer == Player.x ||
+              newGame.currentPlayer == Player.o,
+          true,
+        );
       });
 
       test('deve inicializar sem vencedor', () {

@@ -1,6 +1,9 @@
+import 'dart:math';
+
 enum Player { x, o, none }
 
 class TicTacToeGame {
+  static final Random _random = Random();
   List<List<Player>> board;
   Player currentPlayer;
   Player? winner;
@@ -12,7 +15,7 @@ class TicTacToeGame {
 
   TicTacToeGame()
     : board = List.generate(3, (_) => List.generate(3, (_) => Player.none)),
-      currentPlayer = Player.x,
+      currentPlayer = _randomPlayer(),
       winner = null,
       isGameOver = false,
       scoreX = 0,
@@ -31,6 +34,11 @@ class TicTacToeGame {
     scoreX = 0;
     scoreO = 0;
     currentRound = 1;
+    currentPlayer = _randomPlayer();
+  }
+
+  static Player _randomPlayer() {
+    return _random.nextBool() ? Player.x : Player.o;
   }
 
   void updateScore() {
