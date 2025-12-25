@@ -12,6 +12,8 @@ class TicTacToeScreen extends StatefulWidget {
 
 class _TicTacToeScreenState extends State<TicTacToeScreen> {
   final TicTacToeGame game = TicTacToeGame();
+  String? _roundEndMessage;
+  Player? _roundWinner;
 
   void _onCellTap(int row, int col) {
     if (game.makeMove(row, col)) {
@@ -46,46 +48,20 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       message =
           'Jogador ${game.winner == Player.x ? 'X' : 'O'} venceu este round!';
     } else {
-      message = 'Empate neste round!';
+      message = 'Deu Velha';
     }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Round ${game.currentRound} - Fim'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(message),
-              const SizedBox(height: 16),
-              Text(
-                'Placar: X: ${game.scoreX} | O: ${game.scoreO}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Próximo: Round ${game.currentRound + 1}/${TicTacToeGame.maxRounds}',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _nextRound();
-              },
-              child: const Text('Próximo Round'),
-            ),
-          ],
-        );
-      },
-    );
+    setState(() {
+      _roundEndMessage = message;
+      _roundWinner = game.winner;
+    });
+  }
+
+  void _hideRoundEndMessage() {
+    setState(() {
+      _roundEndMessage = null;
+      _roundWinner = null;
+    });
   }
 
   void _showFinalScoreDialog() {
@@ -154,6 +130,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   }
 
   void _nextRound() {
+    _hideRoundEndMessage();
     setState(() {
       game.nextRound();
     });
@@ -177,119 +154,178 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Informações do jogo
-            Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Column(
-                children: [
-                  Text(
-                    'Round ${game.currentRound}/${TicTacToeGame.maxRounds}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+      body: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Informações do jogo
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: Column(
                     children: [
                       Text(
-                        'X: ${game.scoreX}',
+                        'Round ${game.currentRound}/${TicTacToeGame.maxRounds}',
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      Text(
-                        'O: ${game.scoreO}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'X: ${game.scoreX}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            'O: ${game.scoreO}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            // Indicador de jogador atual
-            Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: game.currentPlayer == Player.x
-                    ? Colors.blue.shade50
-                    : Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: game.currentPlayer == Player.x
-                      ? Colors.blue
-                      : Colors.red,
-                  width: 2,
                 ),
-              ),
-              child: Text(
-                'Vez do jogador: ${game.currentPlayer == Player.x ? 'X' : 'O'}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: game.currentPlayer == Player.x
-                      ? Colors.blue
-                      : Colors.red,
+                // Indicador de jogador atual
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: game.currentPlayer == Player.x
+                        ? Colors.blue.shade50
+                        : Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: game.currentPlayer == Player.x
+                          ? Colors.blue
+                          : Colors.red,
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    'Vez do jogador: ${game.currentPlayer == Player.x ? 'X' : 'O'}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: game.currentPlayer == Player.x
+                          ? Colors.blue
+                          : Colors.red,
+                    ),
+                  ),
                 ),
-              ),
+                // Tabuleiro
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey.shade800, width: 3),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade400,
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        RowComponent(
+                          rowIndex: 0,
+                          row: game.board[0],
+                          onCellTap: _onCellTap,
+                        ),
+                        const HorizontalDividerComponent(),
+                        RowComponent(
+                          rowIndex: 1,
+                          row: game.board[1],
+                          onCellTap: _onCellTap,
+                        ),
+                        const HorizontalDividerComponent(),
+                        RowComponent(
+                          rowIndex: 2,
+                          row: game.board[2],
+                          onCellTap: _onCellTap,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            // Tabuleiro
-            Padding(
-              padding: const EdgeInsets.all(20.0),
+          ),
+          // Banner no topo da tela
+          if (_roundEndMessage != null)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
               child: Container(
-                width: 300,
-                height: 300,
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade800, width: 3),
-                  borderRadius: BorderRadius.circular(8),
+                  color: _roundWinner == Player.x
+                      ? Colors.blue.shade700
+                      : _roundWinner == Player.o
+                      ? Colors.red.shade700
+                      : Colors.grey.shade700,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    RowComponent(
-                      rowIndex: 0,
-                      row: game.board[0],
-                      onCellTap: _onCellTap,
-                    ),
-                    const HorizontalDividerComponent(),
-                    RowComponent(
-                      rowIndex: 1,
-                      row: game.board[1],
-                      onCellTap: _onCellTap,
-                    ),
-                    const HorizontalDividerComponent(),
-                    RowComponent(
-                      rowIndex: 2,
-                      row: game.board[2],
-                      onCellTap: _onCellTap,
-                    ),
-                  ],
+                child: SafeArea(
+                  bottom: false,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _roundEndMessage!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          _nextRound();
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Próximo Round'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }
