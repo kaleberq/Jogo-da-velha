@@ -122,6 +122,12 @@ class TicTacToeGame {
   }
 
   bool _checkDraw() {
+    // Primeiro verifica se há um vencedor - se houver, não é empate
+    if (winner != null) {
+      return false;
+    }
+
+    // Verifica se todas as células estão preenchidas
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         if (board[i][j] == Player.none) {
