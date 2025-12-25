@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,6 +11,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: const TicTacToeScreen());
+    return MaterialApp(
+      title: 'Jogo da Velha',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: const MenuScreen(),
+    );
   }
 }

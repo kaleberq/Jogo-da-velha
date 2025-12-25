@@ -1,10 +1,15 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game.dart';
+import 'package:jogo_da_velha/services/network_service.dart';
 
 class TicTacToeScreen extends StatefulWidget {
-  const TicTacToeScreen({super.key});
+  final NetworkService? networkService;
+  final bool isHost;
+
+  const TicTacToeScreen({super.key, this.networkService, this.isHost = false});
 
   @override
   State<TicTacToeScreen> createState() => _TicTacToeScreenState();
@@ -15,15 +20,170 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   String? _roundEndMessage;
   Player? _roundWinner;
   int _maxRounds = 5;
+  bool _isOnlineMode = false;
+  bool _isMyTurn = true;
 
   @override
   void initState() {
     super.initState();
-    game = TicTacToeGame(maxRounds: _maxRounds);
+    _isOnlineMode = widget.networkService != null;
+
+    // Em modo online, o host é sempre X e começa primeiro
+    if (_isOnlineMode) {
+      _isMyTurn = widget.isHost;
+      game = TicTacToeGame(maxRounds: _maxRounds);
+      if (widget.isHost) {
+        game.currentPlayer = Player.x;
+      } else {
+        game.currentPlayer = Player.o;
+        _isMyTurn = false;
+      }
+
+      // Configurar callbacks de rede
+      widget.networkService!.onMessageReceived = _handleNetworkMessage;
+      widget.networkService!.onConnectionStatusChanged = (status) {
+        if (status == 'disconnected' && mounted) {
+          Future.microtask(() {
+            if (mounted) {
+              _showDisconnectedDialog();
+            }
+          });
+        }
+      };
+      widget.networkService!.onError = (error) {
+        if (mounted) {
+          Future.microtask(() {
+            if (mounted) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(error)));
+            }
+          });
+        }
+      };
+    } else {
+      game = TicTacToeGame(maxRounds: _maxRounds);
+    }
+  }
+
+  void _handleNetworkMessage(String message) {
+    if (message == 'DISCONNECTED') {
+      if (mounted) {
+        Future.microtask(() {
+          if (mounted) {
+            _showDisconnectedDialog();
+          }
+        });
+      }
+      return;
+    }
+
+    // Ignora mensagens de handshake
+    if (message == 'SERVER_CONNECTED' ||
+        message == 'CLIENT_CONNECTED' ||
+        message == 'CONNECTED') {
+      return;
+    }
+
+    if (!mounted) return;
+
+    try {
+      final data = jsonDecode(message);
+      final type = data['type'] as String;
+
+      Future.microtask(() {
+        if (!mounted) return;
+
+        switch (type) {
+          case 'move':
+            final row = data['row'] as int;
+            final col = data['col'] as int;
+            setState(() {
+              game.makeMove(row, col);
+              _isMyTurn = true;
+              _checkGameOver();
+            });
+            break;
+          case 'reset':
+            setState(() {
+              game.resetAll();
+              if (widget.isHost) {
+                game.currentPlayer = Player.x;
+                _isMyTurn = true;
+              } else {
+                game.currentPlayer = Player.o;
+                _isMyTurn = false;
+              }
+            });
+            break;
+          case 'nextRound':
+            setState(() {
+              game.nextRound();
+              if (widget.isHost) {
+                game.currentPlayer = Player.x;
+                _isMyTurn = true;
+              } else {
+                game.currentPlayer = Player.o;
+                _isMyTurn = false;
+              }
+              _hideRoundEndMessage();
+            });
+            break;
+          case 'config':
+            final maxRounds = data['maxRounds'] as int;
+            setState(() {
+              _maxRounds = maxRounds;
+              game = TicTacToeGame(maxRounds: _maxRounds);
+              if (widget.isHost) {
+                game.currentPlayer = Player.x;
+                _isMyTurn = true;
+              } else {
+                game.currentPlayer = Player.o;
+                _isMyTurn = false;
+              }
+            });
+            break;
+        }
+      });
+    } catch (e) {
+      // Ignora mensagens que não são JSON válido
+    }
+  }
+
+  void _showDisconnectedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Conexão Perdida'),
+        content: const Text('A conexão com o outro jogador foi perdida.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+            child: const Text('Voltar ao Menu'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _onCellTap(int row, int col) {
+    // Em modo online, só permite jogar na vez do jogador
+    if (_isOnlineMode && !_isMyTurn) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Aguarde sua vez!')));
+      return;
+    }
+
     if (game.makeMove(row, col)) {
+      // Em modo online, envia o movimento para o outro jogador
+      if (_isOnlineMode) {
+        widget.networkService!.sendMove(row, col);
+        _isMyTurn = false;
+      }
       setState(() {});
       _checkGameOver();
     }
@@ -138,14 +298,39 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
 
   void _nextRound() {
     _hideRoundEndMessage();
+    if (_isOnlineMode) {
+      widget.networkService!.sendNextRound();
+    }
     setState(() {
       game.nextRound();
+      if (_isOnlineMode) {
+        // Em modo online, quem começa é baseado em quem é host
+        if (widget.isHost) {
+          game.currentPlayer = Player.x;
+          _isMyTurn = true;
+        } else {
+          game.currentPlayer = Player.o;
+          _isMyTurn = false;
+        }
+      }
     });
   }
 
   void _resetAll() {
+    if (_isOnlineMode) {
+      widget.networkService!.sendReset();
+    }
     setState(() {
       game.resetAll();
+      if (_isOnlineMode) {
+        if (widget.isHost) {
+          game.currentPlayer = Player.x;
+          _isMyTurn = true;
+        } else {
+          game.currentPlayer = Player.o;
+          _isMyTurn = false;
+        }
+      }
     });
   }
 
@@ -215,6 +400,16 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                     setState(() {
                       _maxRounds = tempMaxRounds;
                       game = TicTacToeGame(maxRounds: _maxRounds);
+                      if (_isOnlineMode) {
+                        widget.networkService!.sendConfig(_maxRounds);
+                        if (widget.isHost) {
+                          game.currentPlayer = Player.x;
+                          _isMyTurn = true;
+                        } else {
+                          game.currentPlayer = Player.o;
+                          _isMyTurn = false;
+                        }
+                      }
                     });
                     Navigator.of(context).pop();
                   },
@@ -232,17 +427,64 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: _isOnlineMode
+            ? Text(widget.isHost ? 'Host (X)' : 'Convidado (O)')
+            : null,
         actions: [
+          if (_isOnlineMode)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: _isMyTurn
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'Sua Vez',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
+                    : Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'Aguardando...',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: _showSettingsDialog,
+            onPressed: _isOnlineMode ? null : _showSettingsDialog,
             tooltip: 'Configurações',
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _resetAll,
+            onPressed: _isOnlineMode ? null : _resetAll,
             tooltip: 'Reiniciar Tudo',
           ),
+          if (_isOnlineMode)
+            IconButton(
+              icon: const Icon(Icons.exit_to_app),
+              onPressed: () {
+                widget.networkService?.disconnect();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              tooltip: 'Sair',
+            ),
         ],
       ),
       body: Stack(
