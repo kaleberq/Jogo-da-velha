@@ -1,19 +1,18 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:jogo_da_velha/data/network/enums/connection_status_enum.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-
-enum ConnectionStatus { disconnected, connecting, connected, error }
 
 class NetworkService {
   ServerSocket? _serverSocket;
   Socket? _clientSocket;
-  ConnectionStatus _status = ConnectionStatus.disconnected;
+  ConnectionStatusEnum _status = ConnectionStatusEnum.disconnected;
   Function(String)? onMessageReceived;
   Function(String)? onConnectionStatusChanged;
   Function(String)? onError;
   String _buffer = '';
 
-  ConnectionStatus get status => _status;
+  ConnectionStatusEnum get status => _status;
 
   // Obter o IP local do dispositivo
   Future<String?> getLocalIP() async {
@@ -29,7 +28,7 @@ class NetworkService {
   // Criar servidor (host)
   Future<String?> startServer({int port = 8080}) async {
     try {
-      _updateStatus(ConnectionStatus.connecting);
+      _updateStatus(ConnectionStatusEnum.connecting);
       _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
 
       _serverSocket!.listen((Socket socket) {
@@ -46,7 +45,7 @@ class NetworkService {
         socket.setOption(SocketOption.tcpNoDelay, true);
 
         _clientSocket = socket;
-        _updateStatus(ConnectionStatus.connected);
+        _updateStatus(ConnectionStatusEnum.connected);
         _listenToClient(socket);
 
         // Envia mensagem de confirmação para o cliente
@@ -63,7 +62,7 @@ class NetworkService {
       final ip = await getLocalIP();
       return ip;
     } catch (e) {
-      _updateStatus(ConnectionStatus.error);
+      _updateStatus(ConnectionStatusEnum.error);
       onError?.call('Erro ao criar servidor: $e');
       return null;
     }
@@ -72,7 +71,7 @@ class NetworkService {
   // Conectar a um servidor (cliente)
   Future<bool> connectToServer(String ip, {int port = 8080}) async {
     try {
-      _updateStatus(ConnectionStatus.connecting);
+      _updateStatus(ConnectionStatusEnum.connecting);
       _clientSocket = await Socket.connect(
         ip,
         port,
@@ -82,18 +81,19 @@ class NetworkService {
       // Configura opções do socket para melhor performance
       _clientSocket!.setOption(SocketOption.tcpNoDelay, true);
 
-      _updateStatus(ConnectionStatus.connected);
+      _updateStatus(ConnectionStatusEnum.connected);
       _listenToClient(_clientSocket!);
 
       // Aguarda um pouco antes de enviar confirmação
       Future.delayed(const Duration(milliseconds: 100), () {
-        if (_clientSocket != null && _status == ConnectionStatus.connected) {
+        if (_clientSocket != null &&
+            _status == ConnectionStatusEnum.connected) {
           sendMessage('CLIENT_CONNECTED');
         }
       });
       return true;
     } catch (e) {
-      _updateStatus(ConnectionStatus.error);
+      _updateStatus(ConnectionStatusEnum.error);
       onError?.call('Erro ao conectar: $e');
       return false;
     }
@@ -117,11 +117,11 @@ class NetworkService {
         }
       },
       onError: (error) {
-        _updateStatus(ConnectionStatus.error);
+        _updateStatus(ConnectionStatusEnum.error);
         onError?.call('Erro na conexão: $error');
       },
       onDone: () {
-        _updateStatus(ConnectionStatus.disconnected);
+        _updateStatus(ConnectionStatusEnum.disconnected);
         _buffer = '';
         onMessageReceived?.call('DISCONNECTED');
       },
@@ -131,12 +131,12 @@ class NetworkService {
 
   // Enviar mensagem
   void sendMessage(String message) {
-    if (_clientSocket != null && _status == ConnectionStatus.connected) {
+    if (_clientSocket != null && _status == ConnectionStatusEnum.connected) {
       try {
         // Adiciona delimitador \n para separar mensagens
         _clientSocket!.add(utf8.encode('$message\n'));
       } catch (e) {
-        _updateStatus(ConnectionStatus.error);
+        _updateStatus(ConnectionStatusEnum.error);
         onError?.call('Erro ao enviar mensagem: $e');
       }
     }
@@ -182,10 +182,10 @@ class NetworkService {
     _clientSocket = null;
     _serverSocket = null;
     _buffer = '';
-    _updateStatus(ConnectionStatus.disconnected);
+    _updateStatus(ConnectionStatusEnum.disconnected);
   }
 
-  void _updateStatus(ConnectionStatus status) {
+  void _updateStatus(ConnectionStatusEnum status) {
     _status = status;
     onConnectionStatusChanged?.call(_status.name);
   }

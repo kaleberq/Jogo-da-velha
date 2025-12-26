@@ -4,7 +4,7 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
-import 'package:jogo_da_velha/services/network_service.dart';
+import 'package:jogo_da_velha/data/network/network_service.dart';
 
 class TicTacToeScreen extends StatefulWidget {
   final NetworkService? networkService;

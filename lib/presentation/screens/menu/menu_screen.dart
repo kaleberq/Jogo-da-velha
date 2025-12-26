@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_screen.dart';
-import 'package:jogo_da_velha/services/network_service.dart';
+import 'package:jogo_da_velha/data/network/network_service.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
