@@ -2,7 +2,7 @@ import 'dart:math';
 
 enum Player { x, o, none }
 
-class TicTacToeGame {
+class TicTacToeGameViewModel {
   static final Random _random = Random();
   List<List<Player>> board;
   Player currentPlayer;
@@ -13,7 +13,7 @@ class TicTacToeGame {
   int currentRound;
   int maxRounds;
 
-  TicTacToeGame({int? maxRounds})
+  TicTacToeGameViewModel({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => Player.none)),
       currentPlayer = _randomPlayer(),
       winner = null,

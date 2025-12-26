@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/cell_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/vertical_divider_component.dart';
-import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
 
 class RowComponent extends StatelessWidget {
   final int rowIndex;

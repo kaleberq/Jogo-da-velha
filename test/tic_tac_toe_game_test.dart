@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
 
 void main() {
   group('TicTacToeGame', () {
-    late TicTacToeGame game;
+    late TicTacToeGameViewModel game;
 
     setUp(() {
-      game = TicTacToeGame(maxRounds: 5);
+      game = TicTacToeGameViewModel(maxRounds: 5);
       // Define X como jogador inicial para consistência nos testes
       game.currentPlayer = Player.x;
     });
@@ -22,7 +22,7 @@ void main() {
 
       test('deve inicializar com um jogador aleatório (X ou O)', () {
         // Cria um novo jogo para testar a aleatoriedade
-        final newGame = TicTacToeGame(maxRounds: 5);
+        final newGame = TicTacToeGameViewModel(maxRounds: 5);
         expect(
           newGame.currentPlayer == Player.x ||
               newGame.currentPlayer == Player.o,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
 
 class CellComponent extends StatelessWidget {
   final Player player;
