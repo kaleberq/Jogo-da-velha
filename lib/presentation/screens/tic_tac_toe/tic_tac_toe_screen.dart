@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game.dart';
 import 'package:jogo_da_velha/services/network_service.dart';
 
