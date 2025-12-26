@@ -1,12 +1,11 @@
 import 'dart:math';
-
-enum Player { x, o, none }
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
 class TicTacToeGameViewModel {
   static final Random _random = Random();
-  List<List<Player>> board;
-  Player currentPlayer;
-  Player? winner;
+  List<List<PlayerEnum>> board;
+  PlayerEnum currentPlayer;
+  PlayerEnum? winner;
   bool isGameOver;
   int scoreX;
   int scoreO;
@@ -14,7 +13,7 @@ class TicTacToeGameViewModel {
   int maxRounds;
 
   TicTacToeGameViewModel({int? maxRounds})
-    : board = List.generate(3, (_) => List.generate(3, (_) => Player.none)),
+    : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer = _randomPlayer(),
       winner = null,
       isGameOver = false,
@@ -24,8 +23,8 @@ class TicTacToeGameViewModel {
       maxRounds = maxRounds ?? 5;
 
   void reset() {
-    board = List.generate(3, (_) => List.generate(3, (_) => Player.none));
-    currentPlayer = Player.x;
+    board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none));
+    currentPlayer = PlayerEnum.x;
     winner = null;
     isGameOver = false;
   }
@@ -38,21 +37,21 @@ class TicTacToeGameViewModel {
     currentPlayer = _randomPlayer();
   }
 
-  static Player _randomPlayer() {
-    return _random.nextBool() ? Player.x : Player.o;
+  static PlayerEnum _randomPlayer() {
+    return _random.nextBool() ? PlayerEnum.x : PlayerEnum.o;
   }
 
   void updateScore() {
-    if (winner == Player.x) {
+    if (winner == PlayerEnum.x) {
       scoreX++;
-    } else if (winner == Player.o) {
+    } else if (winner == PlayerEnum.o) {
       scoreO++;
     }
   }
 
   void nextRound() {
     // Salva o vencedor do round anterior
-    final Player? previousWinner = winner;
+    final PlayerEnum? previousWinner = winner;
 
     currentRound++;
     reset();
@@ -65,17 +64,17 @@ class TicTacToeGameViewModel {
 
   bool get isAllRoundsFinished => currentRound >= maxRounds;
 
-  Player? get overallWinner {
+  PlayerEnum? get overallWinner {
     if (scoreX > scoreO) {
-      return Player.x;
+      return PlayerEnum.x;
     } else if (scoreO > scoreX) {
-      return Player.o;
+      return PlayerEnum.o;
     }
     return null;
   }
 
   bool makeMove(int row, int col) {
-    if (isGameOver || board[row][col] != Player.none) {
+    if (isGameOver || board[row][col] != PlayerEnum.none) {
       return false;
     }
 
@@ -92,18 +91,20 @@ class TicTacToeGameViewModel {
       return true;
     }
 
-    currentPlayer = currentPlayer == Player.x ? Player.o : Player.x;
+    currentPlayer = currentPlayer == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
     return true;
   }
 
   // Fazer movimento de um jogador específico (usado em multiplayer)
-  bool makeMoveWithPlayer(int row, int col, Player player) {
-    if (isGameOver || board[row][col] != Player.none || player == Player.none) {
+  bool makeMoveWithPlayer(int row, int col, PlayerEnum player) {
+    if (isGameOver ||
+        board[row][col] != PlayerEnum.none ||
+        player == PlayerEnum.none) {
       return false;
     }
 
     board[row][col] = player;
-    currentPlayer = player == Player.x ? Player.o : Player.x;
+    currentPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
 
     if (_checkWinnerWithPlayer(row, col, player)) {
       winner = player;
@@ -119,7 +120,7 @@ class TicTacToeGameViewModel {
     return true;
   }
 
-  bool _checkWinnerWithPlayer(int row, int col, Player player) {
+  bool _checkWinnerWithPlayer(int row, int col, PlayerEnum player) {
     // Verifica linha
     if (board[row][0] == player &&
         board[row][1] == player &&
@@ -196,7 +197,7 @@ class TicTacToeGameViewModel {
     // Verifica se todas as células estão preenchidas
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        if (board[i][j] == Player.none) {
+        if (board[i][j] == PlayerEnum.none) {
           return false;
         }
       }

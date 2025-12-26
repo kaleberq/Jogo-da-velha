@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
 
 void main() {
@@ -8,14 +9,14 @@ void main() {
     setUp(() {
       game = TicTacToeGameViewModel(maxRounds: 5);
       // Define X como jogador inicial para consistência nos testes
-      game.currentPlayer = Player.x;
+      game.currentPlayer = PlayerEnum.x;
     });
 
     group('Inicialização', () {
       test('deve inicializar com tabuleiro vazio', () {
         for (int i = 0; i < 3; i++) {
           for (int j = 0; j < 3; j++) {
-            expect(game.board[i][j], Player.none);
+            expect(game.board[i][j], PlayerEnum.none);
           }
         }
       });
@@ -24,8 +25,8 @@ void main() {
         // Cria um novo jogo para testar a aleatoriedade
         final newGame = TicTacToeGameViewModel(maxRounds: 5);
         expect(
-          newGame.currentPlayer == Player.x ||
-              newGame.currentPlayer == Player.o,
+          newGame.currentPlayer == PlayerEnum.x ||
+              newGame.currentPlayer == PlayerEnum.o,
           true,
         );
       });
@@ -56,7 +57,7 @@ void main() {
 
         for (int i = 0; i < 3; i++) {
           for (int j = 0; j < 3; j++) {
-            expect(game.board[i][j], Player.none);
+            expect(game.board[i][j], PlayerEnum.none);
           }
         }
       });
@@ -64,7 +65,7 @@ void main() {
       test('deve resetar o jogador atual para X', () {
         game.makeMove(0, 0);
         game.reset();
-        expect(game.currentPlayer, Player.x);
+        expect(game.currentPlayer, PlayerEnum.x);
       });
 
       test('deve resetar o vencedor', () {
@@ -75,7 +76,7 @@ void main() {
         game.makeMove(1, 1); // O
         game.makeMove(0, 2); // X vence
 
-        expect(game.winner, Player.x);
+        expect(game.winner, PlayerEnum.x);
         game.reset();
         expect(game.winner, isNull);
       });
@@ -120,10 +121,11 @@ void main() {
         expect(game.scoreX, 0);
         expect(game.scoreO, 0);
         expect(game.currentRound, 1);
-        expect(game.board[0][0], Player.none);
+        expect(game.board[0][0], PlayerEnum.none);
         // O jogador inicial é escolhido aleatoriamente após resetAll
         expect(
-          game.currentPlayer == Player.x || game.currentPlayer == Player.o,
+          game.currentPlayer == PlayerEnum.x ||
+              game.currentPlayer == PlayerEnum.o,
           true,
         );
       });
@@ -131,14 +133,14 @@ void main() {
 
     group('updateScore', () {
       test('deve incrementar scoreX quando X vence', () {
-        game.winner = Player.x;
+        game.winner = PlayerEnum.x;
         game.updateScore();
         expect(game.scoreX, 1);
         expect(game.scoreO, 0);
       });
 
       test('deve incrementar scoreO quando O vence', () {
-        game.winner = Player.o;
+        game.winner = PlayerEnum.o;
         game.updateScore();
         expect(game.scoreX, 0);
         expect(game.scoreO, 1);
@@ -152,7 +154,7 @@ void main() {
       });
 
       test('deve incrementar múltiplas vezes', () {
-        game.winner = Player.x;
+        game.winner = PlayerEnum.x;
         game.updateScore();
         game.updateScore();
         expect(game.scoreX, 2);
@@ -183,7 +185,7 @@ void main() {
         expect(game.isGameOver, true);
 
         game.nextRound();
-        expect(game.board[0][0], Player.none);
+        expect(game.board[0][0], PlayerEnum.none);
         expect(game.isGameOver, false);
       });
 
@@ -194,10 +196,10 @@ void main() {
         game.makeMove(0, 1); // X
         game.makeMove(1, 1); // O
         game.makeMove(0, 2); // X vence
-        expect(game.winner, Player.x);
+        expect(game.winner, PlayerEnum.x);
 
         game.nextRound();
-        expect(game.currentPlayer, Player.x);
+        expect(game.currentPlayer, PlayerEnum.x);
         expect(game.currentRound, 2);
 
         // Simula vitória do O no próximo round
@@ -207,10 +209,10 @@ void main() {
         game.makeMove(0, 1); // O
         game.makeMove(2, 2); // X
         game.makeMove(0, 2); // O vence
-        expect(game.winner, Player.o);
+        expect(game.winner, PlayerEnum.o);
 
         game.nextRound();
-        expect(game.currentPlayer, Player.o);
+        expect(game.currentPlayer, PlayerEnum.o);
         expect(game.currentRound, 3);
       });
 
@@ -231,7 +233,7 @@ void main() {
         expect(game.isGameOver, true);
 
         game.nextRound();
-        expect(game.currentPlayer, Player.x);
+        expect(game.currentPlayer, PlayerEnum.x);
         expect(game.currentRound, 2);
       });
     });
@@ -258,13 +260,13 @@ void main() {
       test('deve retornar X quando scoreX > scoreO', () {
         game.scoreX = 3;
         game.scoreO = 2;
-        expect(game.overallWinner, Player.x);
+        expect(game.overallWinner, PlayerEnum.x);
       });
 
       test('deve retornar O quando scoreO > scoreX', () {
         game.scoreX = 1;
         game.scoreO = 3;
-        expect(game.overallWinner, Player.o);
+        expect(game.overallWinner, PlayerEnum.o);
       });
 
       test('deve retornar null quando scores são iguais', () {
@@ -283,21 +285,21 @@ void main() {
     group('makeMove', () {
       test('deve fazer movimento válido', () {
         expect(game.makeMove(0, 0), true);
-        expect(game.board[0][0], Player.x);
+        expect(game.board[0][0], PlayerEnum.x);
       });
 
       test('deve alternar jogador após movimento válido', () {
         game.makeMove(0, 0);
-        expect(game.currentPlayer, Player.o);
+        expect(game.currentPlayer, PlayerEnum.o);
 
         game.makeMove(0, 1);
-        expect(game.currentPlayer, Player.x);
+        expect(game.currentPlayer, PlayerEnum.x);
       });
 
       test('não deve fazer movimento em casa ocupada', () {
         game.makeMove(0, 0);
         expect(game.makeMove(0, 0), false);
-        expect(game.board[0][0], Player.x);
+        expect(game.board[0][0], PlayerEnum.x);
       });
 
       test('não deve fazer movimento quando jogo acabou', () {
@@ -320,7 +322,7 @@ void main() {
           game.makeMove(1, 1); // O
           game.makeMove(0, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
 
@@ -331,7 +333,7 @@ void main() {
           game.makeMove(0, 1); // O
           game.makeMove(1, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
 
@@ -342,7 +344,7 @@ void main() {
           game.makeMove(0, 1); // O
           game.makeMove(2, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
       });
@@ -355,7 +357,7 @@ void main() {
           game.makeMove(0, 2); // O
           game.makeMove(2, 0); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
 
@@ -366,7 +368,7 @@ void main() {
           game.makeMove(0, 2); // O
           game.makeMove(2, 1); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
 
@@ -377,7 +379,7 @@ void main() {
           game.makeMove(0, 1); // O
           game.makeMove(2, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
       });
@@ -390,7 +392,7 @@ void main() {
           game.makeMove(0, 2); // O
           game.makeMove(2, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
 
@@ -401,7 +403,7 @@ void main() {
           game.makeMove(0, 1); // O
           game.makeMove(2, 0); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           expect(game.isGameOver, true);
         });
       });
@@ -415,7 +417,7 @@ void main() {
           game.makeMove(2, 2); // X
           game.makeMove(1, 2); // O vence
 
-          expect(game.winner, Player.o);
+          expect(game.winner, PlayerEnum.o);
           expect(game.isGameOver, true);
         });
       });
@@ -471,7 +473,7 @@ void main() {
           game.makeMove(1, 1); // O
           game.makeMove(0, 2); // X vence
 
-          expect(game.winner, Player.x);
+          expect(game.winner, PlayerEnum.x);
           game.updateScore();
           expect(game.scoreX, 1);
           expect(game.scoreO, 0);
@@ -479,7 +481,7 @@ void main() {
           // Próximo round
           game.nextRound();
           expect(game.currentRound, 2);
-          expect(game.currentPlayer, Player.x);
+          expect(game.currentPlayer, PlayerEnum.x);
           expect(game.isGameOver, false);
           expect(game.winner, isNull);
         },
@@ -496,7 +498,7 @@ void main() {
 
         game.nextRound();
         expect(game.currentRound, 2);
-        expect(game.currentPlayer, Player.x);
+        expect(game.currentPlayer, PlayerEnum.x);
 
         // Round 2: O vence
         game.makeMove(1, 0); // X
@@ -512,7 +514,7 @@ void main() {
 
         game.nextRound();
         expect(game.currentRound, 3);
-        expect(game.currentPlayer, Player.o);
+        expect(game.currentPlayer, PlayerEnum.o);
       });
     });
   });

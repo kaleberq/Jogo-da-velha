@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
@@ -18,7 +19,7 @@ class TicTacToeScreen extends StatefulWidget {
 class _TicTacToeScreenState extends State<TicTacToeScreen> {
   late TicTacToeGameViewModel game;
   String? _roundEndMessage;
-  Player? _roundWinner;
+  PlayerEnum? _roundWinner;
   int _maxRounds = 5;
   bool _isOnlineMode = false;
   bool _isMyTurn = true;
@@ -33,9 +34,9 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       _isMyTurn = widget.isHost;
       game = TicTacToeGameViewModel(maxRounds: _maxRounds);
       if (widget.isHost) {
-        game.currentPlayer = Player.x;
+        game.currentPlayer = PlayerEnum.x;
       } else {
-        game.currentPlayer = Player.o;
+        game.currentPlayer = PlayerEnum.o;
         _isMyTurn = false;
       }
 
@@ -99,7 +100,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
             final row = data['row'] as int;
             final col = data['col'] as int;
             final playerStr = data['player'] as String;
-            final player = playerStr == 'x' ? Player.x : Player.o;
+            final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
             setState(() {
               game.makeMoveWithPlayer(row, col, player);
               _isMyTurn = true;
@@ -110,10 +111,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
             setState(() {
               game.resetAll();
               if (widget.isHost) {
-                game.currentPlayer = Player.x;
+                game.currentPlayer = PlayerEnum.x;
                 _isMyTurn = true;
               } else {
-                game.currentPlayer = Player.o;
+                game.currentPlayer = PlayerEnum.o;
                 _isMyTurn = false;
               }
             });
@@ -122,10 +123,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
             setState(() {
               game.nextRound();
               if (widget.isHost) {
-                game.currentPlayer = Player.x;
+                game.currentPlayer = PlayerEnum.x;
                 _isMyTurn = true;
               } else {
-                game.currentPlayer = Player.o;
+                game.currentPlayer = PlayerEnum.o;
                 _isMyTurn = false;
               }
               _hideRoundEndMessage();
@@ -137,10 +138,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
               _maxRounds = maxRounds;
               game = TicTacToeGameViewModel(maxRounds: _maxRounds);
               if (widget.isHost) {
-                game.currentPlayer = Player.x;
+                game.currentPlayer = PlayerEnum.x;
                 _isMyTurn = true;
               } else {
-                game.currentPlayer = Player.o;
+                game.currentPlayer = PlayerEnum.o;
                 _isMyTurn = false;
               }
             });
@@ -189,7 +190,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         widget.networkService!.sendMove(
           row,
           col,
-          playerWhoMoved == Player.x ? 'x' : 'o',
+          playerWhoMoved == PlayerEnum.x ? 'x' : 'o',
         );
         _isMyTurn = false;
       }
@@ -222,7 +223,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     String message;
     if (game.winner != null) {
       message =
-          'Jogador ${game.winner == Player.x ? 'X' : 'O'} venceu este round!';
+          'Jogador ${game.winner == PlayerEnum.x ? 'X' : 'O'} venceu este round!';
     } else {
       message = 'Deu Velha';
     }
@@ -242,10 +243,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
 
   void _showFinalScoreDialog() {
     String winnerMessage;
-    final Player? overallWinner = game.overallWinner;
-    if (overallWinner == Player.x) {
+    final PlayerEnum? overallWinner = game.overallWinner;
+    if (overallWinner == PlayerEnum.x) {
       winnerMessage = 'Jogador X venceu o jogo!';
-    } else if (overallWinner == Player.o) {
+    } else if (overallWinner == PlayerEnum.o) {
       winnerMessage = 'Jogador O venceu o jogo!';
     } else {
       winnerMessage = 'Empate! Ninguém venceu.';
@@ -315,10 +316,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       if (_isOnlineMode) {
         // Em modo online, quem começa é baseado em quem é host
         if (widget.isHost) {
-          game.currentPlayer = Player.x;
+          game.currentPlayer = PlayerEnum.x;
           _isMyTurn = true;
         } else {
-          game.currentPlayer = Player.o;
+          game.currentPlayer = PlayerEnum.o;
           _isMyTurn = false;
         }
       }
@@ -333,10 +334,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
       game.resetAll();
       if (_isOnlineMode) {
         if (widget.isHost) {
-          game.currentPlayer = Player.x;
+          game.currentPlayer = PlayerEnum.x;
           _isMyTurn = true;
         } else {
-          game.currentPlayer = Player.o;
+          game.currentPlayer = PlayerEnum.o;
           _isMyTurn = false;
         }
       }
@@ -412,10 +413,10 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                       if (_isOnlineMode) {
                         widget.networkService!.sendConfig(_maxRounds);
                         if (widget.isHost) {
-                          game.currentPlayer = Player.x;
+                          game.currentPlayer = PlayerEnum.x;
                           _isMyTurn = true;
                         } else {
-                          game.currentPlayer = Player.o;
+                          game.currentPlayer = PlayerEnum.o;
                           _isMyTurn = false;
                         }
                       }
@@ -546,23 +547,23 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                   padding: const EdgeInsets.all(16),
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: game.currentPlayer == Player.x
+                    color: game.currentPlayer == PlayerEnum.x
                         ? Colors.blue.shade50
                         : Colors.red.shade50,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: game.currentPlayer == Player.x
+                      color: game.currentPlayer == PlayerEnum.x
                           ? Colors.blue
                           : Colors.red,
                       width: 2,
                     ),
                   ),
                   child: Text(
-                    'Vez do jogador: ${game.currentPlayer == Player.x ? 'X' : 'O'}',
+                    'Vez do jogador: ${game.currentPlayer == PlayerEnum.x ? 'X' : 'O'}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: game.currentPlayer == Player.x
+                      color: game.currentPlayer == PlayerEnum.x
                           ? Colors.blue
                           : Colors.red,
                     ),
@@ -625,9 +626,9 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: _roundWinner == Player.x
+                  color: _roundWinner == PlayerEnum.x
                       ? Colors.blue.shade700
-                      : _roundWinner == Player.o
+                      : _roundWinner == PlayerEnum.o
                       ? Colors.red.shade700
                       : Colors.grey.shade700,
                   boxShadow: [

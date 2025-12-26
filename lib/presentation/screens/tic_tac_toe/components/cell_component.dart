@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
 class CellComponent extends StatelessWidget {
-  final Player player;
+  final PlayerEnum player;
   final VoidCallback? onTap;
 
   const CellComponent({super.key, required this.player, this.onTap});
@@ -21,7 +21,7 @@ class CellComponent extends StatelessWidget {
               child: Builder(
                 builder: (context) {
                   switch (player) {
-                    case Player.x:
+                    case PlayerEnum.x:
                       return const Text(
                         'X',
                         style: TextStyle(
@@ -30,7 +30,7 @@ class CellComponent extends StatelessWidget {
                           color: Colors.blue,
                         ),
                       );
-                    case Player.o:
+                    case PlayerEnum.o:
                       return const Text(
                         'O',
                         style: TextStyle(
@@ -39,7 +39,7 @@ class CellComponent extends StatelessWidget {
                           color: Colors.red,
                         ),
                       );
-                    case Player.none:
+                    case PlayerEnum.none:
                       return const SizedBox.shrink();
                   }
                 },
