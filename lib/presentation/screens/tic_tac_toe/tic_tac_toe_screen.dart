@@ -190,7 +190,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         widget.networkService!.sendMove(
           rowIndex,
           columnIndex,
-          playerWhoMoved == PlayerEnum.x ? 'x' : 'o',
+          playerWhoMoved.value,
         );
         _isMyTurn = false;
       }
@@ -222,8 +222,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   void _showRoundEndDialog() {
     String message;
     if (game.winner != null) {
-      message =
-          'Jogador ${game.winner == PlayerEnum.x ? 'X' : 'O'} venceu este round!';
+      message = 'Jogador ${game.winner?.value} venceu este round!';
     } else {
       message = 'Deu Velha';
     }
@@ -559,7 +558,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                     ),
                   ),
                   child: Text(
-                    'Vez do jogador: ${game.currentPlayer == PlayerEnum.x ? 'X' : 'O'}',
+                    'Vez do jogador: ${game.currentPlayer.value}',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

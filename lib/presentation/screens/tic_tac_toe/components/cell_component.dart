@@ -22,8 +22,8 @@ class CellComponent extends StatelessWidget {
                 builder: (context) {
                   switch (player) {
                     case PlayerEnum.x:
-                      return const Text(
-                        'X',
+                      return Text(
+                        PlayerEnum.x.value.toUpperCase(),
                         style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
@@ -31,8 +31,8 @@ class CellComponent extends StatelessWidget {
                         ),
                       );
                     case PlayerEnum.o:
-                      return const Text(
-                        'O',
+                      return Text(
+                        PlayerEnum.o.value.toUpperCase(),
                         style: TextStyle(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
