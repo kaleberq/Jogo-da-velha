@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/network/network_service.dart';
 
 class TicTacToeScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class TicTacToeScreen extends StatefulWidget {
 }
 
 class _TicTacToeScreenState extends State<TicTacToeScreen> {
-  late TicTacToeGameViewModel game;
+  late TicTacToeGameModel game;
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
   int _maxRounds = 5;
@@ -32,7 +32,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     // Em modo online, o host é sempre X e começa primeiro
     if (_isOnlineMode) {
       _isMyTurn = widget.isHost;
-      game = TicTacToeGameViewModel(maxRounds: _maxRounds);
+      game = TicTacToeGameModel(maxRounds: _maxRounds);
       if (widget.isHost) {
         game.currentPlayer = PlayerEnum.x;
       } else {
@@ -63,7 +63,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         }
       };
     } else {
-      game = TicTacToeGameViewModel(maxRounds: _maxRounds);
+      game = TicTacToeGameModel(maxRounds: _maxRounds);
     }
   }
 
@@ -136,7 +136,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
             final maxRounds = data['maxRounds'] as int;
             setState(() {
               _maxRounds = maxRounds;
-              game = TicTacToeGameViewModel(maxRounds: _maxRounds);
+              game = TicTacToeGameModel(maxRounds: _maxRounds);
               if (widget.isHost) {
                 game.currentPlayer = PlayerEnum.x;
                 _isMyTurn = true;
@@ -408,7 +408,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                   onPressed: () {
                     setState(() {
                       _maxRounds = tempMaxRounds;
-                      game = TicTacToeGameViewModel(maxRounds: _maxRounds);
+                      game = TicTacToeGameModel(maxRounds: _maxRounds);
                       if (_isOnlineMode) {
                         widget.networkService!.sendConfig(_maxRounds);
                         if (widget.isHost) {

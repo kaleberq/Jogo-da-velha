@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_game_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/models/tic_tac_toe_game_model.dart';
 
 void main() {
   group('TicTacToeGame', () {
-    late TicTacToeGameViewModel game;
+    late TicTacToeGameModel game;
 
     setUp(() {
-      game = TicTacToeGameViewModel(maxRounds: 5);
+      game = TicTacToeGameModel(maxRounds: 5);
       // Define X como jogador inicial para consistência nos testes
       game.currentPlayer = PlayerEnum.x;
     });
@@ -23,7 +23,7 @@ void main() {
 
       test('deve inicializar com um jogador aleatório (X ou O)', () {
         // Cria um novo jogo para testar a aleatoriedade
-        final newGame = TicTacToeGameViewModel(maxRounds: 5);
+        final newGame = TicTacToeGameModel(maxRounds: 5);
         expect(
           newGame.currentPlayer == PlayerEnum.x ||
               newGame.currentPlayer == PlayerEnum.o,

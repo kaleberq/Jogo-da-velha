@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
-class TicTacToeGameViewModel {
+class TicTacToeGameModel {
   static final Random _random = Random();
   List<List<PlayerEnum>> board;
   PlayerEnum currentPlayer;
@@ -12,7 +12,7 @@ class TicTacToeGameViewModel {
   int currentRound;
   int maxRounds;
 
-  TicTacToeGameViewModel({int? maxRounds})
+  TicTacToeGameModel({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer = _randomPlayer(),
       winner = null,
