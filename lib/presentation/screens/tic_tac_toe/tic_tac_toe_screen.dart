@@ -172,7 +172,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     );
   }
 
-  void _onCellTap(int row, int col) {
+  void _onCellTap({required int rowIndex, required int columnIndex}) {
     // Em modo online, só permite jogar na vez do jogador
     if (_isOnlineMode && !_isMyTurn) {
       ScaffoldMessenger.of(
@@ -184,12 +184,12 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
     // Em modo online, guarda o jogador atual ANTES de fazer o movimento
     final playerWhoMoved = _isOnlineMode ? game.currentPlayer : null;
 
-    if (game.makeMove(row, col)) {
+    if (game.makeMove(rowIndex, columnIndex)) {
       // Em modo online, envia o movimento para o outro jogador
       if (_isOnlineMode && playerWhoMoved != null) {
         widget.networkService!.sendMove(
-          row,
-          col,
+          rowIndex,
+          columnIndex,
           playerWhoMoved == PlayerEnum.x ? 'x' : 'o',
         );
         _isMyTurn = false;
@@ -592,19 +592,40 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                         RowComponent(
                           rowIndex: 0,
                           row: game.board[0],
-                          onCellTap: _onCellTap,
+                          onCellTap:
+                              ({
+                                required int rowIndex,
+                                required int columnIndex,
+                              }) => _onCellTap(
+                                rowIndex: rowIndex,
+                                columnIndex: columnIndex,
+                              ),
                         ),
                         const HorizontalDividerComponent(),
                         RowComponent(
                           rowIndex: 1,
                           row: game.board[1],
-                          onCellTap: _onCellTap,
+                          onCellTap:
+                              ({
+                                required int rowIndex,
+                                required int columnIndex,
+                              }) => _onCellTap(
+                                rowIndex: rowIndex,
+                                columnIndex: columnIndex,
+                              ),
                         ),
                         const HorizontalDividerComponent(),
                         RowComponent(
                           rowIndex: 2,
                           row: game.board[2],
-                          onCellTap: _onCellTap,
+                          onCellTap:
+                              ({
+                                required int rowIndex,
+                                required int columnIndex,
+                              }) => _onCellTap(
+                                rowIndex: rowIndex,
+                                columnIndex: columnIndex,
+                              ),
                         ),
                       ],
                     ),
