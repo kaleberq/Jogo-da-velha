@@ -4,11 +4,13 @@ import 'package:jogo_da_velha/domain/models/winning_line.dart';
 class WinningLineOverlay extends StatelessWidget {
   final WinningLine? winningLine;
   final double boardSize;
+  final double animationProgress; // 0.0 a 1.0
 
   const WinningLineOverlay({
     super.key,
     required this.winningLine,
     required this.boardSize,
+    this.animationProgress = 1.0,
   });
 
   @override
@@ -22,6 +24,7 @@ class WinningLineOverlay extends StatelessWidget {
         painter: WinningLinePainter(
           winningLine: winningLine!,
           boardSize: boardSize,
+          animationProgress: animationProgress,
         ),
       ),
     );
@@ -31,8 +34,13 @@ class WinningLineOverlay extends StatelessWidget {
 class WinningLinePainter extends CustomPainter {
   final WinningLine winningLine;
   final double boardSize;
+  final double animationProgress; // 0.0 a 1.0
 
-  WinningLinePainter({required this.winningLine, required this.boardSize});
+  WinningLinePainter({
+    required this.winningLine,
+    required this.boardSize,
+    this.animationProgress = 1.0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -48,36 +56,38 @@ class WinningLinePainter extends CustomPainter {
     switch (winningLine.type) {
       case WinningLineType.horizontal:
         final y = (winningLine.index! + 0.5) * cellSize;
-        canvas.drawLine(
-          Offset(padding, y),
-          Offset(boardSize - padding, y),
-          paint,
-        );
+        final startX = padding;
+        final endX = boardSize - padding;
+        final currentEndX = startX + (endX - startX) * animationProgress;
+        canvas.drawLine(Offset(startX, y), Offset(currentEndX, y), paint);
         break;
 
       case WinningLineType.vertical:
         final x = (winningLine.index! + 0.5) * cellSize;
-        canvas.drawLine(
-          Offset(x, padding),
-          Offset(x, boardSize - padding),
-          paint,
-        );
+        final startY = padding;
+        final endY = boardSize - padding;
+        final currentEndY = startY + (endY - startY) * animationProgress;
+        canvas.drawLine(Offset(x, startY), Offset(x, currentEndY), paint);
         break;
 
       case WinningLineType.diagonalMain:
-        canvas.drawLine(
-          Offset(padding, padding),
-          Offset(boardSize - padding, boardSize - padding),
-          paint,
+        final start = Offset(padding, padding);
+        final end = Offset(boardSize - padding, boardSize - padding);
+        final currentEnd = Offset(
+          start.dx + (end.dx - start.dx) * animationProgress,
+          start.dy + (end.dy - start.dy) * animationProgress,
         );
+        canvas.drawLine(start, currentEnd, paint);
         break;
 
       case WinningLineType.diagonalSecondary:
-        canvas.drawLine(
-          Offset(boardSize - padding, padding),
-          Offset(padding, boardSize - padding),
-          paint,
+        final start = Offset(boardSize - padding, padding);
+        final end = Offset(padding, boardSize - padding);
+        final currentEnd = Offset(
+          start.dx + (end.dx - start.dx) * animationProgress,
+          start.dy + (end.dy - start.dy) * animationProgress,
         );
+        canvas.drawLine(start, currentEnd, paint);
         break;
     }
   }
@@ -85,6 +95,7 @@ class WinningLinePainter extends CustomPainter {
   @override
   bool shouldRepaint(WinningLinePainter oldDelegate) {
     return winningLine != oldDelegate.winningLine ||
-        boardSize != oldDelegate.boardSize;
+        boardSize != oldDelegate.boardSize ||
+        animationProgress != oldDelegate.animationProgress;
   }
 }

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/winning_line.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/winning_line_overlay.dart';
@@ -15,9 +14,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  late AnimationController _lineAnimationController;
+  late Animation<double> _lineAnimation;
+  List<List<PlayerEnum>> _board = List.generate(
+    3,
+    (_) => List.generate(3, (_) => PlayerEnum.none),
+  );
+  int _currentIndex = 0;
+  Timer? _boardAnimationTimer;
+  bool _hasStartedBoardAnimation = false;
+
+  // Posições da diagonal principal
+  final List<Map<String, int>> _diagonalPositions = [
+    {'row': 0, 'col': 0},
+    {'row': 1, 'col': 1},
+    {'row': 2, 'col': 2},
+  ];
 
   @override
   void initState() {
@@ -31,7 +46,19 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
+    _lineAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _lineAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _lineAnimationController, curve: Curves.easeOut),
+    );
+
     _animationController.forward();
+
+    // Espera a animação de fade terminar antes de começar a animação dos X's
+    _animationController.addStatusListener(_startBoardAnimation);
 
     Timer(const Duration(seconds: 3), () {
       // if (mounted) {
@@ -42,9 +69,38 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
+  void _startBoardAnimation(AnimationStatus status) {
+    if (status == AnimationStatus.completed &&
+        !_hasStartedBoardAnimation &&
+        mounted) {
+      _hasStartedBoardAnimation = true;
+      // Adiciona X's progressivamente na diagonal
+      _boardAnimationTimer = Timer.periodic(const Duration(milliseconds: 500), (
+        timer,
+      ) {
+        if (_currentIndex < _diagonalPositions.length && mounted) {
+          setState(() {
+            final pos = _diagonalPositions[_currentIndex];
+            _board[pos['row']!][pos['col']!] = PlayerEnum.x;
+            _currentIndex++;
+          });
+        } else {
+          timer.cancel();
+          // Inicia a animação do traço quando todos os X's estão na diagonal
+          if (mounted) {
+            _lineAnimationController.forward();
+          }
+        }
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _animationController.removeStatusListener(_startBoardAnimation);
     _animationController.dispose();
+    _lineAnimationController.dispose();
+    _boardAnimationTimer?.cancel();
     super.dispose();
   }
 
@@ -80,7 +136,7 @@ class _SplashScreenState extends State<SplashScreen>
                       children: [
                         RowComponent(
                           rowIndex: 0,
-                          row: [PlayerEnum.x, PlayerEnum.none, PlayerEnum.none],
+                          row: _board[0],
                           onCellTap:
                               ({
                                 required int rowIndex,
@@ -90,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
                         const HorizontalDividerComponent(),
                         RowComponent(
                           rowIndex: 1,
-                          row: [PlayerEnum.none, PlayerEnum.x, PlayerEnum.none],
+                          row: _board[1],
                           onCellTap:
                               ({
                                 required int rowIndex,
@@ -100,7 +156,7 @@ class _SplashScreenState extends State<SplashScreen>
                         const HorizontalDividerComponent(),
                         RowComponent(
                           rowIndex: 2,
-                          row: [PlayerEnum.none, PlayerEnum.none, PlayerEnum.x],
+                          row: _board[2],
                           onCellTap:
                               ({
                                 required int rowIndex,
@@ -110,10 +166,17 @@ class _SplashScreenState extends State<SplashScreen>
                       ],
                     ),
                   ),
-                  WinningLineOverlay(
-                    winningLine: WinningLine.diagonalMain(),
-                    boardSize: 200,
-                  ),
+                  if (_currentIndex == _diagonalPositions.length)
+                    AnimatedBuilder(
+                      animation: _lineAnimation,
+                      builder: (context, child) {
+                        return WinningLineOverlay(
+                          winningLine: WinningLine.diagonalMain(),
+                          boardSize: 200,
+                          animationProgress: _lineAnimation.value,
+                        );
+                      },
+                    ),
                 ],
               ),
               Text(
