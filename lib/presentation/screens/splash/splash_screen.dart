@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  List<List<PlayerEnum>> _board = List.generate(
+  final List<List<PlayerEnum>> _board = List.generate(
     3,
     (_) => List.generate(3, (_) => PlayerEnum.none),
   );
