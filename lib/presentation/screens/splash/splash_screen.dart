@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/winning_line.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/winning_line_overlay.dart';
@@ -60,13 +61,8 @@ class _SplashScreenState extends State<SplashScreen>
     // Espera a animação de fade terminar antes de começar a animação dos X's
     _animationController.addStatusListener(_startBoardAnimation);
 
-    Timer(const Duration(seconds: 3), () {
-      // if (mounted) {
-      //   Navigator.of(context).pushReplacement(
-      //     MaterialPageRoute(builder: (context) => const MenuScreen()),
-      //   );
-      // }
-    });
+    // Espera a animação do traço terminar para navegar
+    _lineAnimationController.addStatusListener(_navigateToMenu);
   }
 
   void _startBoardAnimation(AnimationStatus status) {
@@ -95,9 +91,18 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  void _navigateToMenu(AnimationStatus status) {
+    if (status == AnimationStatus.completed && mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const MenuScreen()),
+      );
+    }
+  }
+
   @override
   void dispose() {
     _animationController.removeStatusListener(_startBoardAnimation);
+    _lineAnimationController.removeStatusListener(_navigateToMenu);
     _animationController.dispose();
     _lineAnimationController.dispose();
     _boardAnimationTimer?.cancel();
