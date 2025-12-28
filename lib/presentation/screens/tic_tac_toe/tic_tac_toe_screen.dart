@@ -17,17 +17,32 @@ class TicTacToeScreen extends StatefulWidget {
   State<TicTacToeScreen> createState() => _TicTacToeScreenState();
 }
 
-class _TicTacToeScreenState extends State<TicTacToeScreen> {
+class _TicTacToeScreenState extends State<TicTacToeScreen>
+    with TickerProviderStateMixin {
   late TicTacToeGameModel game;
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
   int _maxRounds = 5;
   bool _isOnlineMode = false;
   bool _isMyTurn = true;
+  late AnimationController _winningLineAnimationController;
+  late Animation<double> _winningLineAnimation;
 
   @override
   void initState() {
     super.initState();
+    _winningLineAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _winningLineAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _winningLineAnimationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
     _isOnlineMode = widget.networkService != null;
 
     // Em modo online, o host é sempre X e começa primeiro
@@ -202,6 +217,11 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
 
   void _checkGameOver() {
     if (game.isGameOver) {
+      // Inicia a animação do traço se houver uma linha vencedora
+      if (game.winningLine != null) {
+        _winningLineAnimationController.reset();
+        _winningLineAnimationController.forward();
+      }
       Future.delayed(const Duration(milliseconds: 300), () {
         _handleRoundEnd();
       });
@@ -308,6 +328,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
 
   void _nextRound() {
     _hideRoundEndMessage();
+    _winningLineAnimationController.reset();
     if (_isOnlineMode) {
       widget.networkService!.sendNextRound();
     }
@@ -327,6 +348,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
   }
 
   void _resetAll() {
+    _winningLineAnimationController.reset();
     if (_isOnlineMode) {
       widget.networkService!.sendReset();
     }
@@ -407,6 +429,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                 ),
                 TextButton(
                   onPressed: () {
+                    _winningLineAnimationController.reset();
                     setState(() {
                       _maxRounds = tempMaxRounds;
                       game = TicTacToeGameModel(maxRounds: _maxRounds);
@@ -431,6 +454,12 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _winningLineAnimationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -635,10 +664,17 @@ class _TicTacToeScreenState extends State<TicTacToeScreen> {
                           ],
                         ),
                       ),
-                      WinningLineOverlay(
-                        winningLine: game.winningLine,
-                        boardSize: 300,
-                      ),
+                      if (game.winningLine != null)
+                        AnimatedBuilder(
+                          animation: _winningLineAnimation,
+                          builder: (context, child) {
+                            return WinningLineOverlay(
+                              winningLine: game.winningLine,
+                              boardSize: 300,
+                              animationProgress: _winningLineAnimation.value,
+                            );
+                          },
+                        ),
                     ],
                   ),
                 ),
