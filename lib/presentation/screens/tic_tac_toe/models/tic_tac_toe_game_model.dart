@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/models/winning_line.dart';
 
 class TicTacToeGameModel {
   static final Random _random = Random();
   List<List<PlayerEnum>> board;
   PlayerEnum currentPlayer;
   PlayerEnum? winner;
+  WinningLine? winningLine;
   bool isGameOver;
   int scoreX;
   int scoreO;
@@ -16,6 +18,7 @@ class TicTacToeGameModel {
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer = _randomPlayer(),
       winner = null,
+      winningLine = null,
       isGameOver = false,
       scoreX = 0,
       scoreO = 0,
@@ -26,6 +29,7 @@ class TicTacToeGameModel {
     board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none));
     currentPlayer = PlayerEnum.x;
     winner = null;
+    winningLine = null;
     isGameOver = false;
   }
 
@@ -80,8 +84,10 @@ class TicTacToeGameModel {
 
     board[row][col] = currentPlayer;
 
-    if (_checkWinner(row, col)) {
+    final winningLineResult = _checkWinner(row, col);
+    if (winningLineResult != null) {
       winner = currentPlayer;
+      winningLine = winningLineResult;
       isGameOver = true;
       return true;
     }
@@ -106,8 +112,10 @@ class TicTacToeGameModel {
     board[row][col] = player;
     currentPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
 
-    if (_checkWinnerWithPlayer(row, col, player)) {
+    final winningLineResult = _checkWinnerWithPlayer(row, col, player);
+    if (winningLineResult != null) {
       winner = player;
+      winningLine = winningLineResult;
       isGameOver = true;
       return true;
     }
@@ -120,19 +128,19 @@ class TicTacToeGameModel {
     return true;
   }
 
-  bool _checkWinnerWithPlayer(int row, int col, PlayerEnum player) {
+  WinningLine? _checkWinnerWithPlayer(int row, int col, PlayerEnum player) {
     // Verifica linha
     if (board[row][0] == player &&
         board[row][1] == player &&
         board[row][2] == player) {
-      return true;
+      return WinningLine.horizontal(row);
     }
 
     // Verifica coluna
     if (board[0][col] == player &&
         board[1][col] == player &&
         board[2][col] == player) {
-      return true;
+      return WinningLine.vertical(col);
     }
 
     // Verifica diagonal principal
@@ -140,7 +148,7 @@ class TicTacToeGameModel {
         board[0][0] == player &&
         board[1][1] == player &&
         board[2][2] == player) {
-      return true;
+      return WinningLine.diagonalMain();
     }
 
     // Verifica diagonal secundária
@@ -148,25 +156,25 @@ class TicTacToeGameModel {
         board[0][2] == player &&
         board[1][1] == player &&
         board[2][0] == player) {
-      return true;
+      return WinningLine.diagonalSecondary();
     }
 
-    return false;
+    return null;
   }
 
-  bool _checkWinner(int row, int col) {
+  WinningLine? _checkWinner(int row, int col) {
     // Verifica linha
     if (board[row][0] == currentPlayer &&
         board[row][1] == currentPlayer &&
         board[row][2] == currentPlayer) {
-      return true;
+      return WinningLine.horizontal(row);
     }
 
     // Verifica coluna
     if (board[0][col] == currentPlayer &&
         board[1][col] == currentPlayer &&
         board[2][col] == currentPlayer) {
-      return true;
+      return WinningLine.vertical(col);
     }
 
     // Verifica diagonal principal
@@ -174,7 +182,7 @@ class TicTacToeGameModel {
         board[0][0] == currentPlayer &&
         board[1][1] == currentPlayer &&
         board[2][2] == currentPlayer) {
-      return true;
+      return WinningLine.diagonalMain();
     }
 
     // Verifica diagonal secundária
@@ -182,10 +190,10 @@ class TicTacToeGameModel {
         board[0][2] == currentPlayer &&
         board[1][1] == currentPlayer &&
         board[2][0] == currentPlayer) {
-      return true;
+      return WinningLine.diagonalSecondary();
     }
 
-    return false;
+    return null;
   }
 
   bool _checkDraw() {
