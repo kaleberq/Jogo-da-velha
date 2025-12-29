@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/splash/enums/direction_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
+import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';

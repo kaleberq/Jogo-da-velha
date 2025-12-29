@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 
 class TicTacToeGameModel {
   static final Random _random = Random();

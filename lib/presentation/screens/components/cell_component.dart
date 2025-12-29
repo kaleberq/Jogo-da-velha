@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
 class CellComponent extends StatelessWidget {
   final PlayerEnum player;

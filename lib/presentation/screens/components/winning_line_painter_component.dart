@@ -1,6 +1,6 @@
-import 'package:jogo_da_velha/presentation/screens/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/enums/winning_line_enum.dart';
+import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 
 class WinningLinePainterComponent extends CustomPainter {
   final WinningLineModel winningLine;

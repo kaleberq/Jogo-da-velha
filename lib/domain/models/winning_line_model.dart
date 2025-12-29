@@ -1,4 +1,4 @@
-import 'package:jogo_da_velha/presentation/screens/enums/winning_line_enum.dart';
+import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 
 class WinningLineModel {
   final WinningLineEnum type;

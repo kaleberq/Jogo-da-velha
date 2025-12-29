@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/network/network_service.dart';
 
 class TicTacToeScreen extends StatefulWidget {
