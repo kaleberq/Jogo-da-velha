@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/models/tic_tac_toe_game_model.dart';
 
 void main() {

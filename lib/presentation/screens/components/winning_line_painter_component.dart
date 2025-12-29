@@ -1,42 +1,13 @@
+import 'package:jogo_da_velha/presentation/screens/models/winning_line_model.dart';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/models/winning_line.dart';
+import 'package:jogo_da_velha/presentation/screens/enums/winning_line_enum.dart';
 
-class WinningLineOverlay extends StatelessWidget {
-  final WinningLine? winningLine;
+class WinningLinePainterComponent extends CustomPainter {
+  final WinningLineModel winningLine;
   final double boardSize;
   final double animationProgress; // 0.0 a 1.0
 
-  const WinningLineOverlay({
-    super.key,
-    required this.winningLine,
-    required this.boardSize,
-    this.animationProgress = 1.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (winningLine == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Positioned.fill(
-      child: CustomPaint(
-        painter: WinningLinePainter(
-          winningLine: winningLine!,
-          boardSize: boardSize,
-          animationProgress: animationProgress,
-        ),
-      ),
-    );
-  }
-}
-
-class WinningLinePainter extends CustomPainter {
-  final WinningLine winningLine;
-  final double boardSize;
-  final double animationProgress; // 0.0 a 1.0
-
-  WinningLinePainter({
+  WinningLinePainterComponent({
     required this.winningLine,
     required this.boardSize,
     this.animationProgress = 1.0,
@@ -54,7 +25,7 @@ class WinningLinePainter extends CustomPainter {
     final padding = cellSize * 0.15; // 15% de padding em cada lado
 
     switch (winningLine.type) {
-      case WinningLineType.horizontal:
+      case WinningLineEnum.horizontal:
         final y = (winningLine.index! + 0.5) * cellSize;
         final startX = padding;
         final endX = boardSize - padding;
@@ -62,7 +33,7 @@ class WinningLinePainter extends CustomPainter {
         canvas.drawLine(Offset(startX, y), Offset(currentEndX, y), paint);
         break;
 
-      case WinningLineType.vertical:
+      case WinningLineEnum.vertical:
         final x = (winningLine.index! + 0.5) * cellSize;
         final startY = padding;
         final endY = boardSize - padding;
@@ -70,7 +41,7 @@ class WinningLinePainter extends CustomPainter {
         canvas.drawLine(Offset(x, startY), Offset(x, currentEndY), paint);
         break;
 
-      case WinningLineType.diagonalMain:
+      case WinningLineEnum.diagonalMain:
         final start = Offset(padding, padding);
         final end = Offset(boardSize - padding, boardSize - padding);
         final currentEnd = Offset(
@@ -80,7 +51,7 @@ class WinningLinePainter extends CustomPainter {
         canvas.drawLine(start, currentEnd, paint);
         break;
 
-      case WinningLineType.diagonalSecondary:
+      case WinningLineEnum.diagonalSecondary:
         final start = Offset(boardSize - padding, padding);
         final end = Offset(padding, boardSize - padding);
         final currentEnd = Offset(
@@ -93,7 +64,7 @@ class WinningLinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(WinningLinePainter oldDelegate) {
+  bool shouldRepaint(WinningLinePainterComponent oldDelegate) {
     return winningLine != oldDelegate.winningLine ||
         boardSize != oldDelegate.boardSize ||
         animationProgress != oldDelegate.animationProgress;

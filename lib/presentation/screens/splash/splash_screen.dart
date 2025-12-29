@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
-import 'package:jogo_da_velha/domain/models/winning_line.dart';
+import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/splash/enums/direction_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/horizontal_divider_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/winning_line_overlay.dart';
+import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
+import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
+import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -154,8 +154,8 @@ class _SplashScreenState extends State<SplashScreen>
                     AnimatedBuilder(
                       animation: _lineAnimation,
                       builder: (context, child) {
-                        return WinningLineOverlay(
-                          winningLine: WinningLine.diagonalMain(),
+                        return WinningLineOverlayComponent(
+                          winningLine: WinningLineModel.diagonalMain(),
                           boardSize: 200,
                           animationProgress: _lineAnimation.value,
                         );

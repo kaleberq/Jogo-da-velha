@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/cell_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/vertical_divider_component.dart';
+import 'package:jogo_da_velha/presentation/screens/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/components/cell_component.dart';
+import 'package:jogo_da_velha/presentation/screens/components/vertical_divider_component.dart';
 
 class RowComponent extends StatelessWidget {
   final int rowIndex;
