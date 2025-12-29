@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
@@ -8,9 +7,9 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_i
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/final_score_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/settings_dialog.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/network_message_handler_mixin.dart';
 
 class TicTacToeScreen extends StatefulWidget {
   final NetworkService? networkService;
@@ -23,7 +22,7 @@ class TicTacToeScreen extends StatefulWidget {
 }
 
 class _TicTacToeScreenState extends State<TicTacToeScreen>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, NetworkMessageHandlerMixin {
   late TicTacToeGameModel game;
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
@@ -61,117 +60,48 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
         _isMyTurn = false;
       }
 
-      // Configurar callbacks de rede
-      widget.networkService!.onMessageReceived = _handleNetworkMessage;
-      widget.networkService!.onConnectionStatusChanged = (status) {
-        if (status == 'disconnected' && mounted) {
-          Future.microtask(() {
-            if (mounted) {
-              DisconnectedDialog.show(context);
-            }
-          });
-        }
-      };
-      widget.networkService!.onError = (error) {
-        if (mounted) {
-          Future.microtask(() {
-            if (mounted) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(error)));
-            }
-          });
-        }
-      };
+      // Configurar callbacks de rede usando o mixin
+      setupNetworkCallbacks();
     } else {
       game = TicTacToeGameModel(maxRounds: _maxRounds);
     }
   }
 
-  void _handleNetworkMessage(String message) {
-    if (message == 'DISCONNECTED') {
-      if (mounted) {
-        Future.microtask(() {
-          if (mounted) {
-            DisconnectedDialog.show(context);
-          }
-        });
-      }
-      return;
-    }
+  // Implementação dos getters/setters do mixin
+  @override
+  bool get isOnlineMode => _isOnlineMode;
 
-    // Ignora mensagens de handshake
-    if (message == 'SERVER_CONNECTED' ||
-        message == 'CLIENT_CONNECTED' ||
-        message == 'CONNECTED') {
-      return;
-    }
+  @override
+  bool get isHost => widget.isHost;
 
-    if (!mounted) return;
+  @override
+  bool get isMyTurn => _isMyTurn;
 
-    try {
-      final data = jsonDecode(message);
-      final type = data['type'] as String;
+  @override
+  set isMyTurn(bool value) => _isMyTurn = value;
 
-      Future.microtask(() {
-        if (!mounted) return;
+  @override
+  NetworkService? get networkService => widget.networkService;
 
-        switch (type) {
-          case 'move':
-            final row = data['row'] as int;
-            final col = data['col'] as int;
-            final playerStr = data['player'] as String;
-            final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
-            setState(() {
-              game.makeMoveWithPlayer(row, col, player);
-              _isMyTurn = true;
-              _checkGameOver();
-            });
-            break;
-          case 'reset':
-            setState(() {
-              game.resetAll();
-              if (widget.isHost) {
-                game.currentPlayer = PlayerEnum.x;
-                _isMyTurn = true;
-              } else {
-                game.currentPlayer = PlayerEnum.o;
-                _isMyTurn = false;
-              }
-            });
-            break;
-          case 'nextRound':
-            setState(() {
-              game.nextRound();
-              if (widget.isHost) {
-                game.currentPlayer = PlayerEnum.x;
-                _isMyTurn = true;
-              } else {
-                game.currentPlayer = PlayerEnum.o;
-                _isMyTurn = false;
-              }
-              _hideRoundEndMessage();
-            });
-            break;
-          case 'config':
-            final maxRounds = data['maxRounds'] as int;
-            setState(() {
-              _maxRounds = maxRounds;
-              game = TicTacToeGameModel(maxRounds: _maxRounds);
-              if (widget.isHost) {
-                game.currentPlayer = PlayerEnum.x;
-                _isMyTurn = true;
-              } else {
-                game.currentPlayer = PlayerEnum.o;
-                _isMyTurn = false;
-              }
-            });
-            break;
+  @override
+  void checkGameOver() => _checkGameOver();
+
+  @override
+  void hideRoundEndMessage() => _hideRoundEndMessage();
+
+  @override
+  void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame) {
+    setState(() {
+      _maxRounds = maxRounds;
+      game = newGame;
+      if (_isOnlineMode) {
+        if (widget.isHost) {
+          _isMyTurn = true;
+        } else {
+          _isMyTurn = false;
         }
-      });
-    } catch (e) {
-      // Ignora mensagens que não são JSON válido
-    }
+      }
+    });
   }
 
   void _onCellTap({required int rowIndex, required int columnIndex}) {
@@ -295,19 +225,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
       isHost: widget.isHost,
       networkService: widget.networkService,
       winningLineAnimationController: _winningLineAnimationController,
-      onSave: (maxRounds, newGame) {
-        setState(() {
-          _maxRounds = maxRounds;
-          game = newGame;
-          if (_isOnlineMode) {
-            if (widget.isHost) {
-              _isMyTurn = true;
-            } else {
-              _isMyTurn = false;
-            }
-          }
-        });
-      },
+      onSave: onConfigUpdate,
     );
   }
 
