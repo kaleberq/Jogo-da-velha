@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/network/network_service.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/app_bar_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_info_section_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_board_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
 
 class TicTacToeScreen extends StatefulWidget {
   final NetworkService? networkService;
@@ -465,66 +467,13 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: _isOnlineMode
-            ? Text(widget.isHost ? 'Host (X)' : 'Convidado (O)')
-            : null,
-        actions: [
-          if (_isOnlineMode)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: _isMyTurn
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'Sua Vez',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    : Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'Aguardando...',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-              ),
-            ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: _isOnlineMode ? null : _showSettingsDialog,
-            tooltip: 'Configurações',
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _isOnlineMode ? null : _resetAll,
-            tooltip: 'Reiniciar Tudo',
-          ),
-          if (_isOnlineMode)
-            IconButton(
-              icon: const Icon(Icons.exit_to_app),
-              onPressed: () {
-                widget.networkService?.disconnect();
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-              tooltip: 'Sair',
-            ),
-        ],
+      appBar: AppBarComponent(
+        isOnlineMode: _isOnlineMode,
+        isHost: widget.isHost,
+        isMyTurn: _isMyTurn,
+        networkService: widget.networkService,
+        onSettingsPressed: _showSettingsDialog,
+        onResetPressed: _resetAll,
       ),
       body: Stack(
         children: [
@@ -532,209 +481,26 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Informações do jogo
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: Column(
-                    children: [
-                      Text(
-                        'Round ${game.currentRound}/${game.maxRounds}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'X: ${game.scoreX}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
+                GameInfoSectionComponent(game: game),
+                CurrentPlayerIndicatorComponent(game: game),
+                GameBoardComponent(
+                  game: game,
+                  winningLineAnimation: _winningLineAnimation,
+                  onCellTap:
+                      ({required int rowIndex, required int columnIndex}) =>
+                          _onCellTap(
+                            rowIndex: rowIndex,
+                            columnIndex: columnIndex,
                           ),
-                          const SizedBox(width: 20),
-                          Text(
-                            'O: ${game.scoreO}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Indicador de jogador atual
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: game.currentPlayer == PlayerEnum.x
-                        ? Colors.blue.shade50
-                        : Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: game.currentPlayer == PlayerEnum.x
-                          ? Colors.blue
-                          : Colors.red,
-                      width: 2,
-                    ),
-                  ),
-                  child: Text(
-                    'Vez do jogador: ${game.currentPlayer.value}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: game.currentPlayer == PlayerEnum.x
-                          ? Colors.blue
-                          : Colors.red,
-                    ),
-                  ),
-                ),
-                // Tabuleiro
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 300,
-                        height: 300,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.grey.shade800,
-                            width: 3,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            RowComponent(
-                              rowIndex: 0,
-                              row: game.board[0],
-                              onCellTap:
-                                  ({
-                                    required int rowIndex,
-                                    required int columnIndex,
-                                  }) => _onCellTap(
-                                    rowIndex: rowIndex,
-                                    columnIndex: columnIndex,
-                                  ),
-                            ),
-                            const HorizontalDividerComponent(),
-                            RowComponent(
-                              rowIndex: 1,
-                              row: game.board[1],
-                              onCellTap:
-                                  ({
-                                    required int rowIndex,
-                                    required int columnIndex,
-                                  }) => _onCellTap(
-                                    rowIndex: rowIndex,
-                                    columnIndex: columnIndex,
-                                  ),
-                            ),
-                            const HorizontalDividerComponent(),
-                            RowComponent(
-                              rowIndex: 2,
-                              row: game.board[2],
-                              onCellTap:
-                                  ({
-                                    required int rowIndex,
-                                    required int columnIndex,
-                                  }) => _onCellTap(
-                                    rowIndex: rowIndex,
-                                    columnIndex: columnIndex,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (game.winningLine != null)
-                        AnimatedBuilder(
-                          animation: _winningLineAnimation,
-                          builder: (context, child) {
-                            return WinningLineOverlayComponent(
-                              winningLine: game.winningLine,
-                              boardSize: 300,
-                              animationProgress: _winningLineAnimation.value,
-                            );
-                          },
-                        ),
-                    ],
-                  ),
                 ),
               ],
             ),
           ),
-          // Banner no topo da tela
           if (_roundEndMessage != null)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: _roundWinner == PlayerEnum.x
-                      ? Colors.blue.shade700
-                      : _roundWinner == PlayerEnum.o
-                      ? Colors.red.shade700
-                      : Colors.grey.shade700,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: SafeArea(
-                  bottom: false,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _roundEndMessage!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          _nextRound();
-                        },
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Próximo Round'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            RoundEndBannerComponent(
+              roundEndMessage: _roundEndMessage!,
+              roundWinner: _roundWinner,
+              onNextRound: _nextRound,
             ),
         ],
       ),
