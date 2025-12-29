@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/models/winning_line.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/row_component.dart';
@@ -29,15 +30,14 @@ class _SplashScreenState extends State<SplashScreen>
   bool _hasStartedBoardAnimation = false;
 
   // Posições da diagonal principal
-  final List<Map<String, int>> _diagonalPositions = [
-    {'row': 0, 'col': 0},
-    {'row': 1, 'col': 1},
-    {'row': 2, 'col': 2},
+  final List<Map<DirectionEnum, int>> _diagonalPositions = [
+    {DirectionEnum.row: 0, DirectionEnum.col: 0},
+    {DirectionEnum.row: 1, DirectionEnum.col: 1},
+    {DirectionEnum.row: 2, DirectionEnum.col: 2},
   ];
 
   @override
   void initState() {
-    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -63,6 +63,8 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Espera a animação do traço terminar para navegar
     _lineAnimationController.addStatusListener(_navigateToMenu);
+
+    super.initState();
   }
 
   void _startBoardAnimation(AnimationStatus status) {
@@ -77,7 +79,8 @@ class _SplashScreenState extends State<SplashScreen>
         if (_currentIndex < _diagonalPositions.length && mounted) {
           setState(() {
             final pos = _diagonalPositions[_currentIndex];
-            _board[pos['row']!][pos['col']!] = PlayerEnum.x;
+            _board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
+                PlayerEnum.x;
             _currentIndex++;
           });
         } else {
@@ -139,35 +142,11 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                     child: Column(
                       children: [
-                        RowComponent(
-                          rowIndex: 0,
-                          row: _board[0],
-                          onCellTap:
-                              ({
-                                required int rowIndex,
-                                required int columnIndex,
-                              }) {},
-                        ),
+                        RowComponent(rowIndex: 0, row: _board[0]),
                         const HorizontalDividerComponent(),
-                        RowComponent(
-                          rowIndex: 1,
-                          row: _board[1],
-                          onCellTap:
-                              ({
-                                required int rowIndex,
-                                required int columnIndex,
-                              }) {},
-                        ),
+                        RowComponent(rowIndex: 1, row: _board[1]),
                         const HorizontalDividerComponent(),
-                        RowComponent(
-                          rowIndex: 2,
-                          row: _board[2],
-                          onCellTap:
-                              ({
-                                required int rowIndex,
-                                required int columnIndex,
-                              }) {},
-                        ),
+                        RowComponent(rowIndex: 2, row: _board[2]),
                       ],
                     ),
                   ),

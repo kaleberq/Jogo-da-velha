@@ -6,13 +6,13 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/vertic
 class RowComponent extends StatelessWidget {
   final int rowIndex;
   final List<PlayerEnum> row;
-  final Function({required int rowIndex, required int columnIndex}) onCellTap;
+  final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const RowComponent({
     super.key,
     required this.rowIndex,
     required this.row,
-    required this.onCellTap,
+    this.onCellTap,
   });
 
   @override
@@ -22,17 +22,17 @@ class RowComponent extends StatelessWidget {
         children: [
           CellComponent(
             player: row[0],
-            onTap: () => onCellTap(rowIndex: rowIndex, columnIndex: 0),
+            onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 0),
           ),
           const VerticalDividerComponent(),
           CellComponent(
             player: row[1],
-            onTap: () => onCellTap(rowIndex: rowIndex, columnIndex: 1),
+            onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 1),
           ),
           const VerticalDividerComponent(),
           CellComponent(
             player: row[2],
-            onTap: () => onCellTap(rowIndex: rowIndex, columnIndex: 2),
+            onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 2),
           ),
         ],
       ),
