@@ -8,6 +8,9 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_i
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/final_score_dialog.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/settings_dialog.dart';
 
 class TicTacToeScreen extends StatefulWidget {
   final NetworkService? networkService;
@@ -64,7 +67,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
         if (status == 'disconnected' && mounted) {
           Future.microtask(() {
             if (mounted) {
-              _showDisconnectedDialog();
+              DisconnectedDialog.show(context);
             }
           });
         }
@@ -90,7 +93,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
       if (mounted) {
         Future.microtask(() {
           if (mounted) {
-            _showDisconnectedDialog();
+            DisconnectedDialog.show(context);
           }
         });
       }
@@ -171,25 +174,6 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
     }
   }
 
-  void _showDisconnectedDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Conexão Perdida'),
-        content: const Text('A conexão com o outro jogador foi perdida.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-            child: const Text('Voltar ao Menu'),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _onCellTap({required int rowIndex, required int columnIndex}) {
     // Em modo online, só permite jogar na vez do jogador
     if (_isOnlineMode && !_isMyTurn) {
@@ -236,7 +220,7 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
 
     // Verifica se chegou ao fim dos 5 rounds
     if (game.isAllRoundsFinished) {
-      _showFinalScoreDialog();
+      FinalScoreDialog.show(context, game, _resetAll);
     } else {
       _showRoundEndDialog();
     }
@@ -261,71 +245,6 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
       _roundEndMessage = null;
       _roundWinner = null;
     });
-  }
-
-  void _showFinalScoreDialog() {
-    String winnerMessage;
-    final PlayerEnum? overallWinner = game.overallWinner;
-    if (overallWinner == PlayerEnum.x) {
-      winnerMessage = 'Jogador X venceu o jogo!';
-    } else if (overallWinner == PlayerEnum.o) {
-      winnerMessage = 'Jogador O venceu o jogo!';
-    } else {
-      winnerMessage = 'Empate! Ninguém venceu.';
-    }
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Fim do Jogo'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                winnerMessage,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Placar Final:',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Jogador X: ${game.scoreX}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Jogador O: ${game.scoreO}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _resetAll();
-              },
-              child: const Text('Jogar Novamente'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _nextRound() {
@@ -369,91 +288,25 @@ class _TicTacToeScreenState extends State<TicTacToeScreen>
   }
 
   void _showSettingsDialog() {
-    int tempMaxRounds = _maxRounds;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              title: const Text('Configurações'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Número de Rounds:'),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        onPressed: tempMaxRounds > 1
-                            ? () {
-                                setDialogState(() {
-                                  tempMaxRounds--;
-                                });
-                              }
-                            : null,
-                      ),
-                      Text(
-                        '$tempMaxRounds',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: tempMaxRounds < 20
-                            ? () {
-                                setDialogState(() {
-                                  tempMaxRounds++;
-                                });
-                              }
-                            : null,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Escolha entre 1 e 20 rounds',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _winningLineAnimationController.reset();
-                    setState(() {
-                      _maxRounds = tempMaxRounds;
-                      game = TicTacToeGameModel(maxRounds: _maxRounds);
-                      if (_isOnlineMode) {
-                        widget.networkService!.sendConfig(_maxRounds);
-                        if (widget.isHost) {
-                          game.currentPlayer = PlayerEnum.x;
-                          _isMyTurn = true;
-                        } else {
-                          game.currentPlayer = PlayerEnum.o;
-                          _isMyTurn = false;
-                        }
-                      }
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Salvar'),
-                ),
-              ],
-            );
-          },
-        );
+    SettingsDialog.show(
+      context,
+      currentMaxRounds: _maxRounds,
+      isOnlineMode: _isOnlineMode,
+      isHost: widget.isHost,
+      networkService: widget.networkService,
+      winningLineAnimationController: _winningLineAnimationController,
+      onSave: (maxRounds, newGame) {
+        setState(() {
+          _maxRounds = maxRounds;
+          game = newGame;
+          if (_isOnlineMode) {
+            if (widget.isHost) {
+              _isMyTurn = true;
+            } else {
+              _isMyTurn = false;
+            }
+          }
+        });
       },
     );
   }
