@@ -1,4 +1,9 @@
 # Jogo da Velha
+<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 26" src="https://github.com/user-attachments/assets/c62b3d66-2e51-4b6b-b072-afaf140aae3e" />
+<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 38" src="https://github.com/user-attachments/assets/0d49a1b4-3d7a-4a51-a5dd-a77c93b13981" />
+<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 41" src="https://github.com/user-attachments/assets/b789cb74-fb72-46a5-ac2e-fb920a1126a8" />
+
+
 
 ## O que é?
 
