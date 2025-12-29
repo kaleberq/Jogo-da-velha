@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_screen.dart';
-import 'package:jogo_da_velha/data/network/network_service.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -10,7 +10,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final NetworkService _networkService = NetworkService();
+  late final GameRepository _gameRepository;
   final TextEditingController _ipController = TextEditingController();
   bool _isCreatingServer = false;
   String? _serverIP;
@@ -20,7 +20,8 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    _networkService.onMessageReceived = (message) {
+    _gameRepository = GameRepository();
+    _gameRepository.onMessageReceived = (message) {
       if (message == 'CONNECTED' && _isCreatingServer && mounted) {
         _navigatingToGame = true;
         Future.microtask(() {
@@ -28,7 +29,7 @@ class _MenuScreenState extends State<MenuScreen> {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => TicTacToeScreen(
-                  networkService: _networkService,
+                  gameRepository: _gameRepository,
                   isHost: true,
                 ),
               ),
@@ -37,7 +38,7 @@ class _MenuScreenState extends State<MenuScreen> {
         });
       }
     };
-    _networkService.onError = (error) {
+    _gameRepository.onError = (error) {
       if (mounted) {
         Future.microtask(() {
           if (mounted) {
@@ -60,7 +61,7 @@ class _MenuScreenState extends State<MenuScreen> {
     _ipController.dispose();
     // Só desconecta se não estiver navegando para o jogo
     if (!_navigatingToGame) {
-      _networkService.disconnect();
+      _gameRepository.disconnect();
     }
     super.dispose();
   }
@@ -70,7 +71,7 @@ class _MenuScreenState extends State<MenuScreen> {
       _isCreatingServer = true;
     });
 
-    final ip = await _networkService.startServer();
+    final ip = await _gameRepository.startServer();
     if (ip != null && mounted) {
       setState(() {
         _serverIP = ip;
@@ -94,13 +95,13 @@ class _MenuScreenState extends State<MenuScreen> {
       _isConnecting = true;
     });
 
-    final connected = await _networkService.connectToServer(_ipController.text);
+    final connected = await _gameRepository.connectToServer(_ipController.text);
     if (connected && mounted) {
       _navigatingToGame = true;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) =>
-              TicTacToeScreen(networkService: _networkService, isHost: false),
+              TicTacToeScreen(gameRepository: _gameRepository, isHost: false),
         ),
       );
     } else if (mounted) {

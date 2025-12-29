@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/data/network/network_service.dart';
+import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final bool isOnlineMode;
   final bool isHost;
   final bool isMyTurn;
-  final NetworkService? networkService;
+  final IGameRepository? gameRepository;
   final VoidCallback? onSettingsPressed;
   final VoidCallback? onResetPressed;
   final VoidCallback? onExitPressed;
@@ -15,7 +15,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     required this.isOnlineMode,
     required this.isHost,
     required this.isMyTurn,
-    this.networkService,
+    this.gameRepository,
     this.onSettingsPressed,
     this.onResetPressed,
     this.onExitPressed,
@@ -75,7 +75,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
-              networkService?.disconnect();
+              gameRepository?.disconnect();
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
             tooltip: 'Sair',

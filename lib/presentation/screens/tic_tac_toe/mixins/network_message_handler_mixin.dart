@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/data/network/network_service.dart';
+import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
 
 mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
@@ -11,12 +11,12 @@ mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
   bool get isOnlineMode;
   bool get isHost;
   bool get isMyTurn;
-  NetworkService? get networkService;
+  IGameRepository? get gameRepository;
 
   // Setters para atualizar estado
   set isMyTurn(bool value);
 
-  // Métodos que devem ser implementados pela classe
+  // Métodos que devem ser implementados pela classe ou por outro mixin
   void checkGameOver();
   void hideRoundEndMessage();
 
@@ -24,10 +24,10 @@ mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
   void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame);
 
   void setupNetworkCallbacks() {
-    if (networkService == null) return;
+    if (gameRepository == null) return;
 
-    networkService!.onMessageReceived = handleNetworkMessage;
-    networkService!.onConnectionStatusChanged = (status) {
+    gameRepository!.onMessageReceived = handleNetworkMessage;
+    gameRepository!.onConnectionStatusChanged = (status) {
       if (status == 'disconnected' && mounted) {
         Future.microtask(() {
           if (mounted) {
@@ -36,7 +36,7 @@ mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
         });
       }
     };
-    networkService!.onError = (error) {
+    gameRepository!.onError = (error) {
       if (mounted) {
         Future.microtask(() {
           if (mounted) {

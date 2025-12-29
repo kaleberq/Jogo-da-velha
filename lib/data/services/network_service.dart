@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:jogo_da_velha/data/network/enums/connection_status_enum.dart';
+import 'package:jogo_da_velha/data/services/enums/connection_status_enum.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 class NetworkService {

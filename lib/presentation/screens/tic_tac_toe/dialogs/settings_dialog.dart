@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/data/network/network_service.dart';
+import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 
 class SettingsDialog {
   static void show(
@@ -9,7 +9,7 @@ class SettingsDialog {
     required int currentMaxRounds,
     required bool isOnlineMode,
     required bool isHost,
-    required NetworkService? networkService,
+    required IGameRepository? gameRepository,
     required AnimationController winningLineAnimationController,
     required Function(int maxRounds, TicTacToeGameModel newGame) onSave,
   }) {
@@ -80,7 +80,7 @@ class SettingsDialog {
                       maxRounds: tempMaxRounds,
                     );
                     if (isOnlineMode) {
-                      networkService?.sendConfig(tempMaxRounds);
+                      gameRepository?.sendConfig(tempMaxRounds);
                       if (isHost) {
                         newGame.currentPlayer = PlayerEnum.x;
                       } else {
