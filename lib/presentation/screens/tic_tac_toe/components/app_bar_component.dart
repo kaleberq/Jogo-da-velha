@@ -25,6 +25,13 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: isOnlineMode ? Text(isHost ? 'Host (X)' : 'Convidado (O)') : null,
+      leading: !isOnlineMode
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Voltar',
+            )
+          : null,
       actions: [
         if (isOnlineMode)
           Padding(

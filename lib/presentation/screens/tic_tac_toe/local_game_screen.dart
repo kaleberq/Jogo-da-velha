@@ -124,6 +124,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         gameRepository: null,
         onSettingsPressed: _showSettingsDialog,
         onResetPressed: resetAll,
+        onExitPressed: () => Navigator.of(context).pop(),
       ),
       body: Stack(
         children: [
