@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/models/menu_model.dart';
 import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -27,7 +28,7 @@ class _MenuScreenState extends State<MenuScreen> {
           if (mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => TicTacToeScreen(
+                builder: (context) => OnlineGameScreen(
                   gameRepository: _gameRepository,
                   isHost: true,
                 ),
@@ -101,7 +102,7 @@ class _MenuScreenState extends State<MenuScreen> {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) =>
-              TicTacToeScreen(gameRepository: _gameRepository, isHost: false),
+              OnlineGameScreen(gameRepository: _gameRepository, isHost: false),
         ),
       );
     } else if (mounted) {
@@ -134,7 +135,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => const TicTacToeScreen(),
+                        builder: (context) => const LocalGameScreen(),
                       ),
                     );
                   },
