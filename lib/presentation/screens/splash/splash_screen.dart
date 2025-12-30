@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
+import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -21,10 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  final List<List<PlayerEnum>> _board = List.generate(
-    3,
-    (_) => List.generate(3, (_) => PlayerEnum.none),
-  );
+  late TicTacToeGameModel _game;
   int _currentIndex = 0;
   Timer? _boardAnimationTimer;
   bool _hasStartedBoardAnimation = false;
@@ -38,6 +34,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
+    _game = TicTacToeGameModel();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -79,14 +77,17 @@ class _SplashScreenState extends State<SplashScreen>
         if (_currentIndex < _diagonalPositions.length && mounted) {
           setState(() {
             final pos = _diagonalPositions[_currentIndex];
-            _board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
+            _game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
                 PlayerEnum.x;
             _currentIndex++;
           });
         } else {
           timer.cancel();
-          // Inicia a animação do traço quando todos os X's estão na diagonal
+          // Configura a linha de vitória e inicia a animação do traço
           if (mounted) {
+            setState(() {
+              _game.winningLine = WinningLineModel.diagonalMain();
+            });
             _lineAnimationController.forward();
           }
         }
@@ -119,60 +120,19 @@ class _SplashScreenState extends State<SplashScreen>
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 50,
-            children: [
-              Stack(
-                children: [
-                  Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.black, width: 3),
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        RowComponent(rowIndex: 0, row: _board[0]),
-                        const HorizontalDividerComponent(),
-                        RowComponent(rowIndex: 1, row: _board[1]),
-                        const HorizontalDividerComponent(),
-                        RowComponent(rowIndex: 2, row: _board[2]),
-                      ],
-                    ),
-                  ),
-                  if (_currentIndex == _diagonalPositions.length)
-                    AnimatedBuilder(
-                      animation: _lineAnimation,
-                      builder: (context, child) {
-                        return WinningLineOverlayComponent(
-                          winningLine: WinningLineModel.diagonalMain(),
-                          boardSize: 200,
-                          animationProgress: _lineAnimation.value,
-                        );
-                      },
-                    ),
-                ],
-              ),
-              Text(
-                'Jogo da Velha',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 2,
+          child: SizedBox(
+            width: 350,
+            height: 350,
+            child: ClipRect(
+              child: Transform.scale(
+                scale: 0.8, // Escala baseada no board interno (300x300)
+                alignment: Alignment.center,
+                child: GameBoardComponent(
+                  game: _game,
+                  winningLineAnimation: _lineAnimation,
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),

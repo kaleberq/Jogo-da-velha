@@ -5,7 +5,7 @@ import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_int
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_info_section_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_board_component.dart';
+import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/settings_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/network_message_handler_mixin.dart';

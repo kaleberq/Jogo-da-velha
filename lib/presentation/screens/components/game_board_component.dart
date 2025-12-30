@@ -7,13 +7,13 @@ import 'package:jogo_da_velha/presentation/screens/components/winning_line_overl
 class GameBoardComponent extends StatelessWidget {
   final TicTacToeGameModel game;
   final Animation<double> winningLineAnimation;
-  final Function({required int rowIndex, required int columnIndex}) onCellTap;
+  final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const GameBoardComponent({
     super.key,
     required this.game,
     required this.winningLineAnimation,
-    required this.onCellTap,
+    this.onCellTap,
   });
 
   @override
@@ -44,7 +44,7 @@ class GameBoardComponent extends StatelessWidget {
                   row: game.board[0],
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
-                          onCellTap(
+                          onCellTap?.call(
                             rowIndex: rowIndex,
                             columnIndex: columnIndex,
                           ),
@@ -55,7 +55,7 @@ class GameBoardComponent extends StatelessWidget {
                   row: game.board[1],
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
-                          onCellTap(
+                          onCellTap?.call(
                             rowIndex: rowIndex,
                             columnIndex: columnIndex,
                           ),
@@ -66,7 +66,7 @@ class GameBoardComponent extends StatelessWidget {
                   row: game.board[2],
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
-                          onCellTap(
+                          onCellTap?.call(
                             rowIndex: rowIndex,
                             columnIndex: columnIndex,
                           ),
