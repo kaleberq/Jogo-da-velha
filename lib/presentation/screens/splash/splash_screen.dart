@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/models/splash_model.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
@@ -21,9 +22,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
   late TicTacToeGameModel _game;
-  int _currentIndex = 0;
-  Timer? _boardAnimationTimer;
-  bool _hasStartedBoardAnimation = false;
+  final SplashModel _state = SplashModel();
 
   // Posições da diagonal principal
   final List<Map<DirectionEnum, int>> _diagonalPositions = [
@@ -67,31 +66,32 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _startBoardAnimation(AnimationStatus status) {
     if (status == AnimationStatus.completed &&
-        !_hasStartedBoardAnimation &&
+        !_state.hasStartedBoardAnimation &&
         mounted) {
-      _hasStartedBoardAnimation = true;
+      _state.hasStartedBoardAnimation = true;
       // Adiciona X's progressivamente na diagonal
-      _boardAnimationTimer = Timer.periodic(const Duration(milliseconds: 500), (
-        timer,
-      ) {
-        if (_currentIndex < _diagonalPositions.length && mounted) {
-          setState(() {
-            final pos = _diagonalPositions[_currentIndex];
-            _game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
-                PlayerEnum.x;
-            _currentIndex++;
-          });
-        } else {
-          timer.cancel();
-          // Configura a linha de vitória e inicia a animação do traço
-          if (mounted) {
+      _state.boardAnimationTimer = Timer.periodic(
+        const Duration(milliseconds: 500),
+        (timer) {
+          if (_state.currentIndex < _diagonalPositions.length && mounted) {
             setState(() {
-              _game.winningLine = WinningLineModel.diagonalMain();
+              final pos = _diagonalPositions[_state.currentIndex];
+              _game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
+                  PlayerEnum.x;
+              _state.incrementIndex();
             });
-            _lineAnimationController.forward();
+          } else {
+            timer.cancel();
+            // Configura a linha de vitória e inicia a animação do traço
+            if (mounted) {
+              setState(() {
+                _game.winningLine = WinningLineModel.diagonalMain();
+              });
+              _lineAnimationController.forward();
+            }
           }
-        }
-      });
+        },
+      );
     }
   }
 
@@ -109,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen>
     _lineAnimationController.removeStatusListener(_navigateToMenu);
     _animationController.dispose();
     _lineAnimationController.dispose();
-    _boardAnimationTimer?.cancel();
+    _state.cancelTimer();
     super.dispose();
   }
 

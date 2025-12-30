@@ -21,7 +21,7 @@ class _MenuScreenState extends State<MenuScreen> {
     _gameRepository.onMessageReceived = (message) {
       if (message == 'CONNECTED' && _menu.isCreatingServer && mounted) {
         setState(() {
-          _menu = _menu.copyWith(navigatingToGame: true);
+          _menu.navigatingToGame = true;
         });
         Future.microtask(() {
           if (mounted) {
@@ -66,17 +66,17 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Future<void> _createServer() async {
     setState(() {
-      _menu = _menu.copyWith(isCreatingServer: true);
+      _menu.isCreatingServer = true;
     });
 
     final ip = await _gameRepository.startServer();
     if (ip != null && mounted) {
       setState(() {
-        _menu = _menu.copyWith(serverIP: ip);
+        _menu.serverIP = ip;
       });
     } else if (mounted) {
       setState(() {
-        _menu = _menu.copyWith(isCreatingServer: false);
+        _menu.isCreatingServer = false;
       });
     }
   }
@@ -90,13 +90,13 @@ class _MenuScreenState extends State<MenuScreen> {
     }
 
     setState(() {
-      _menu = _menu.copyWith(isConnecting: true);
+      _menu.isConnecting = true;
     });
 
     final connected = await _gameRepository.connectToServer(_ipController.text);
     if (connected && mounted) {
       setState(() {
-        _menu = _menu.copyWith(navigatingToGame: true);
+        _menu.navigatingToGame = true;
       });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
@@ -106,7 +106,7 @@ class _MenuScreenState extends State<MenuScreen> {
       );
     } else if (mounted) {
       setState(() {
-        _menu = _menu.copyWith(isConnecting: false);
+        _menu.isConnecting = false;
       });
     }
   }
