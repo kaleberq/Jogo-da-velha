@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/domain/models/menu_model.dart';
 import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/tic_tac_toe_screen.dart';
 
@@ -11,18 +12,17 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   final GameRepository _gameRepository = GameRepository();
+  MenuModel _menu = MenuModel();
   final TextEditingController _ipController = TextEditingController();
-  bool _isCreatingServer = false;
-  String? _serverIP;
-  bool _isConnecting = false;
-  bool _navigatingToGame = false;
 
   @override
   void initState() {
     super.initState();
     _gameRepository.onMessageReceived = (message) {
-      if (message == 'CONNECTED' && _isCreatingServer && mounted) {
-        _navigatingToGame = true;
+      if (message == 'CONNECTED' && _menu.isCreatingServer && mounted) {
+        setState(() {
+          _menu = _menu.copyWith(navigatingToGame: true);
+        });
         Future.microtask(() {
           if (mounted) {
             Navigator.of(context).pushReplacement(
@@ -45,9 +45,8 @@ class _MenuScreenState extends State<MenuScreen> {
               context,
             ).showSnackBar(SnackBar(content: Text(error)));
             setState(() {
-              _isCreatingServer = false;
-              _isConnecting = false;
-              _serverIP = null;
+              _menu.resetServerState();
+              _menu.resetConnectionState();
             });
           }
         });
@@ -59,7 +58,7 @@ class _MenuScreenState extends State<MenuScreen> {
   void dispose() {
     _ipController.dispose();
     // Só desconecta se não estiver navegando para o jogo
-    if (!_navigatingToGame) {
+    if (!_menu.navigatingToGame) {
       _gameRepository.disconnect();
     }
     super.dispose();
@@ -67,17 +66,17 @@ class _MenuScreenState extends State<MenuScreen> {
 
   Future<void> _createServer() async {
     setState(() {
-      _isCreatingServer = true;
+      _menu = _menu.copyWith(isCreatingServer: true);
     });
 
     final ip = await _gameRepository.startServer();
     if (ip != null && mounted) {
       setState(() {
-        _serverIP = ip;
+        _menu = _menu.copyWith(serverIP: ip);
       });
     } else if (mounted) {
       setState(() {
-        _isCreatingServer = false;
+        _menu = _menu.copyWith(isCreatingServer: false);
       });
     }
   }
@@ -91,12 +90,14 @@ class _MenuScreenState extends State<MenuScreen> {
     }
 
     setState(() {
-      _isConnecting = true;
+      _menu = _menu.copyWith(isConnecting: true);
     });
 
     final connected = await _gameRepository.connectToServer(_ipController.text);
     if (connected && mounted) {
-      _navigatingToGame = true;
+      setState(() {
+        _menu = _menu.copyWith(navigatingToGame: true);
+      });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) =>
@@ -105,7 +106,7 @@ class _MenuScreenState extends State<MenuScreen> {
       );
     } else if (mounted) {
       setState(() {
-        _isConnecting = false;
+        _menu = _menu.copyWith(isConnecting: false);
       });
     }
   }
@@ -179,9 +180,9 @@ class _MenuScreenState extends State<MenuScreen> {
               // Criar Servidor (Host)
               Card(
                 elevation: 4,
-                color: _serverIP != null ? Colors.green.shade50 : null,
+                color: _menu.serverIP != null ? Colors.green.shade50 : null,
                 child: InkWell(
-                  onTap: _isCreatingServer || _serverIP != null
+                  onTap: _menu.isCreatingServer || _menu.serverIP != null
                       ? null
                       : _createServer,
                   borderRadius: BorderRadius.circular(12),
@@ -192,7 +193,9 @@ class _MenuScreenState extends State<MenuScreen> {
                         Icon(
                           Icons.wifi,
                           size: 48,
-                          color: _serverIP != null ? Colors.green : Colors.grey,
+                          color: _menu.serverIP != null
+                              ? Colors.green
+                              : Colors.grey,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -207,12 +210,12 @@ class _MenuScreenState extends State<MenuScreen> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              if (_serverIP != null)
+                              if (_menu.serverIP != null)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'IP: $_serverIP',
+                                      'IP: ${_menu.serverIP}',
                                       style: const TextStyle(
                                         color: Colors.green,
                                         fontWeight: FontWeight.bold,
@@ -229,7 +232,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     ),
                                   ],
                                 )
-                              else if (_isCreatingServer)
+                              else if (_menu.isCreatingServer)
                                 const Text(
                                   'Criando servidor...',
                                   style: TextStyle(color: Colors.orange),
@@ -242,9 +245,9 @@ class _MenuScreenState extends State<MenuScreen> {
                             ],
                           ),
                         ),
-                        if (_isCreatingServer)
+                        if (_menu.isCreatingServer)
                           const CircularProgressIndicator()
-                        else if (_serverIP != null)
+                        else if (_menu.serverIP != null)
                           const Icon(Icons.check_circle, color: Colors.green)
                         else
                           const Icon(Icons.arrow_forward_ios),
@@ -300,14 +303,16 @@ class _MenuScreenState extends State<MenuScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _isConnecting ? null : _connectToServer,
+                          onPressed: _menu.isConnecting
+                              ? null
+                              : _connectToServer,
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: _isConnecting
+                          child: _menu.isConnecting
                               ? const CircularProgressIndicator()
                               : const Text(
                                   'Conectar',
