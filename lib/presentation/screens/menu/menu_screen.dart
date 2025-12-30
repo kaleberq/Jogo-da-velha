@@ -10,7 +10,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  late final GameRepository _gameRepository;
+  final GameRepository _gameRepository = GameRepository();
   final TextEditingController _ipController = TextEditingController();
   bool _isCreatingServer = false;
   String? _serverIP;
@@ -20,7 +20,6 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    _gameRepository = GameRepository();
     _gameRepository.onMessageReceived = (message) {
       if (message == 'CONNECTED' && _isCreatingServer && mounted) {
         _navigatingToGame = true;
