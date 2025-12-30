@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  late TicTacToeGameModel _game;
+  final TicTacToeGameModel _game = TicTacToeGameModel();
   final SplashModel _state = SplashModel();
 
   // Posições da diagonal principal
@@ -33,8 +33,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void initState() {
-    _game = TicTacToeGameModel();
-
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
