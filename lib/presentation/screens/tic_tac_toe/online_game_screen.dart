@@ -146,6 +146,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
+    gameRepository?.disconnect();
     super.dispose();
   }
 

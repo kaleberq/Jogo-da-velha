@@ -71,6 +71,12 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     });
   }
 
+  void onMaxRoundsChanged(int maxRounds) {
+    _winningLineAnimationController.reset();
+    final newGame = TicTacToeGameModel(maxRounds: maxRounds);
+    onConfigUpdate(maxRounds, newGame);
+  }
+
   // Implementação dos getters/setters do GameActionsMixin
   @override
   AnimationController get winningLineAnimationController =>
@@ -125,6 +131,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         onSettingsPressed: _showSettingsDialog,
         onResetPressed: resetAll,
         onExitPressed: () => Navigator.of(context).pop(),
+        currentMaxRounds: _maxRounds,
+        onMaxRoundsChanged: onMaxRoundsChanged,
       ),
       body: Stack(
         children: [
