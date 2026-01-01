@@ -3,7 +3,6 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/app_bar_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/game_info_section_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
@@ -167,7 +166,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GameInfoSectionComponent(game: game),
                 CurrentPlayerIndicatorComponent(game: game),
                 GameBoardComponent(
                   game: game,
