@@ -7,8 +7,8 @@ class SettingsDialog {
   static void show(
     BuildContext context, {
     required int currentMaxRounds,
-    required bool isOnlineMode,
-    required bool isHost,
+    bool isOnlineMode = false,
+    bool isHost = false,
     required IGameRepository? gameRepository,
     required AnimationController winningLineAnimationController,
     required Function(int maxRounds, TicTacToeGameModel newGame) onSave,

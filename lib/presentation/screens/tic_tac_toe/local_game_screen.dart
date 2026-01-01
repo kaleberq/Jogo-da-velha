@@ -52,9 +52,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   bool get isOnlineMode => false;
 
   @override
-  bool get isHost => false;
-
-  @override
   bool get isMyTurn => true;
 
   @override
@@ -107,8 +104,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     SettingsDialog.show(
       context,
       currentMaxRounds: _maxRounds,
-      isOnlineMode: false,
-      isHost: false,
       gameRepository: null,
       winningLineAnimationController: _winningLineAnimationController,
       onSave: onConfigUpdate,
@@ -125,10 +120,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarComponent(
-        isOnlineMode: false,
-        isHost: false,
         isMyTurn: true,
-        gameRepository: null,
         onSettingsPressed: _showSettingsDialog,
         onResetPressed: resetAll,
         onExitPressed: () => Navigator.of(context).pop(),

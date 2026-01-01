@@ -9,7 +9,7 @@ mixin GameActionsMixin<T extends StatefulWidget> on State<T> {
   TicTacToeGameModel get game;
   bool get isOnlineMode;
   bool get isMyTurn;
-  bool get isHost;
+  bool get isHost => false;
   IGameRepository? get gameRepository;
   AnimationController get winningLineAnimationController;
   String? get roundEndMessage;

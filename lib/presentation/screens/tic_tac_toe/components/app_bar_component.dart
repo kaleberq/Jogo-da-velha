@@ -14,8 +14,8 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
 
   const AppBarComponent({
     super.key,
-    required this.isOnlineMode,
-    required this.isHost,
+    this.isOnlineMode = false,
+    this.isHost = false,
     required this.isMyTurn,
     this.gameRepository,
     this.onSettingsPressed,
