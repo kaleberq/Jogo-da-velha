@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/app_bar_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/settings_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/game_actions_mixin.dart';
 
 class LocalGameScreen extends StatefulWidget {
@@ -99,16 +98,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     });
   }
 
-  void _showSettingsDialog() {
-    SettingsDialog.show(
-      context,
-      currentMaxRounds: _maxRounds,
-      gameRepository: null,
-      winningLineAnimationController: _winningLineAnimationController,
-      onSave: onConfigUpdate,
-    );
-  }
-
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
@@ -119,10 +108,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarComponent(
-        isMyTurn: true,
-        onSettingsPressed: _showSettingsDialog,
         onResetPressed: resetAll,
-        onExitPressed: () => Navigator.of(context).pop(),
         currentMaxRounds: _maxRounds,
         onMaxRoundsChanged: onMaxRoundsChanged,
       ),

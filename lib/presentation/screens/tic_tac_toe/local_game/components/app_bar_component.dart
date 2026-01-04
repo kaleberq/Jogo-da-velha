@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
-  final bool isOnlineMode;
-  final bool isHost;
-  final bool isMyTurn;
-  final IGameRepository? gameRepository;
-  final VoidCallback? onSettingsPressed;
   final VoidCallback? onResetPressed;
-  final VoidCallback? onExitPressed;
   final int? currentMaxRounds;
   final Function(int)? onMaxRoundsChanged;
 
   const AppBarComponent({
     super.key,
-    this.isOnlineMode = false,
-    this.isHost = false,
-    required this.isMyTurn,
-    this.gameRepository,
-    this.onSettingsPressed,
     this.onResetPressed,
-    this.onExitPressed,
     this.currentMaxRounds,
     this.onMaxRoundsChanged,
   });
@@ -28,55 +15,15 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: isOnlineMode ? Text(isHost ? 'Host (X)' : 'Convidado (O)') : null,
-      leading: !isOnlineMode
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Voltar',
-            )
-          : null,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pop(),
+        tooltip: 'Voltar',
+      ),
       actions: [
-        if (isOnlineMode)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: isMyTurn
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Sua Vez',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                  : Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text(
-                        'Aguardando...',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-            ),
-          ),
         IconButton(
           icon: const Icon(Icons.settings),
-          onPressed: isOnlineMode
-              ? null
-              : () => _showSettingsBottomSheet(context),
+          onPressed: () => _showSettingsBottomSheet(context),
           tooltip: 'Configurações',
         ),
       ],

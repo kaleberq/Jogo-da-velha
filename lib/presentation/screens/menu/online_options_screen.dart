@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/models/menu_model.dart';
 import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
 
 class OnlineOptionsScreen extends StatefulWidget {
   const OnlineOptionsScreen({super.key});

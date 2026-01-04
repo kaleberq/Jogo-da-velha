@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/app_bar_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/settings_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/network_message_handler_mixin.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/game_actions_mixin.dart';
 
@@ -130,18 +129,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     });
   }
 
-  void _showSettingsDialog() {
-    SettingsDialog.show(
-      context,
-      currentMaxRounds: _maxRounds,
-      isOnlineMode: true,
-      isHost: widget.isHost,
-      gameRepository: widget.gameRepository,
-      winningLineAnimationController: _winningLineAnimationController,
-      onSave: onConfigUpdate,
-    );
-  }
-
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
@@ -153,11 +140,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarComponent(
-        isOnlineMode: true,
         isHost: widget.isHost,
         isMyTurn: _isMyTurn,
-        gameRepository: widget.gameRepository,
-        onSettingsPressed: _showSettingsDialog,
         onResetPressed: resetAll,
       ),
       body: Stack(
