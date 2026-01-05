@@ -150,17 +150,17 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CurrentPlayerIndicatorComponent(game: game),
-                GameBoardComponent(
-                  game: game,
-                  winningLineAnimation: _winningLineAnimation,
-                  onCellTap:
-                      ({required int rowIndex, required int columnIndex}) =>
-                          onCellTap(
-                            rowIndex: rowIndex,
-                            columnIndex: columnIndex,
-                          ),
-                ),
+                // CurrentPlayerIndicatorComponent(game: game),
+                // GameBoardComponent(
+                //   game: game,
+                //   winningLineAnimation: _winningLineAnimation,
+                //   onCellTap:
+                //       ({required int rowIndex, required int columnIndex}) =>
+                //           onCellTap(
+                //             rowIndex: rowIndex,
+                //             columnIndex: columnIndex,
+                //           ),
+                // ),
               ],
             ),
           ),
