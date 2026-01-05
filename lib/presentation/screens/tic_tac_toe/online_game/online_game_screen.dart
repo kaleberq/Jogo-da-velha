@@ -1,13 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/network_message_handler_mixin.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/game_actions_mixin.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
 
 class OnlineGameScreen extends StatefulWidget {
   final IGameRepository gameRepository;
@@ -24,10 +24,7 @@ class OnlineGameScreen extends StatefulWidget {
 }
 
 class _OnlineGameScreenState extends State<OnlineGameScreen>
-    with
-        TickerProviderStateMixin,
-        NetworkMessageHandlerMixin,
-        GameActionsMixin {
+    with TickerProviderStateMixin {
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
   int _maxRounds = 5;
@@ -35,8 +32,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
 
-  @override
-  late OldTicTacToeGameModel game;
+  late final OnlineGameViewModel viewModel = OnlineGameViewModel(
+    isHost: widget.isHost,
+    maxRounds: _maxRounds,
+  );
 
   @override
   void initState() {
@@ -55,39 +54,129 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
     // Em modo online, o host é sempre X e começa primeiro
     _isMyTurn = widget.isHost;
-    game = OldTicTacToeGameModel(maxRounds: _maxRounds);
-    if (widget.isHost) {
-      game.currentPlayer = PlayerEnum.x;
-    } else {
-      game.currentPlayer = PlayerEnum.o;
-      _isMyTurn = false;
-    }
 
-    // Configurar callbacks de rede usando o mixin
-    setupNetworkCallbacks();
+    // Configurar callbacks de rede
+    _setupNetworkCallbacks();
   }
 
-  // Implementação dos getters/setters do mixin
-  @override
-  bool get isOnlineMode => true;
+  void _setupNetworkCallbacks() {
+    widget.gameRepository.onMessageReceived = _handleNetworkMessage;
+    widget.gameRepository.onConnectionStatusChanged = (status) {
+      if (status == 'disconnected' && mounted) {
+        Future.microtask(() {
+          if (mounted) {
+            DisconnectedDialog.show(context);
+          }
+        });
+      }
+    };
+    widget.gameRepository.onError = (error) {
+      if (mounted) {
+        Future.microtask(() {
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(error)));
+          }
+        });
+      }
+    };
+  }
 
-  @override
-  bool get isHost => widget.isHost;
+  void _handleNetworkMessage(String message) {
+    if (message == 'DISCONNECTED') {
+      if (mounted) {
+        Future.microtask(() {
+          if (mounted) {
+            DisconnectedDialog.show(context);
+          }
+        });
+      }
+      return;
+    }
 
-  @override
-  bool get isMyTurn => _isMyTurn;
+    // Ignora mensagens de handshake
+    if (message == 'SERVER_CONNECTED' ||
+        message == 'CLIENT_CONNECTED' ||
+        message == 'CONNECTED') {
+      return;
+    }
 
-  @override
-  set isMyTurn(bool value) => _isMyTurn = value;
+    if (!mounted) return;
 
-  @override
-  IGameRepository? get gameRepository => widget.gameRepository;
+    try {
+      final data = jsonDecode(message);
+      final type = data['type'] as String;
 
-  @override
-  void onConfigUpdate(int maxRounds, OldTicTacToeGameModel newGame) {
+      Future.microtask(() {
+        if (!mounted) return;
+
+        switch (type) {
+          case 'move':
+            _handleMoveMessage(data);
+            break;
+          case 'reset':
+            _handleResetMessage();
+            break;
+          case 'nextRound':
+            _handleNextRoundMessage();
+            break;
+          case 'config':
+            _handleConfigMessage(data);
+            break;
+        }
+      });
+    } catch (e) {
+      // Ignora mensagens que não são JSON válido
+    }
+  }
+
+  void _handleMoveMessage(Map<String, dynamic> data) {
+    final row = data['row'] as int;
+    final col = data['col'] as int;
+    final playerStr = data['player'] as String;
+    final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
+
+    viewModel.makeMoveWithPlayer(row, col, player);
+    _isMyTurn = true;
+    _checkGameOver();
+  }
+
+  void _handleResetMessage() {
+    viewModel.resetAll();
+    if (widget.isHost) {
+      viewModel.game.currentPlayer = PlayerEnum.x;
+      _isMyTurn = true;
+    } else {
+      viewModel.game.currentPlayer = PlayerEnum.o;
+      _isMyTurn = false;
+    }
+    setState(() {});
+  }
+
+  void _handleNextRoundMessage() {
+    viewModel.nextRound();
+    if (widget.isHost) {
+      viewModel.game.currentPlayer = PlayerEnum.x;
+      _isMyTurn = true;
+    } else {
+      viewModel.game.currentPlayer = PlayerEnum.o;
+      _isMyTurn = false;
+    }
+    _hideRoundEndMessage();
+    setState(() {});
+  }
+
+  void _handleConfigMessage(Map<String, dynamic> data) {
+    final maxRounds = data['maxRounds'] as int;
+    viewModel.setMaxRounds(maxRounds);
+    if (widget.isHost) {
+      viewModel.game.currentPlayer = PlayerEnum.x;
+    } else {
+      viewModel.game.currentPlayer = PlayerEnum.o;
+    }
+    _maxRounds = maxRounds;
     setState(() {
-      _maxRounds = maxRounds;
-      game = newGame;
       if (widget.isHost) {
         _isMyTurn = true;
       } else {
@@ -96,82 +185,220 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     });
   }
 
-  // Implementação dos getters/setters do GameActionsMixin
-  @override
-  AnimationController get winningLineAnimationController =>
-      _winningLineAnimationController;
+  void onCellTap({required int rowIndex, required int columnIndex}) {
+    // Em modo online, só permite jogar na vez do jogador
+    if (!_isMyTurn) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Aguarde sua vez!')));
+      return;
+    }
 
-  @override
-  String? get roundEndMessage => _roundEndMessage;
+    // Em modo online, guarda o jogador atual ANTES de fazer o movimento
+    final playerWhoMoved = viewModel.game.currentPlayer;
 
-  @override
-  set roundEndMessage(String? value) => _roundEndMessage = value;
+    if (viewModel.makeMove(rowIndex, columnIndex)) {
+      // Em modo online, envia o movimento para o outro jogador
+      widget.gameRepository.sendMove(
+        rowIndex,
+        columnIndex,
+        playerWhoMoved.value,
+      );
+      _isMyTurn = false;
+      _checkGameOver();
+    }
+  }
 
-  @override
-  PlayerEnum? get roundWinner => _roundWinner;
+  void _checkGameOver() {
+    if (viewModel.game.isGameOver) {
+      // Inicia a animação do traço se houver uma linha vencedora
+      if (viewModel.game.winningLine != null) {
+        _winningLineAnimationController.reset();
+        _winningLineAnimationController.forward();
+      }
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _handleRoundEnd();
+      });
+    }
+  }
 
-  @override
-  set roundWinner(PlayerEnum? value) => _roundWinner = value;
+  void _handleRoundEnd() {
+    // Atualiza pontuação
+    viewModel.updateScore();
 
-  @override
+    // Verifica se chegou ao fim dos rounds
+    if (viewModel.isAllRoundsFinished) {
+      _showFinalScoreDialog();
+    } else {
+      _showRoundEndDialog();
+    }
+  }
+
+  void _showFinalScoreDialog() {
+    String winnerMessage;
+    final PlayerEnum? overallWinner = viewModel.overallWinner;
+    if (overallWinner == PlayerEnum.x) {
+      winnerMessage = 'Jogador X venceu o jogo!';
+    } else if (overallWinner == PlayerEnum.o) {
+      winnerMessage = 'Jogador O venceu o jogo!';
+    } else {
+      winnerMessage = 'Empate! Ninguém venceu.';
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Fim do Jogo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                winnerMessage,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Placar Final:',
+                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Jogador X: ${viewModel.game.scoreX}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Jogador O: ${viewModel.game.scoreO}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                resetAll();
+              },
+              child: const Text('Jogar Novamente'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showRoundEndDialog() {
+    String message;
+    if (viewModel.game.winner != null) {
+      message = 'Jogador ${viewModel.game.winner?.value} venceu este round!';
+    } else {
+      message = 'Deu Velha';
+    }
+
+    setState(() {
+      _roundEndMessage = message;
+      _roundWinner = viewModel.game.winner;
+    });
+  }
+
+  void _hideRoundEndMessage() {
+    setState(() {
+      _roundEndMessage = null;
+      _roundWinner = null;
+    });
+  }
+
+  void nextRound() {
+    _hideRoundEndMessage();
+    _winningLineAnimationController.reset();
+    widget.gameRepository.sendNextRound();
+    viewModel.nextRound();
+    // Em modo online, quem começa é baseado em quem é host
+    if (widget.isHost) {
+      viewModel.game.currentPlayer = PlayerEnum.x;
+      _isMyTurn = true;
+    } else {
+      viewModel.game.currentPlayer = PlayerEnum.o;
+      _isMyTurn = false;
+    }
+    setState(() {});
+  }
+
   void resetAll() {
     _winningLineAnimationController.reset();
     widget.gameRepository.sendReset();
-    setState(() {
-      game.resetAll();
-      if (widget.isHost) {
-        game.currentPlayer = PlayerEnum.x;
-        _isMyTurn = true;
-      } else {
-        game.currentPlayer = PlayerEnum.o;
-        _isMyTurn = false;
-      }
-    });
+    viewModel.resetAll();
+    if (widget.isHost) {
+      viewModel.game.currentPlayer = PlayerEnum.x;
+      _isMyTurn = true;
+    } else {
+      viewModel.game.currentPlayer = PlayerEnum.o;
+      _isMyTurn = false;
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
-    gameRepository?.disconnect();
+    viewModel.dispose();
+    widget.gameRepository.disconnect();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarComponent(
-        isHost: widget.isHost,
-        isMyTurn: _isMyTurn,
-        onResetPressed: resetAll,
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // CurrentPlayerIndicatorComponent(game: game),
-                // GameBoardComponent(
-                //   game: game,
-                //   winningLineAnimation: _winningLineAnimation,
-                //   onCellTap:
-                //       ({required int rowIndex, required int columnIndex}) =>
-                //           onCellTap(
-                //             rowIndex: rowIndex,
-                //             columnIndex: columnIndex,
-                //           ),
-                // ),
-              ],
-            ),
+    return ListenableBuilder(
+      listenable: viewModel,
+      builder: (context, _) {
+        return Scaffold(
+          appBar: AppBarComponent(
+            isHost: widget.isHost,
+            isMyTurn: _isMyTurn,
+            onResetPressed: resetAll,
           ),
-          if (roundEndMessage != null)
-            RoundEndBannerComponent(
-              roundEndMessage: roundEndMessage!,
-              roundWinner: roundWinner,
-              onNextRound: nextRound,
-            ),
-        ],
-      ),
+          body: Stack(
+            children: [
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CurrentPlayerIndicatorComponent(game: viewModel.game),
+                    GameBoardComponent(
+                      game: viewModel.game,
+                      winningLineAnimation: _winningLineAnimation,
+                      onCellTap:
+                          ({required int rowIndex, required int columnIndex}) =>
+                              onCellTap(
+                                rowIndex: rowIndex,
+                                columnIndex: columnIndex,
+                              ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_roundEndMessage != null)
+                RoundEndBannerComponent(
+                  roundEndMessage: _roundEndMessage!,
+                  roundWinner: _roundWinner,
+                  onNextRound: nextRound,
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
