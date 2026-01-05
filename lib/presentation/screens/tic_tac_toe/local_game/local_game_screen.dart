@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/final_score_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/mixins/game_actions_mixin.dart';
 
 class LocalGameScreen extends StatefulWidget {
   const LocalGameScreen({super.key});
@@ -17,15 +16,13 @@ class LocalGameScreen extends StatefulWidget {
 }
 
 class _LocalGameScreenState extends State<LocalGameScreen>
-    with TickerProviderStateMixin, GameActionsMixin {
+    with TickerProviderStateMixin {
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
-  int _maxRounds = 5;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
 
-  @override
-  late TicTacToeGameModel game;
+  TicTacToeGameModel game = TicTacToeGameModel();
 
   @override
   void initState() {
@@ -41,28 +38,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         curve: Curves.easeOut,
       ),
     );
-
-    game = TicTacToeGameModel(maxRounds: _maxRounds);
   }
-
-  // Implementação dos getters/setters do mixin
-  @override
-  bool get isOnlineMode => false;
-
-  @override
-  bool get isMyTurn => true;
-
-  @override
-  set isMyTurn(bool value) {
-    // No modo local, sempre é a vez do jogador
-  }
-
-  @override
-  IGameRepository? get gameRepository => null;
 
   void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame) {
     setState(() {
-      _maxRounds = maxRounds;
       game = newGame;
     });
   }
@@ -73,28 +52,68 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     onConfigUpdate(maxRounds, newGame);
   }
 
-  // Implementação dos getters/setters do GameActionsMixin
-  @override
-  AnimationController get winningLineAnimationController =>
-      _winningLineAnimationController;
-
-  @override
-  String? get roundEndMessage => _roundEndMessage;
-
-  @override
-  set roundEndMessage(String? value) => _roundEndMessage = value;
-
-  @override
-  PlayerEnum? get roundWinner => _roundWinner;
-
-  @override
-  set roundWinner(PlayerEnum? value) => _roundWinner = value;
-
-  @override
   void resetAll() {
     _winningLineAnimationController.reset();
     setState(() {
       game.resetAll();
+    });
+  }
+
+  void onCellTap({required int rowIndex, required int columnIndex}) {
+    if (game.makeMove(rowIndex, columnIndex)) {
+      setState(() {});
+      checkGameOver();
+    }
+  }
+
+  void checkGameOver() {
+    if (game.isGameOver) {
+      if (game.winningLine != null) {
+        _winningLineAnimationController.reset();
+        _winningLineAnimationController.forward();
+      }
+      Future.delayed(const Duration(milliseconds: 300), () {
+        handleRoundEnd();
+      });
+    }
+  }
+
+  void handleRoundEnd() {
+    game.updateScore();
+
+    if (game.isAllRoundsFinished) {
+      FinalScoreDialog.show(context, game, resetAll);
+    } else {
+      showRoundEndDialog();
+    }
+  }
+
+  void showRoundEndDialog() {
+    String message;
+    if (game.winner != null) {
+      message = 'Jogador ${game.winner?.value} venceu este round!';
+    } else {
+      message = 'Deu Velha';
+    }
+
+    setState(() {
+      _roundEndMessage = message;
+      _roundWinner = game.winner;
+    });
+  }
+
+  void hideRoundEndMessage() {
+    setState(() {
+      _roundEndMessage = null;
+      _roundWinner = null;
+    });
+  }
+
+  void nextRound() {
+    hideRoundEndMessage();
+    _winningLineAnimationController.reset();
+    setState(() {
+      game.nextRound();
     });
   }
 
@@ -109,7 +128,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     return Scaffold(
       appBar: AppBarComponent(
         onResetPressed: resetAll,
-        currentMaxRounds: _maxRounds,
+        currentMaxRounds: game.maxRounds,
         onMaxRoundsChanged: onMaxRoundsChanged,
       ),
       body: Stack(
@@ -133,10 +152,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
               ],
             ),
           ),
-          if (roundEndMessage != null)
+          if (_roundEndMessage != null)
             RoundEndBannerComponent(
-              roundEndMessage: roundEndMessage!,
-              roundWinner: roundWinner,
+              roundEndMessage: _roundEndMessage!,
+              roundWinner: _roundWinner,
               onNextRound: nextRound,
             ),
         ],
