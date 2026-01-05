@@ -1,22 +1,102 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
+import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 
 class OnlineGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   final bool isHost;
+  final IGameRepository _gameRepository;
 
-  OnlineGameViewModel({required this.isHost, int? maxRounds}) {
+  // Callbacks para a UI
+  VoidCallback? onOpponentDisconnected;
+  Function(String)? onError;
+  Function(int, int, PlayerEnum)? onMoveReceived;
+  VoidCallback? onResetReceived;
+  VoidCallback? onNextRoundReceived;
+  Function(int)? onConfigReceived;
+
+  OnlineGameViewModel({required this.isHost, int? maxRounds})
+    : _gameRepository = GameRepository() {
     _game = TicTacToeGameModel(maxRounds: maxRounds);
     if (isHost) {
       _game.currentPlayer = PlayerEnum.x;
     } else {
       _game.currentPlayer = PlayerEnum.o;
     }
+    _setupNetworkCallbacks();
   }
 
   TicTacToeGameModel get game => _game;
+
+  void _setupNetworkCallbacks() {
+    _gameRepository.onMessageReceived = _handleNetworkMessage;
+    _gameRepository.onConnectionStatusChanged = (status) {
+      if (status == 'disconnected') {
+        onOpponentDisconnected?.call();
+      }
+    };
+    _gameRepository.onError = (error) {
+      onError?.call(error);
+    };
+  }
+
+  void _handleNetworkMessage(String message) {
+    if (message == 'DISCONNECTED') {
+      onOpponentDisconnected?.call();
+      return;
+    }
+
+    if (message == 'SERVER_CONNECTED' ||
+        message == 'CLIENT_CONNECTED' ||
+        message == 'CONNECTED') {
+      return;
+    }
+
+    try {
+      final data = jsonDecode(message);
+      final type = data['type'] as String;
+
+      switch (type) {
+        case 'move':
+          final row = data['row'] as int;
+          final col = data['col'] as int;
+          final playerStr = data['player'] as String;
+          final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
+          onMoveReceived?.call(row, col, player);
+          break;
+        case 'reset':
+          onResetReceived?.call();
+          break;
+        case 'nextRound':
+          onNextRoundReceived?.call();
+          break;
+        case 'config':
+          final maxRounds = data['maxRounds'] as int;
+          onConfigReceived?.call(maxRounds);
+          break;
+      }
+    } catch (e) {
+      // Ignora mensagens que não são JSON válido
+    }
+  }
+
+  // Métodos para enviar eventos de rede
+  void sendMove(int row, int col, PlayerEnum player) {
+    _gameRepository.sendMove(row, col, player.value);
+  }
+
+  void sendReset() {
+    _gameRepository.sendReset();
+  }
+
+  void sendNextRound() {
+    _gameRepository.sendNextRound();
+  }
 
   void setMaxRounds(int maxRounds) {
     _game.maxRounds = maxRounds;
@@ -54,17 +134,14 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   void nextRound() {
-    // Salva o vencedor do round anterior
     final PlayerEnum? previousWinner = _game.winner;
 
     _game.currentRound++;
     reset();
 
-    // Se houve um vencedor, ele começa o próximo round
     if (previousWinner != null) {
       _game.currentPlayer = previousWinner;
     } else {
-      // Se não houve vencedor, o host começa
       _game.currentPlayer = isHost ? PlayerEnum.x : PlayerEnum.o;
     }
     notifyListeners();
@@ -110,7 +187,6 @@ class OnlineGameViewModel extends ChangeNotifier {
     return true;
   }
 
-  // Fazer movimento de um jogador específico (usado em multiplayer)
   bool makeMoveWithPlayer(int row, int col, PlayerEnum player) {
     if (_game.isGameOver ||
         _game.board[row][col] != PlayerEnum.none ||
@@ -144,21 +220,18 @@ class OnlineGameViewModel extends ChangeNotifier {
     int col,
     PlayerEnum player,
   ) {
-    // Verifica linha
     if (_game.board[row][0] == player &&
         _game.board[row][1] == player &&
         _game.board[row][2] == player) {
       return WinningLineModel.horizontal(row);
     }
 
-    // Verifica coluna
     if (_game.board[0][col] == player &&
         _game.board[1][col] == player &&
         _game.board[2][col] == player) {
       return WinningLineModel.vertical(col);
     }
 
-    // Verifica diagonal principal
     if (row == col &&
         _game.board[0][0] == player &&
         _game.board[1][1] == player &&
@@ -166,7 +239,6 @@ class OnlineGameViewModel extends ChangeNotifier {
       return WinningLineModel.diagonalMain();
     }
 
-    // Verifica diagonal secundária
     if (row + col == 2 &&
         _game.board[0][2] == player &&
         _game.board[1][1] == player &&
@@ -178,21 +250,18 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   WinningLineModel? _checkWinner(int row, int col) {
-    // Verifica linha
     if (_game.board[row][0] == _game.currentPlayer &&
         _game.board[row][1] == _game.currentPlayer &&
         _game.board[row][2] == _game.currentPlayer) {
       return WinningLineModel.horizontal(row);
     }
 
-    // Verifica coluna
     if (_game.board[0][col] == _game.currentPlayer &&
         _game.board[1][col] == _game.currentPlayer &&
         _game.board[2][col] == _game.currentPlayer) {
       return WinningLineModel.vertical(col);
     }
 
-    // Verifica diagonal principal
     if (row == col &&
         _game.board[0][0] == _game.currentPlayer &&
         _game.board[1][1] == _game.currentPlayer &&
@@ -200,7 +269,6 @@ class OnlineGameViewModel extends ChangeNotifier {
       return WinningLineModel.diagonalMain();
     }
 
-    // Verifica diagonal secundária
     if (row + col == 2 &&
         _game.board[0][2] == _game.currentPlayer &&
         _game.board[1][1] == _game.currentPlayer &&
@@ -212,12 +280,10 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   bool _checkDraw() {
-    // Primeiro verifica se há um vencedor - se houver, não é empate
     if (_game.winner != null) {
       return false;
     }
 
-    // Verifica se todas as células estão preenchidas
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         if (_game.board[i][j] == PlayerEnum.none) {
@@ -226,5 +292,11 @@ class OnlineGameViewModel extends ChangeNotifier {
       }
     }
     return true;
+  }
+
+  @override
+  void dispose() {
+    _gameRepository.disconnect();
+    super.dispose();
   }
 }

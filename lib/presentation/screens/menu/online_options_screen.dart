@@ -27,10 +27,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
           if (mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => OnlineGameScreen(
-                  gameRepository: _gameRepository,
-                  isHost: true,
-                ),
+                builder: (context) => const OnlineGameScreen(isHost: true),
               ),
             );
           }
@@ -100,8 +97,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
       });
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) =>
-              OnlineGameScreen(gameRepository: _gameRepository, isHost: false),
+          builder: (context) => const OnlineGameScreen(isHost: false),
         ),
       );
     } else if (mounted) {

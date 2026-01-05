@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
@@ -10,14 +8,9 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
 
 class OnlineGameScreen extends StatefulWidget {
-  final IGameRepository gameRepository;
   final bool isHost;
 
-  const OnlineGameScreen({
-    super.key,
-    required this.gameRepository,
-    required this.isHost,
-  });
+  const OnlineGameScreen({super.key, required this.isHost});
 
   @override
   State<OnlineGameScreen> createState() => _OnlineGameScreenState();
@@ -27,19 +20,18 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     with TickerProviderStateMixin {
   String? _roundEndMessage;
   PlayerEnum? _roundWinner;
-  int _maxRounds = 5;
   bool _isMyTurn = true;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
 
-  late final OnlineGameViewModel viewModel = OnlineGameViewModel(
-    isHost: widget.isHost,
-    maxRounds: _maxRounds,
-  );
+  late final OnlineGameViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
+
+    viewModel = OnlineGameViewModel(isHost: widget.isHost);
+
     _winningLineAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -52,141 +44,56 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       ),
     );
 
-    // Em modo online, o host é sempre X e começa primeiro
     _isMyTurn = widget.isHost;
-
-    // Configurar callbacks de rede
-    _setupNetworkCallbacks();
+    _setupViewModelCallbacks();
   }
 
-  void _setupNetworkCallbacks() {
-    widget.gameRepository.onMessageReceived = _handleNetworkMessage;
-    widget.gameRepository.onConnectionStatusChanged = (status) {
-      if (status == 'disconnected' && mounted) {
-        Future.microtask(() {
-          if (mounted) {
-            DisconnectedDialog.show(context);
-          }
-        });
+  void _setupViewModelCallbacks() {
+    viewModel.onOpponentDisconnected = () {
+      if (mounted) {
+        DisconnectedDialog.show(context);
       }
     };
-    widget.gameRepository.onError = (error) {
+    viewModel.onError = (error) {
       if (mounted) {
-        Future.microtask(() {
-          if (mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(error)));
-          }
-        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error)));
       }
     };
-  }
-
-  void _handleNetworkMessage(String message) {
-    if (message == 'DISCONNECTED') {
+    viewModel.onMoveReceived = (row, col, player) {
       if (mounted) {
-        Future.microtask(() {
-          if (mounted) {
-            DisconnectedDialog.show(context);
-          }
-        });
-      }
-      return;
-    }
-
-    // Ignora mensagens de handshake
-    if (message == 'SERVER_CONNECTED' ||
-        message == 'CLIENT_CONNECTED' ||
-        message == 'CONNECTED') {
-      return;
-    }
-
-    if (!mounted) return;
-
-    try {
-      final data = jsonDecode(message);
-      final type = data['type'] as String;
-
-      Future.microtask(() {
-        if (!mounted) return;
-
-        switch (type) {
-          case 'move':
-            _handleMoveMessage(data);
-            break;
-          case 'reset':
-            _handleResetMessage();
-            break;
-          case 'nextRound':
-            _handleNextRoundMessage();
-            break;
-          case 'config':
-            _handleConfigMessage(data);
-            break;
-        }
-      });
-    } catch (e) {
-      // Ignora mensagens que não são JSON válido
-    }
-  }
-
-  void _handleMoveMessage(Map<String, dynamic> data) {
-    final row = data['row'] as int;
-    final col = data['col'] as int;
-    final playerStr = data['player'] as String;
-    final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
-
-    viewModel.makeMoveWithPlayer(row, col, player);
-    _isMyTurn = true;
-    _checkGameOver();
-  }
-
-  void _handleResetMessage() {
-    viewModel.resetAll();
-    if (widget.isHost) {
-      viewModel.game.currentPlayer = PlayerEnum.x;
-      _isMyTurn = true;
-    } else {
-      viewModel.game.currentPlayer = PlayerEnum.o;
-      _isMyTurn = false;
-    }
-    setState(() {});
-  }
-
-  void _handleNextRoundMessage() {
-    viewModel.nextRound();
-    if (widget.isHost) {
-      viewModel.game.currentPlayer = PlayerEnum.x;
-      _isMyTurn = true;
-    } else {
-      viewModel.game.currentPlayer = PlayerEnum.o;
-      _isMyTurn = false;
-    }
-    _hideRoundEndMessage();
-    setState(() {});
-  }
-
-  void _handleConfigMessage(Map<String, dynamic> data) {
-    final maxRounds = data['maxRounds'] as int;
-    viewModel.setMaxRounds(maxRounds);
-    if (widget.isHost) {
-      viewModel.game.currentPlayer = PlayerEnum.x;
-    } else {
-      viewModel.game.currentPlayer = PlayerEnum.o;
-    }
-    _maxRounds = maxRounds;
-    setState(() {
-      if (widget.isHost) {
+        viewModel.makeMoveWithPlayer(row, col, player);
         _isMyTurn = true;
-      } else {
-        _isMyTurn = false;
+        _checkGameOver();
       }
-    });
+    };
+    viewModel.onResetReceived = () {
+      if (mounted) {
+        viewModel.resetAll();
+        _isMyTurn = widget.isHost;
+        setState(() {});
+      }
+    };
+    viewModel.onNextRoundReceived = () {
+      if (mounted) {
+        viewModel.nextRound();
+        _isMyTurn = widget.isHost;
+        _hideRoundEndMessage();
+        setState(() {});
+      }
+    };
+    viewModel.onConfigReceived = (maxRounds) {
+      if (mounted) {
+        viewModel.setMaxRounds(maxRounds);
+        setState(() {
+          _isMyTurn = widget.isHost;
+        });
+      }
+    };
   }
 
   void onCellTap({required int rowIndex, required int columnIndex}) {
-    // Em modo online, só permite jogar na vez do jogador
     if (!_isMyTurn) {
       ScaffoldMessenger.of(
         context,
@@ -194,16 +101,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       return;
     }
 
-    // Em modo online, guarda o jogador atual ANTES de fazer o movimento
     final playerWhoMoved = viewModel.game.currentPlayer;
-
     if (viewModel.makeMove(rowIndex, columnIndex)) {
-      // Em modo online, envia o movimento para o outro jogador
-      widget.gameRepository.sendMove(
-        rowIndex,
-        columnIndex,
-        playerWhoMoved.value,
-      );
+      viewModel.sendMove(rowIndex, columnIndex, playerWhoMoved);
       _isMyTurn = false;
       _checkGameOver();
     }
@@ -211,7 +111,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
   void _checkGameOver() {
     if (viewModel.game.isGameOver) {
-      // Inicia a animação do traço se houver uma linha vencedora
       if (viewModel.game.winningLine != null) {
         _winningLineAnimationController.reset();
         _winningLineAnimationController.forward();
@@ -223,10 +122,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   }
 
   void _handleRoundEnd() {
-    // Atualiza pontuação
     viewModel.updateScore();
 
-    // Verifica se chegou ao fim dos rounds
     if (viewModel.isAllRoundsFinished) {
       _showFinalScoreDialog();
     } else {
@@ -323,30 +220,17 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   void nextRound() {
     _hideRoundEndMessage();
     _winningLineAnimationController.reset();
-    widget.gameRepository.sendNextRound();
+    viewModel.sendNextRound();
     viewModel.nextRound();
-    // Em modo online, quem começa é baseado em quem é host
-    if (widget.isHost) {
-      viewModel.game.currentPlayer = PlayerEnum.x;
-      _isMyTurn = true;
-    } else {
-      viewModel.game.currentPlayer = PlayerEnum.o;
-      _isMyTurn = false;
-    }
+    _isMyTurn = widget.isHost;
     setState(() {});
   }
 
   void resetAll() {
     _winningLineAnimationController.reset();
-    widget.gameRepository.sendReset();
+    viewModel.sendReset();
     viewModel.resetAll();
-    if (widget.isHost) {
-      viewModel.game.currentPlayer = PlayerEnum.x;
-      _isMyTurn = true;
-    } else {
-      viewModel.game.currentPlayer = PlayerEnum.o;
-      _isMyTurn = false;
-    }
+    _isMyTurn = widget.isHost;
     setState(() {});
   }
 
@@ -354,7 +238,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   void dispose() {
     _winningLineAnimationController.dispose();
     viewModel.dispose();
-    widget.gameRepository.disconnect();
     super.dispose();
   }
 

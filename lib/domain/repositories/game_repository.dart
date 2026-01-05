@@ -5,7 +5,15 @@ import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_int
 class GameRepository implements IGameRepository {
   final NetworkService _networkService;
 
-  GameRepository() : _networkService = NetworkService();
+  // --- Singleton Setup ---
+  static final GameRepository _instance = GameRepository._internal();
+
+  factory GameRepository() {
+    return _instance;
+  }
+
+  GameRepository._internal() : _networkService = NetworkService();
+  // ----------------------
 
   @override
   Function(String)? get onMessageReceived => _networkService.onMessageReceived;
