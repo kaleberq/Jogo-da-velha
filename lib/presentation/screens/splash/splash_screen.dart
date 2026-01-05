@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/splash_model.dart';
-import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
