@@ -12,6 +12,7 @@ class GameRepository implements IGameRepository {
     return _instance;
   }
 
+  // O construtor agora obtém a instância Singleton do NetworkService
   GameRepository._internal() : _networkService = NetworkService();
   // ----------------------
 

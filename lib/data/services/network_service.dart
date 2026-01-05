@@ -12,6 +12,16 @@ class NetworkService {
   Function(String)? onError;
   String _buffer = '';
 
+  // --- Singleton Setup ---
+  static final NetworkService _instance = NetworkService._internal();
+
+  factory NetworkService() {
+    return _instance;
+  }
+
+  NetworkService._internal();
+  // -----------------------
+
   ConnectionStatusEnum get status => _status;
 
   // Obter o IP local do dispositivo
