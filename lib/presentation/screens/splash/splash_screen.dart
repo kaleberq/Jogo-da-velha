@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/splash_model.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  final TicTacToeGameModel _game = TicTacToeGameModel();
+  final OldTicTacToeGameModel _game = OldTicTacToeGameModel();
   final SplashModel _state = SplashModel();
 
   // Posições da diagonal principal

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/final_score_dialog.dart';
 
 mixin GameActionsMixin<T extends StatefulWidget> on State<T> {
   // Propriedades que devem ser fornecidas pela classe que usa o mixin
-  TicTacToeGameModel get game;
+  OldTicTacToeGameModel get game;
   bool get isOnlineMode;
   bool get isMyTurn;
   bool get isHost => false;

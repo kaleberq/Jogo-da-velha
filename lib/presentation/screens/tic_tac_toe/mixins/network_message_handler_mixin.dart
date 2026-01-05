@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/disconnected_dialog.dart';
 
 mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
   // Propriedades que devem ser fornecidas pela classe que usa o mixin
-  TicTacToeGameModel get game;
+  OldTicTacToeGameModel get game;
   bool get isOnlineMode;
   bool get isHost;
   bool get isMyTurn;
@@ -21,7 +21,7 @@ mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
   void hideRoundEndMessage();
 
   // Callback para atualizar configurações
-  void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame);
+  void onConfigUpdate(int maxRounds, OldTicTacToeGameModel newGame);
 
   void setupNetworkCallbacks() {
     if (gameRepository == null) return;
@@ -139,7 +139,7 @@ mixin NetworkMessageHandlerMixin<T extends StatefulWidget> on State<T> {
 
   void handleConfigMessage(Map<String, dynamic> data) {
     final maxRounds = data['maxRounds'] as int;
-    final newGame = TicTacToeGameModel(maxRounds: maxRounds);
+    final newGame = OldTicTacToeGameModel(maxRounds: maxRounds);
 
     if (isHost) {
       newGame.currentPlayer = PlayerEnum.x;

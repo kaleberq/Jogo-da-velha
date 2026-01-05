@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
@@ -36,7 +36,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   late Animation<double> _winningLineAnimation;
 
   @override
-  late TicTacToeGameModel game;
+  late OldTicTacToeGameModel game;
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
     // Em modo online, o host é sempre X e começa primeiro
     _isMyTurn = widget.isHost;
-    game = TicTacToeGameModel(maxRounds: _maxRounds);
+    game = OldTicTacToeGameModel(maxRounds: _maxRounds);
     if (widget.isHost) {
       game.currentPlayer = PlayerEnum.x;
     } else {
@@ -84,7 +84,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   IGameRepository? get gameRepository => widget.gameRepository;
 
   @override
-  void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame) {
+  void onConfigUpdate(int maxRounds, OldTicTacToeGameModel newGame) {
     setState(() {
       _maxRounds = maxRounds;
       game = newGame;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 
 class CurrentPlayerIndicatorComponent extends StatelessWidget {
-  final TicTacToeGameModel game;
+  final OldTicTacToeGameModel game;
 
   const CurrentPlayerIndicatorComponent({super.key, required this.game});
 

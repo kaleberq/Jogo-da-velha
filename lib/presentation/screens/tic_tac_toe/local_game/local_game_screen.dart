@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/dialogs/final_score_dialog.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
@@ -22,7 +22,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
 
-  TicTacToeGameModel game = TicTacToeGameModel();
+  OldTicTacToeGameModel game = OldTicTacToeGameModel();
+  //final LocalGameViewModel viewModel = LocalGameViewModel();
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     );
   }
 
-  void onConfigUpdate(int maxRounds, TicTacToeGameModel newGame) {
+  void onConfigUpdate(int maxRounds, OldTicTacToeGameModel newGame) {
     setState(() {
       game = newGame;
     });
@@ -48,7 +49,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void onMaxRoundsChanged(int maxRounds) {
     _winningLineAnimationController.reset();
-    final newGame = TicTacToeGameModel(maxRounds: maxRounds);
+    final newGame = OldTicTacToeGameModel(maxRounds: maxRounds);
     onConfigUpdate(maxRounds, newGame);
   }
 

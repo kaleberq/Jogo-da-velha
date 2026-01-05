@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
 
 class FinalScoreDialog {
   static void show(
     BuildContext context,
-    TicTacToeGameModel game,
+    OldTicTacToeGameModel game,
     VoidCallback onPlayAgain,
   ) {
     String winnerMessage;
