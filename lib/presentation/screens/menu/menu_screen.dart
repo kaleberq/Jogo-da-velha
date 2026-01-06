@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/online_options_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/online_options/online_options_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
