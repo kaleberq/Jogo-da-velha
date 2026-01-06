@@ -13,8 +13,6 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   String? get serverIP => _serverIP;
   bool get navigatingToGame => _navigatingToGame;
 
-  GameRepository get gameRepository => _gameRepository;
-
   OnlineOptionsViewModel() {
     _setupNetworkCallbacks();
   }
