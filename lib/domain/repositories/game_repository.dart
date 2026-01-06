@@ -4,6 +4,12 @@ import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_int
 
 class GameRepository implements IGameRepository {
   final NetworkService _networkService;
+  NetworkConnectionManager? _connectionManager;
+
+  // Callbacks - serão definidos pelo ViewModel
+  Function(String)? _onMessageReceived;
+  Function(String)? _onConnectionStatusChanged;
+  Function(String)? _onError;
 
   // --- Singleton Setup ---
   static final GameRepository _instance = GameRepository._internal();
@@ -12,62 +18,102 @@ class GameRepository implements IGameRepository {
     return _instance;
   }
 
-  // O construtor agora obtém a instância Singleton do NetworkService
   GameRepository._internal() : _networkService = NetworkService();
   // ----------------------
 
   @override
-  Function(String)? get onMessageReceived => _networkService.onMessageReceived;
+  Function(String)? get onMessageReceived => _onMessageReceived;
 
   @override
   set onMessageReceived(Function(String)? callback) {
-    _networkService.onMessageReceived = callback;
+    _onMessageReceived = callback;
   }
 
   @override
-  Function(String)? get onConnectionStatusChanged =>
-      _networkService.onConnectionStatusChanged;
+  Function(String)? get onConnectionStatusChanged => _onConnectionStatusChanged;
 
   @override
   set onConnectionStatusChanged(Function(String)? callback) {
-    _networkService.onConnectionStatusChanged = callback;
+    _onConnectionStatusChanged = callback;
   }
 
   @override
-  Function(String)? get onError => _networkService.onError;
+  Function(String)? get onError => _onError;
 
   @override
   set onError(Function(String)? callback) {
-    _networkService.onError = callback;
+    _onError = callback;
   }
 
   @override
   Future<String?> getLocalIP() => _networkService.getLocalIP();
 
   @override
-  Future<String?> startServer({int port = 8080}) =>
-      _networkService.startServer(port: port);
+  Future<String?> startServer({int port = 8080}) async {
+    final ip = await _networkService.getLocalIP();
+    _connectionManager = await _networkService.startServer(
+      onStatusChanged: (status) {
+        _onConnectionStatusChanged?.call(status.name);
+      },
+      onMessageReceived: (message) {
+        _onMessageReceived?.call(message);
+      },
+      onError: (error) {
+        _onError?.call(error);
+      },
+      port: port,
+    );
+    return ip;
+  }
 
   @override
-  Future<bool> connectToServer(String ip, {int port = 8080}) =>
-      _networkService.connectToServer(ip, port: port);
+  Future<bool> connectToServer(String ip, {int port = 8080}) async {
+    _connectionManager = await _networkService.connectToServer(
+      ip: ip,
+      onStatusChanged: (status) {
+        _onConnectionStatusChanged?.call(status.name);
+      },
+      onMessageReceived: (message) {
+        _onMessageReceived?.call(message);
+      },
+      onError: (error) {
+        _onError?.call(error);
+      },
+      port: port,
+    );
+    return _connectionManager != null;
+  }
 
   @override
-  void disconnect() => _networkService.disconnect();
+  void disconnect() {
+    _connectionManager?.disconnect();
+    _connectionManager = null;
+  }
 
   @override
-  void sendMove(int row, int col, String player) =>
-      _networkService.sendMove(row, col, player);
+  void sendMove(int row, int col, String player) {
+    _connectionManager?.sendMove(row, col, player);
+  }
 
   @override
-  void sendReset() => _networkService.sendReset();
+  void sendReset() {
+    _connectionManager?.sendReset();
+  }
 
   @override
-  void sendNextRound() => _networkService.sendNextRound();
+  void sendNextRound() {
+    _connectionManager?.sendNextRound();
+  }
 
   @override
-  void sendConfig(int maxRounds) => _networkService.sendConfig(maxRounds);
+  void sendConfig(int maxRounds) {
+    _connectionManager?.sendConfig(maxRounds);
+  }
 
   @override
-  ConnectionStatusEnum get status => _networkService.status;
+  ConnectionStatusEnum get status {
+    // O status agora é gerenciado pelo ViewModel através de callbacks
+    // Este getter mantém compatibilidade mas não reflete o estado real
+    return ConnectionStatusEnum.disconnected;
+  }
 }

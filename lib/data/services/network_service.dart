@@ -3,26 +3,10 @@ import 'dart:convert';
 import 'package:jogo_da_velha/data/services/enums/connection_status_enum.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
+/// Service que executa operações de rede
+/// Mantém recursos de conexão (sockets) mas delega estado para callbacks
 class NetworkService {
-  ServerSocket? _serverSocket;
-  Socket? _clientSocket;
-  ConnectionStatusEnum _status = ConnectionStatusEnum.disconnected;
-  Function(String)? onMessageReceived;
-  Function(String)? onConnectionStatusChanged;
-  Function(String)? onError;
-  String _buffer = '';
-
-  // --- Singleton Setup ---
-  static final NetworkService _instance = NetworkService._internal();
-
-  factory NetworkService() {
-    return _instance;
-  }
-
-  NetworkService._internal();
-  // -----------------------
-
-  ConnectionStatusEnum get status => _status;
+  NetworkService();
 
   // Obter o IP local do dispositivo
   Future<String?> getLocalIP() async {
@@ -35,124 +19,165 @@ class NetworkService {
     }
   }
 
-  // Criar servidor (host)
-  Future<String?> startServer({int port = 8080}) async {
+  /// Cria um servidor e retorna o IP local
+  /// Retorna um NetworkConnectionManager que gerencia a conexão
+  Future<NetworkConnectionManager?> startServer({
+    required Function(ConnectionStatusEnum) onStatusChanged,
+    required Function(String) onMessageReceived,
+    required Function(String) onError,
+    int port = 8080,
+  }) async {
     try {
-      _updateStatus(ConnectionStatusEnum.connecting);
-      _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
+      onStatusChanged(ConnectionStatusEnum.connecting);
+      final serverSocket = await ServerSocket.bind(
+        InternetAddress.anyIPv4,
+        port,
+      );
 
-      _serverSocket!.listen((Socket socket) {
-        if (_clientSocket != null) {
-          // Fecha conexão anterior se houver
-          try {
-            _clientSocket!.destroy();
-          } catch (e) {
-            // Ignora erros
-          }
-        }
+      final connectionManager = NetworkConnectionManager(
+        serverSocket: serverSocket,
+        onStatusChanged: onStatusChanged,
+        onMessageReceived: onMessageReceived,
+        onError: onError,
+      );
 
-        // Configura opções do socket para melhor performance
-        socket.setOption(SocketOption.tcpNoDelay, true);
-
-        _clientSocket = socket;
-        _updateStatus(ConnectionStatusEnum.connected);
-        _listenToClient(socket);
-
-        // Envia mensagem de confirmação para o cliente
-        Future.microtask(() {
-          try {
-            socket.add(utf8.encode('SERVER_CONNECTED\n'));
-          } catch (e) {
-            onError?.call('Erro ao confirmar conexão: $e');
-          }
-        });
-        onMessageReceived?.call('CONNECTED');
+      serverSocket.listen((Socket socket) {
+        connectionManager.setClientSocket(socket);
       });
 
-      final ip = await getLocalIP();
-      return ip;
+      await getLocalIP();
+      return connectionManager;
     } catch (e) {
-      _updateStatus(ConnectionStatusEnum.error);
-      onError?.call('Erro ao criar servidor: $e');
+      onStatusChanged(ConnectionStatusEnum.error);
+      onError('Erro ao criar servidor: $e');
       return null;
     }
   }
 
-  // Conectar a um servidor (cliente)
-  Future<bool> connectToServer(String ip, {int port = 8080}) async {
+  /// Conecta a um servidor
+  /// Retorna um NetworkConnectionManager que gerencia a conexão
+  Future<NetworkConnectionManager?> connectToServer({
+    required String ip,
+    required Function(ConnectionStatusEnum) onStatusChanged,
+    required Function(String) onMessageReceived,
+    required Function(String) onError,
+    int port = 8080,
+  }) async {
     try {
-      _updateStatus(ConnectionStatusEnum.connecting);
-      _clientSocket = await Socket.connect(
+      onStatusChanged(ConnectionStatusEnum.connecting);
+      final socket = await Socket.connect(
         ip,
         port,
         timeout: const Duration(seconds: 10),
       );
 
-      // Configura opções do socket para melhor performance
-      _clientSocket!.setOption(SocketOption.tcpNoDelay, true);
+      socket.setOption(SocketOption.tcpNoDelay, true);
+      onStatusChanged(ConnectionStatusEnum.connected);
 
-      _updateStatus(ConnectionStatusEnum.connected);
-      _listenToClient(_clientSocket!);
+      final connectionManager = NetworkConnectionManager(
+        clientSocket: socket,
+        onStatusChanged: onStatusChanged,
+        onMessageReceived: onMessageReceived,
+        onError: onError,
+      );
 
-      // Aguarda um pouco antes de enviar confirmação
       Future.delayed(const Duration(milliseconds: 100), () {
-        if (_clientSocket != null &&
-            _status == ConnectionStatusEnum.connected) {
-          sendMessage('CLIENT_CONNECTED');
-        }
+        connectionManager.sendMessage('CLIENT_CONNECTED');
       });
-      return true;
+
+      return connectionManager;
     } catch (e) {
-      _updateStatus(ConnectionStatusEnum.error);
-      onError?.call('Erro ao conectar: $e');
-      return false;
+      onStatusChanged(ConnectionStatusEnum.error);
+      onError('Erro ao conectar: $e');
+      return null;
+    }
+  }
+}
+
+/// Gerencia uma conexão de rede ativa
+/// Mantém os recursos (sockets) mas o estado é notificado via callbacks
+class NetworkConnectionManager {
+  ServerSocket? _serverSocket;
+  Socket? _clientSocket;
+  String _buffer = '';
+  final Function(ConnectionStatusEnum) onStatusChanged;
+  final Function(String) onMessageReceived;
+  final Function(String) onError;
+
+  NetworkConnectionManager({
+    ServerSocket? serverSocket,
+    Socket? clientSocket,
+    required this.onStatusChanged,
+    required this.onMessageReceived,
+    required this.onError,
+  }) : _serverSocket = serverSocket,
+       _clientSocket = clientSocket {
+    if (_clientSocket != null) {
+      _listenToClient(_clientSocket!);
     }
   }
 
-  // Escutar mensagens do cliente/servidor
+  void setClientSocket(Socket socket) {
+    if (_clientSocket != null) {
+      try {
+        _clientSocket!.destroy();
+      } catch (e) {
+        // Ignora erros
+      }
+    }
+
+    socket.setOption(SocketOption.tcpNoDelay, true);
+    _clientSocket = socket;
+    onStatusChanged(ConnectionStatusEnum.connected);
+    _listenToClient(socket);
+
+    Future.microtask(() {
+      try {
+        socket.add(utf8.encode('SERVER_CONNECTED\n'));
+      } catch (e) {
+        onError('Erro ao confirmar conexão: $e');
+      }
+    });
+    onMessageReceived('CONNECTED');
+  }
+
   void _listenToClient(Socket socket) {
     socket.listen(
       (data) {
         _buffer += utf8.decode(data);
-
-        // Processa todas as mensagens completas (separadas por \n)
         final lines = _buffer.split('\n');
-        _buffer = lines
-            .removeLast(); // Mantém a última linha incompleta no buffer
+        _buffer = lines.removeLast();
 
         for (final line in lines) {
           if (line.trim().isNotEmpty) {
-            onMessageReceived?.call(line.trim());
+            onMessageReceived(line.trim());
           }
         }
       },
       onError: (error) {
-        _updateStatus(ConnectionStatusEnum.error);
-        onError?.call('Erro na conexão: $error');
+        onStatusChanged(ConnectionStatusEnum.error);
+        onError('Erro na conexão: $error');
       },
       onDone: () {
-        _updateStatus(ConnectionStatusEnum.disconnected);
+        onStatusChanged(ConnectionStatusEnum.disconnected);
         _buffer = '';
-        onMessageReceived?.call('DISCONNECTED');
+        onMessageReceived('DISCONNECTED');
       },
       cancelOnError: false,
     );
   }
 
-  // Enviar mensagem
   void sendMessage(String message) {
-    if (_clientSocket != null && _status == ConnectionStatusEnum.connected) {
+    if (_clientSocket != null) {
       try {
-        // Adiciona delimitador \n para separar mensagens
         _clientSocket!.add(utf8.encode('$message\n'));
       } catch (e) {
-        _updateStatus(ConnectionStatusEnum.error);
-        onError?.call('Erro ao enviar mensagem: $e');
+        onStatusChanged(ConnectionStatusEnum.error);
+        onError('Erro ao enviar mensagem: $e');
       }
     }
   }
 
-  // Enviar movimento do jogo
   void sendMove(int row, int col, String player) {
     final data = jsonEncode({
       'type': 'move',
@@ -163,40 +188,31 @@ class NetworkService {
     sendMessage(data);
   }
 
-  // Enviar reinício do jogo
   void sendReset() {
     final data = jsonEncode({'type': 'reset'});
     sendMessage(data);
   }
 
-  // Enviar próximo round
   void sendNextRound() {
     final data = jsonEncode({'type': 'nextRound'});
     sendMessage(data);
   }
 
-  // Enviar configuração
   void sendConfig(int maxRounds) {
     final data = jsonEncode({'type': 'config', 'maxRounds': maxRounds});
     sendMessage(data);
   }
 
-  // Fechar conexões
   void disconnect() {
     try {
       _clientSocket?.destroy();
       _serverSocket?.close();
     } catch (e) {
-      // Ignora erros ao fechar
+      // Ignora erros
     }
     _clientSocket = null;
     _serverSocket = null;
     _buffer = '';
-    _updateStatus(ConnectionStatusEnum.disconnected);
-  }
-
-  void _updateStatus(ConnectionStatusEnum status) {
-    _status = status;
-    onConnectionStatusChanged?.call(_status.name);
+    onStatusChanged(ConnectionStatusEnum.disconnected);
   }
 }

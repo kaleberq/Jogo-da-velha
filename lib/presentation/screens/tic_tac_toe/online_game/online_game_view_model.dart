@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:jogo_da_velha/domain/models/network_connection_model.dart';
+import 'package:jogo_da_velha/data/services/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
@@ -11,6 +13,9 @@ class OnlineGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   final bool isHost;
   final IGameRepository _gameRepository;
+
+  // Estado da conexão gerenciado pelo ViewModel
+  final NetworkConnectionModel _connectionState = NetworkConnectionModel();
 
   // Callbacks para a UI
   VoidCallback? onOpponentDisconnected;
@@ -35,14 +40,28 @@ class OnlineGameViewModel extends ChangeNotifier {
 
   void _setupNetworkCallbacks() {
     _gameRepository.onMessageReceived = _handleNetworkMessage;
-    _gameRepository.onConnectionStatusChanged = (status) {
-      if (status == 'disconnected') {
+    _gameRepository.onConnectionStatusChanged = (statusString) {
+      final status = ConnectionStatusEnum.values.firstWhere(
+        (e) => e.name == statusString,
+        orElse: () => ConnectionStatusEnum.disconnected,
+      );
+      _updateConnectionStatus(status);
+
+      if (status == ConnectionStatusEnum.disconnected) {
         onOpponentDisconnected?.call();
       }
     };
     _gameRepository.onError = (error) {
+      _connectionState.errorMessage = error;
+      _connectionState.status = ConnectionStatusEnum.error;
+      notifyListeners();
       onError?.call(error);
     };
+  }
+
+  void _updateConnectionStatus(ConnectionStatusEnum status) {
+    _connectionState.status = status;
+    notifyListeners();
   }
 
   void _handleNetworkMessage(String message) {
