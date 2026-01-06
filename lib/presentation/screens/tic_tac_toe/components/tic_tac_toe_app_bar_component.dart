@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/repositories/interfaces/game_repository_interface.dart';
+import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final bool isOnlineMode;
   final bool isHost;
   final bool isMyTurn;
-  final IGameRepository? gameRepository;
+  final GameRepository? gameRepository;
   final VoidCallback? onSettingsPressed;
   final VoidCallback? onResetPressed;
   final VoidCallback? onExitPressed;
