@@ -4,9 +4,54 @@ import 'package:jogo_da_velha/data/services/enums/connection_status_enum.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 /// Service que executa operações de rede
-/// Mantém recursos de conexão (sockets) mas delega estado para callbacks
+/// Singleton que mantém estado da conexão
 class NetworkService {
-  NetworkService();
+  NetworkConnectionManager? _connectionManager;
+
+  // Callbacks - serão definidos pelo Repository
+  Function(String)? _onMessageReceived;
+  Function(String)? _onConnectionStatusChanged;
+  Function(String)? _onError;
+
+  // --- Singleton Setup ---
+  static final NetworkService _instance = NetworkService._internal();
+
+  factory NetworkService() {
+    return _instance;
+  }
+
+  NetworkService._internal();
+  // -----------------------
+
+  // Configurar callbacks
+  set onMessageReceived(Function(String)? callback) {
+    _onMessageReceived = callback;
+    _updateConnectionManagerCallbacks();
+  }
+
+  set onConnectionStatusChanged(Function(String)? callback) {
+    _onConnectionStatusChanged = callback;
+    _updateConnectionManagerCallbacks();
+  }
+
+  set onError(Function(String)? callback) {
+    _onError = callback;
+    _updateConnectionManagerCallbacks();
+  }
+
+  void _updateConnectionManagerCallbacks() {
+    if (_connectionManager != null) {
+      _connectionManager!.onMessageReceived = (message) {
+        _onMessageReceived?.call(message);
+      };
+      _connectionManager!.onStatusChanged = (status) {
+        _onConnectionStatusChanged?.call(status.name);
+      };
+      _connectionManager!.onError = (error) {
+        _onError?.call(error);
+      };
+    }
+  }
 
   // Obter o IP local do dispositivo
   Future<String?> getLocalIP() async {
@@ -20,51 +65,44 @@ class NetworkService {
   }
 
   /// Cria um servidor e retorna o IP local
-  /// Retorna um NetworkConnectionManager que gerencia a conexão
-  Future<NetworkConnectionManager?> startServer({
-    required Function(ConnectionStatusEnum) onStatusChanged,
-    required Function(String) onMessageReceived,
-    required Function(String) onError,
-    int port = 8080,
-  }) async {
+  Future<String?> startServer({int port = 8080}) async {
     try {
-      onStatusChanged(ConnectionStatusEnum.connecting);
+      _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
       final serverSocket = await ServerSocket.bind(
         InternetAddress.anyIPv4,
         port,
       );
 
-      final connectionManager = NetworkConnectionManager(
+      _connectionManager = NetworkConnectionManager(
         serverSocket: serverSocket,
-        onStatusChanged: onStatusChanged,
-        onMessageReceived: onMessageReceived,
-        onError: onError,
+        onStatusChanged: (status) {
+          _onConnectionStatusChanged?.call(status.name);
+        },
+        onMessageReceived: (message) {
+          _onMessageReceived?.call(message);
+        },
+        onError: (error) {
+          _onError?.call(error);
+        },
       );
 
       serverSocket.listen((Socket socket) {
-        connectionManager.setClientSocket(socket);
+        _connectionManager!.setClientSocket(socket);
       });
 
-      await getLocalIP();
-      return connectionManager;
+      final ip = await getLocalIP();
+      return ip;
     } catch (e) {
-      onStatusChanged(ConnectionStatusEnum.error);
-      onError('Erro ao criar servidor: $e');
+      _onConnectionStatusChanged?.call(ConnectionStatusEnum.error.name);
+      _onError?.call('Erro ao criar servidor: $e');
       return null;
     }
   }
 
   /// Conecta a um servidor
-  /// Retorna um NetworkConnectionManager que gerencia a conexão
-  Future<NetworkConnectionManager?> connectToServer({
-    required String ip,
-    required Function(ConnectionStatusEnum) onStatusChanged,
-    required Function(String) onMessageReceived,
-    required Function(String) onError,
-    int port = 8080,
-  }) async {
+  Future<bool> connectToServer(String ip, {int port = 8080}) async {
     try {
-      onStatusChanged(ConnectionStatusEnum.connecting);
+      _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
       final socket = await Socket.connect(
         ip,
         port,
@@ -72,25 +110,52 @@ class NetworkService {
       );
 
       socket.setOption(SocketOption.tcpNoDelay, true);
-      onStatusChanged(ConnectionStatusEnum.connected);
+      _onConnectionStatusChanged?.call(ConnectionStatusEnum.connected.name);
 
-      final connectionManager = NetworkConnectionManager(
+      _connectionManager = NetworkConnectionManager(
         clientSocket: socket,
-        onStatusChanged: onStatusChanged,
-        onMessageReceived: onMessageReceived,
-        onError: onError,
+        onStatusChanged: (status) {
+          _onConnectionStatusChanged?.call(status.name);
+        },
+        onMessageReceived: (message) {
+          _onMessageReceived?.call(message);
+        },
+        onError: (error) {
+          _onError?.call(error);
+        },
       );
 
       Future.delayed(const Duration(milliseconds: 100), () {
-        connectionManager.sendMessage('CLIENT_CONNECTED');
+        _connectionManager?.sendMessage('CLIENT_CONNECTED');
       });
 
-      return connectionManager;
+      return true;
     } catch (e) {
-      onStatusChanged(ConnectionStatusEnum.error);
-      onError('Erro ao conectar: $e');
-      return null;
+      _onConnectionStatusChanged?.call(ConnectionStatusEnum.error.name);
+      _onError?.call('Erro ao conectar: $e');
+      return false;
     }
+  }
+
+  void disconnect() {
+    _connectionManager?.disconnect();
+    _connectionManager = null;
+  }
+
+  void sendMove(int row, int col, String player) {
+    _connectionManager?.sendMove(row, col, player);
+  }
+
+  void sendReset() {
+    _connectionManager?.sendReset();
+  }
+
+  void sendNextRound() {
+    _connectionManager?.sendNextRound();
+  }
+
+  void sendConfig(int maxRounds) {
+    _connectionManager?.sendConfig(maxRounds);
   }
 }
 
@@ -100,9 +165,9 @@ class NetworkConnectionManager {
   ServerSocket? _serverSocket;
   Socket? _clientSocket;
   String _buffer = '';
-  final Function(ConnectionStatusEnum) onStatusChanged;
-  final Function(String) onMessageReceived;
-  final Function(String) onError;
+  Function(ConnectionStatusEnum) onStatusChanged;
+  Function(String) onMessageReceived;
+  Function(String) onError;
 
   NetworkConnectionManager({
     ServerSocket? serverSocket,
