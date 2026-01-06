@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
-import 'package:jogo_da_velha/data/interfaces/services/network_service_interface.dart';
+import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 /// Service que executa operações de rede

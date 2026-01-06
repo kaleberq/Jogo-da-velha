@@ -1,6 +1,6 @@
 import 'package:jogo_da_velha/data/services/network_service.dart';
-import 'package:jogo_da_velha/domain/interfaces/game_repository_interface.dart';
-import 'package:jogo_da_velha/data/interfaces/services/network_service_interface.dart';
+import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
+import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 
 /// Implementação concreta do IGameRepository
 /// Usa INetworkService para executar operações de rede

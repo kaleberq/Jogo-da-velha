@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/old_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/data/models/old_tic_tac_toe_game_model.dart';
 
 void main() {
   group('TicTacToeGame', () {

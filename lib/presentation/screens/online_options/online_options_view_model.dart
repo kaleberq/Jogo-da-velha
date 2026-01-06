@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:jogo_da_velha/domain/models/online_options_model.dart';
-import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
-import 'package:jogo_da_velha/domain/interfaces/game_repository_interface.dart';
+import 'package:jogo_da_velha/presentation/screens/online_options/models/online_options_model.dart';
+import 'package:jogo_da_velha/data/repositories/game_repository.dart';
+import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 
 class OnlineOptionsViewModel extends ChangeNotifier {
   final IGameRepository _gameRepository = GameRepository();

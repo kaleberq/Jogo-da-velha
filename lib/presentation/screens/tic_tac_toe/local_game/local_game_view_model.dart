@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
+import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
 class LocalGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;

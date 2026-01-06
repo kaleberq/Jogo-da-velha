@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 
 class ScoreDisplayComponent extends StatelessWidget {
   final TicTacToeGameModel game;
