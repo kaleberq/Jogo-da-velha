@@ -189,34 +189,32 @@ class _LocalGameScreenState extends State<LocalGameScreen>
             currentMaxRounds: viewModel.game.maxRounds,
             onMaxRoundsChanged: onMaxRoundsChanged,
           ),
-          body: Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CurrentPlayerIndicatorComponent(game: viewModel.game),
-                    ScoreDisplayComponent(game: viewModel.game),
-                    GameBoardComponent(
-                      game: viewModel.game,
-                      winningLineAnimation: _winningLineAnimation,
-                      onCellTap:
-                          ({required int rowIndex, required int columnIndex}) =>
-                              onCellTap(
-                                rowIndex: rowIndex,
-                                columnIndex: columnIndex,
-                              ),
-                    ),
-                  ],
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              spacing: 24,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CurrentPlayerIndicatorComponent(game: viewModel.game),
+                ScoreDisplayComponent(game: viewModel.game),
+                GameBoardComponent(
+                  game: viewModel.game,
+                  winningLineAnimation: _winningLineAnimation,
+                  onCellTap:
+                      ({required int rowIndex, required int columnIndex}) =>
+                          onCellTap(
+                            rowIndex: rowIndex,
+                            columnIndex: columnIndex,
+                          ),
                 ),
-              ),
-              if (_roundEndMessage != null)
-                RoundEndBannerComponent(
-                  roundEndMessage: _roundEndMessage!,
-                  roundWinner: _roundWinner,
-                  onNextRound: nextRound,
-                ),
-            ],
+                if (_roundEndMessage != null)
+                  RoundEndBannerComponent(
+                    roundEndMessage: _roundEndMessage!,
+                    roundWinner: _roundWinner,
+                    onNextRound: nextRound,
+                  ),
+              ],
+            ),
           ),
         );
       },

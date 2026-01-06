@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
@@ -252,33 +253,31 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
             isMyTurn: _isMyTurn,
             onResetPressed: resetAll,
           ),
-          body: Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CurrentPlayerIndicatorComponent(game: viewModel.game),
-                    GameBoardComponent(
-                      game: viewModel.game,
-                      winningLineAnimation: _winningLineAnimation,
-                      onCellTap:
-                          ({required int rowIndex, required int columnIndex}) =>
-                              onCellTap(
-                                rowIndex: rowIndex,
-                                columnIndex: columnIndex,
-                              ),
-                    ),
-                  ],
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            child: Column(
+              spacing: 24,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ScoreDisplayComponent(game: viewModel.game),
+                GameBoardComponent(
+                  game: viewModel.game,
+                  winningLineAnimation: _winningLineAnimation,
+                  onCellTap:
+                      ({required int rowIndex, required int columnIndex}) =>
+                          onCellTap(
+                            rowIndex: rowIndex,
+                            columnIndex: columnIndex,
+                          ),
                 ),
-              ),
-              if (_roundEndMessage != null)
-                RoundEndBannerComponent(
-                  roundEndMessage: _roundEndMessage!,
-                  roundWinner: _roundWinner,
-                  onNextRound: nextRound,
-                ),
-            ],
+                // if (_roundEndMessage != null)
+                //   RoundEndBannerComponent(
+                //     roundEndMessage: _roundEndMessage!,
+                //     roundWinner: _roundWinner,
+                //     onNextRound: nextRound,
+                //   ),
+              ],
+            ),
           ),
         );
       },
