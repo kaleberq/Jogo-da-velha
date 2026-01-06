@@ -24,13 +24,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
 
-  late final OnlineGameViewModel viewModel;
+  late final OnlineGameViewModel viewModel = OnlineGameViewModel(
+    isHost: widget.isHost,
+  );
 
   @override
   void initState() {
     super.initState();
-
-    viewModel = OnlineGameViewModel(isHost: widget.isHost);
 
     _winningLineAnimationController = AnimationController(
       vsync: this,

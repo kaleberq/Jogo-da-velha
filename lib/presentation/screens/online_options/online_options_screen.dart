@@ -31,9 +31,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
     if (!mounted || _hasNavigated) return;
 
     // Navega para o jogo quando conectado
-    if (_viewModel.navigatingToGame) {
+    if (_viewModel.onlineOptions.navigatingToGame) {
       _hasNavigated = true;
-      final isHost = _viewModel.serverIP != null;
+      final isHost = _viewModel.onlineOptions.serverIP != null;
       Future.microtask(() {
         if (mounted) {
           Navigator.of(context).pushReplacement(
@@ -101,13 +101,13 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                   // Criar Servidor (Host)
                   Card(
                     elevation: 4,
-                    color: _viewModel.serverIP != null
+                    color: _viewModel.onlineOptions.serverIP != null
                         ? Colors.green.shade50
                         : null,
                     child: InkWell(
                       onTap:
-                          _viewModel.isCreatingServer ||
-                              _viewModel.serverIP != null
+                          _viewModel.onlineOptions.isCreatingServer ||
+                              _viewModel.onlineOptions.serverIP != null
                           ? null
                           : _createServer,
                       borderRadius: BorderRadius.circular(12),
@@ -118,7 +118,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                             Icon(
                               Icons.wifi,
                               size: 48,
-                              color: _viewModel.serverIP != null
+                              color: _viewModel.onlineOptions.serverIP != null
                                   ? Colors.green
                                   : Colors.grey,
                             ),
@@ -135,13 +135,13 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (_viewModel.serverIP != null)
+                                  if (_viewModel.onlineOptions.serverIP != null)
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'IP: ${_viewModel.serverIP}',
+                                          'IP: ${_viewModel.onlineOptions.serverIP}',
                                           style: const TextStyle(
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold,
@@ -157,7 +157,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                         ),
                                       ],
                                     )
-                                  else if (_viewModel.isCreatingServer)
+                                  else if (_viewModel
+                                      .onlineOptions
+                                      .isCreatingServer)
                                     const Text(
                                       'Criando servidor...',
                                       style: TextStyle(color: Colors.orange),
@@ -170,9 +172,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                 ],
                               ),
                             ),
-                            if (_viewModel.isCreatingServer)
+                            if (_viewModel.onlineOptions.isCreatingServer)
                               const CircularProgressIndicator()
-                            else if (_viewModel.serverIP != null)
+                            else if (_viewModel.onlineOptions.serverIP != null)
                               const Icon(
                                 Icons.check_circle,
                                 color: Colors.green,
@@ -229,7 +231,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _viewModel.isConnecting
+                              onPressed: _viewModel.onlineOptions.isConnecting
                                   ? null
                                   : _connectToServer,
                               style: ElevatedButton.styleFrom(
@@ -240,7 +242,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: _viewModel.isConnecting
+                              child: _viewModel.onlineOptions.isConnecting
                                   ? const CircularProgressIndicator()
                                   : const Text(
                                       'Conectar',
