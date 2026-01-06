@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
+import 'package:jogo_da_velha/data/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
 /// Service que executa operações de rede
 /// Singleton que mantém estado da conexão
-class NetworkService {
+class NetworkService implements INetworkService {
   NetworkConnectionManager? _connectionManager;
 
   // Callbacks - serão definidos pelo Repository
@@ -24,16 +25,19 @@ class NetworkService {
   // -----------------------
 
   // Configurar callbacks
+  @override
   set onMessageReceived(Function(String)? callback) {
     _onMessageReceived = callback;
     _updateConnectionManagerCallbacks();
   }
 
+  @override
   set onConnectionStatusChanged(Function(String)? callback) {
     _onConnectionStatusChanged = callback;
     _updateConnectionManagerCallbacks();
   }
 
+  @override
   set onError(Function(String)? callback) {
     _onError = callback;
     _updateConnectionManagerCallbacks();
@@ -54,6 +58,7 @@ class NetworkService {
   }
 
   // Obter o IP local do dispositivo
+  @override
   Future<String?> getLocalIP() async {
     try {
       final networkInfo = NetworkInfo();
@@ -65,6 +70,7 @@ class NetworkService {
   }
 
   /// Cria um servidor e retorna o IP local
+  @override
   Future<String?> startServer({int port = 8080}) async {
     try {
       _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
@@ -100,6 +106,7 @@ class NetworkService {
   }
 
   /// Conecta a um servidor
+  @override
   Future<bool> connectToServer(String ip, {int port = 8080}) async {
     try {
       _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
@@ -137,23 +144,28 @@ class NetworkService {
     }
   }
 
+  @override
   void disconnect() {
     _connectionManager?.disconnect();
     _connectionManager = null;
   }
 
+  @override
   void sendMove(int row, int col, String player) {
     _connectionManager?.sendMove(row, col, player);
   }
 
+  @override
   void sendReset() {
     _connectionManager?.sendReset();
   }
 
+  @override
   void sendNextRound() {
     _connectionManager?.sendNextRound();
   }
 
+  @override
   void sendConfig(int maxRounds) {
     _connectionManager?.sendConfig(maxRounds);
   }

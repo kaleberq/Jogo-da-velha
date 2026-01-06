@@ -7,11 +7,12 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
+import 'package:jogo_da_velha/domain/interfaces/game_repository_interface.dart';
 
 class OnlineGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   final bool isHost;
-  final GameRepository _gameRepository;
+  final IGameRepository _gameRepository;
 
   // Estado da conexão gerenciado pelo ViewModel
   final NetworkConnectionModel _connectionState = NetworkConnectionModel();

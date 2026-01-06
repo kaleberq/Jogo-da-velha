@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/domain/models/online_options_model.dart';
 import 'package:jogo_da_velha/domain/repositories/game_repository.dart';
+import 'package:jogo_da_velha/domain/interfaces/game_repository_interface.dart';
 
 class OnlineOptionsViewModel extends ChangeNotifier {
-  final GameRepository _gameRepository = GameRepository();
+  final IGameRepository _gameRepository = GameRepository();
   final OnlineOptionsModel _onlineOptions = OnlineOptionsModel();
 
   OnlineOptionsViewModel() {
