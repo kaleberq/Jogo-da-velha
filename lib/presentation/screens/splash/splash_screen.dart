@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/tokens/ds_colors.dart';
+import 'package:flutter_design_system/tokens/ds_typography.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -44,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.addStatusListener(_startBoardAnimation);
 
     // Espera a animação do traço terminar para navegar
-    //_lineAnimationController.addStatusListener(_navigateToMenu);
+    _lineAnimationController.addStatusListener(_navigateToMenu);
 
     // Configura callbacks do ViewModel
     _viewModel.onLineAnimationReady = () {
@@ -105,14 +107,10 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   ),
                 ),
-
                 Text(
                   'Jogo da Velha',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2,
+                  style: DSTypographySemiBold.labelXLarge.copyWith(
+                    color: DSColors.background,
                   ),
                 ),
               ],
