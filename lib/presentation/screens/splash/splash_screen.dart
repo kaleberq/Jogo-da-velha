@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/models/splash_model.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -116,23 +116,33 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: const Color(0xFF1565C0),
       body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SizedBox(
-            width: 350,
-            height: 350,
-            child: ClipRect(
-              child: Center(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: GameBoardComponent(
-                    game: _game,
-                    winningLineAnimation: _lineAnimation,
-                  ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 50,
+          children: [
+            SizedBox(
+              height: 200,
+              width: 200,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: GameBoardComponent(
+                  game: _game,
+                  winningLineAnimation: _lineAnimation,
+                  lineSize: 200,
                 ),
               ),
             ),
-          ),
+
+            Text(
+              'Jogo da Velha',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 2,
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:jogo_da_velha/presentation/screens/components/winning_line_overl
 class GameBoardComponent extends StatelessWidget {
   final TicTacToeGameModel game;
   final Animation<double> winningLineAnimation;
+  final double lineSize;
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const GameBoardComponent({
@@ -14,6 +15,7 @@ class GameBoardComponent extends StatelessWidget {
     required this.game,
     required this.winningLineAnimation,
     this.onCellTap,
+    this.lineSize = 300,
   });
 
   @override
@@ -78,7 +80,7 @@ class GameBoardComponent extends StatelessWidget {
             builder: (context, child) {
               return WinningLineOverlayComponent(
                 winningLine: game.winningLine,
-                boardSize: 300,
+                boardSize: lineSize,
                 animationProgress: winningLineAnimation.value,
               );
             },
