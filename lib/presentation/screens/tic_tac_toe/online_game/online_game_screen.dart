@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/dialogs/disconnected_dialog.dart';
@@ -18,7 +18,6 @@ class OnlineGameScreen extends StatefulWidget {
 
 class _OnlineGameScreenState extends State<OnlineGameScreen>
     with TickerProviderStateMixin {
-  String? _roundEndMessage;
   PlayerEnum? _roundWinner;
   bool _isMyTurn = true;
   late AnimationController _winningLineAnimationController;
@@ -127,7 +126,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     if (viewModel.isAllRoundsFinished) {
       _showFinalScoreDialog();
     } else {
-      _showRoundEndDialog();
+      _showRoundEnd();
     }
   }
 
@@ -196,7 +195,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     );
   }
 
-  void _showRoundEndDialog() {
+  void _showRoundEnd() {
     String message;
     if (viewModel.game.winner != null) {
       message = 'Jogador ${viewModel.game.winner?.value} venceu este round!';
@@ -205,25 +204,36 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     }
 
     setState(() {
-      _roundEndMessage = message;
       _roundWinner = viewModel.game.winner;
     });
+
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) {
+        return RoundEndBottomSheet(
+          roundEndMessage: message,
+          roundWinner: _roundWinner,
+          onNextRound: () {
+            _hideRoundEndMessage();
+            _winningLineAnimationController.reset();
+            viewModel.sendNextRound();
+            viewModel.nextRound();
+            _isMyTurn = widget.isHost;
+
+            Navigator.of(context).pop();
+            setState(() {});
+          },
+        );
+      },
+    );
   }
 
   void _hideRoundEndMessage() {
     setState(() {
-      _roundEndMessage = null;
       _roundWinner = null;
     });
-  }
-
-  void nextRound() {
-    _hideRoundEndMessage();
-    _winningLineAnimationController.reset();
-    viewModel.sendNextRound();
-    viewModel.nextRound();
-    _isMyTurn = widget.isHost;
-    setState(() {});
   }
 
   void resetAll() {
@@ -269,12 +279,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                             columnIndex: columnIndex,
                           ),
                 ),
-                if (_roundEndMessage != null)
-                  RoundEndBannerComponent(
-                    roundEndMessage: _roundEndMessage!,
-                    roundWinner: _roundWinner,
-                    onNextRound: nextRound,
-                  ),
               ],
             ),
           ),

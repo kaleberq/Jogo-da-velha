@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
-class RoundEndBannerComponent extends StatelessWidget {
+class RoundEndBottomSheet extends StatelessWidget {
   final String roundEndMessage;
   final PlayerEnum? roundWinner;
   final VoidCallback onNextRound;
 
-  const RoundEndBannerComponent({
+  const RoundEndBottomSheet({
     super.key,
     required this.roundEndMessage,
     required this.roundWinner,
@@ -32,25 +32,28 @@ class RoundEndBannerComponent extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Text(
-              roundEndMessage,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      child: SafeArea(
+        top: false, // evita espaçamento desnecessário no topo
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                roundEndMessage,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          TextButton(
-            onPressed: onNextRound,
-            style: TextButton.styleFrom(foregroundColor: Colors.white),
-            child: const Text('Próximo Round'),
-          ),
-        ],
+            TextButton(
+              onPressed: onNextRound,
+              style: TextButton.styleFrom(foregroundColor: Colors.white),
+              child: const Text('Próximo Round'),
+            ),
+          ],
+        ),
       ),
     );
   }

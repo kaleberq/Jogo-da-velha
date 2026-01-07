@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
@@ -15,7 +15,6 @@ class LocalGameScreen extends StatefulWidget {
 
 class _LocalGameScreenState extends State<LocalGameScreen>
     with TickerProviderStateMixin {
-  String? _roundEndMessage;
   PlayerEnum? _roundWinner;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
@@ -74,7 +73,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       // Por enquanto, vamos usar os dados do viewModel
       _showFinalScoreDialog();
     } else {
-      showRoundEndDialog();
+      showRoundEnd();
     }
   }
 
@@ -143,7 +142,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     );
   }
 
-  void showRoundEndDialog() {
+  void showRoundEnd() {
     String message;
     if (viewModel.game.winner != null) {
       message = 'Jogador ${viewModel.game.winner?.value} venceu este round!';
@@ -152,14 +151,31 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     }
 
     setState(() {
-      _roundEndMessage = message;
       _roundWinner = viewModel.game.winner;
     });
+
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      enableDrag: false,
+      builder: (context) {
+        return RoundEndBottomSheet(
+          roundEndMessage: message,
+          roundWinner: _roundWinner,
+          onNextRound: () {
+            _winningLineAnimationController.reset();
+            viewModel.nextRound();
+
+            Navigator.of(context).pop();
+            setState(() {});
+          },
+        );
+      },
+    );
   }
 
   void hideRoundEndMessage() {
     setState(() {
-      _roundEndMessage = null;
       _roundWinner = null;
     });
   }
@@ -207,12 +223,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
                             columnIndex: columnIndex,
                           ),
                 ),
-                if (_roundEndMessage != null)
-                  RoundEndBannerComponent(
-                    roundEndMessage: _roundEndMessage!,
-                    roundWinner: _roundWinner,
-                    onNextRound: nextRound,
-                  ),
               ],
             ),
           ),
