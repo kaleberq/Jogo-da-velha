@@ -1,11 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/splash/models/splash_model.dart';
-import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,15 +16,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  final TicTacToeGameModel _game = TicTacToeGameModel();
-  final SplashModel _state = SplashModel();
-
-  // Posições da diagonal principal
-  final List<Map<DirectionEnum, int>> _diagonalPositions = [
-    {DirectionEnum.row: 0, DirectionEnum.col: 0},
-    {DirectionEnum.row: 1, DirectionEnum.col: 1},
-    {DirectionEnum.row: 2, DirectionEnum.col: 2},
-  ];
+  final SplashViewModel _viewModel = SplashViewModel();
 
   @override
   void initState() {
@@ -59,45 +46,35 @@ class _SplashScreenState extends State<SplashScreen>
     // Espera a animação do traço terminar para navegar
     _lineAnimationController.addStatusListener(_navigateToMenu);
 
+    // Configura callbacks do ViewModel
+    _viewModel.onLineAnimationReady = () {
+      if (mounted) {
+        _lineAnimationController.forward();
+      }
+    };
+
+    _viewModel.onNavigateToMenu = () {
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const MenuScreen()),
+        );
+      }
+    };
+
     super.initState();
   }
 
   void _startBoardAnimation(AnimationStatus status) {
     if (status == AnimationStatus.completed &&
-        !_state.hasStartedBoardAnimation &&
+        !_viewModel.state.hasStartedBoardAnimation &&
         mounted) {
-      _state.hasStartedBoardAnimation = true;
-      // Adiciona X's progressivamente na diagonal
-      _state.boardAnimationTimer = Timer.periodic(
-        const Duration(milliseconds: 500),
-        (timer) {
-          if (_state.currentIndex < _diagonalPositions.length && mounted) {
-            setState(() {
-              final pos = _diagonalPositions[_state.currentIndex];
-              _game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
-                  PlayerEnum.x;
-              _state.incrementIndex();
-            });
-          } else {
-            timer.cancel();
-            // Configura a linha de vitória e inicia a animação do traço
-            if (mounted) {
-              setState(() {
-                _game.winningLine = WinningLineModel.diagonalMain();
-              });
-              _lineAnimationController.forward();
-            }
-          }
-        },
-      );
+      _viewModel.startBoardAnimation();
     }
   }
 
   void _navigateToMenu(AnimationStatus status) {
     if (status == AnimationStatus.completed && mounted) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MenuScreen()),
-      );
+      _viewModel.navigateToMenu();
     }
   }
 
@@ -107,44 +84,49 @@ class _SplashScreenState extends State<SplashScreen>
     _lineAnimationController.removeStatusListener(_navigateToMenu);
     _animationController.dispose();
     _lineAnimationController.dispose();
-    _state.cancelTimer();
+    _viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1565C0),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 50,
-          children: [
-            SizedBox(
-              height: 200,
-              width: 200,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: GameBoardComponent(
-                  game: _game,
-                  winningLineAnimation: _lineAnimation,
-                  lineSize: 200,
+    return ListenableBuilder(
+      listenable: _viewModel,
+      builder: (context, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF1565C0),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 50,
+              children: [
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: GameBoardComponent(
+                      game: _viewModel.game,
+                      winningLineAnimation: _lineAnimation,
+                      lineSize: 200,
+                    ),
+                  ),
                 ),
-              ),
-            ),
 
-            Text(
-              'Jogo da Velha',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: 2,
-              ),
+                Text(
+                  'Jogo da Velha',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
