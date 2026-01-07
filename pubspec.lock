@@ -118,6 +118,15 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_design_system:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "v0.0.1"
+      resolved-ref: "234e040cb21c8583a5df2bce756469cc2d856556"
+      url: "git@github.com:kaleberq/flutter_design_system.git"
+    source: git
+    version: "0.0.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
