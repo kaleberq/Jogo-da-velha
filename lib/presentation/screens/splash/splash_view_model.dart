@@ -17,9 +17,6 @@ class SplashViewModel extends ChangeNotifier {
     {DirectionEnum.row: 2, DirectionEnum.col: 2},
   ];
 
-  // Callback para navegação - será definido pela UI
-  VoidCallback? onNavigateToMenu;
-
   TicTacToeGameModel get game => _ticTacToeGameState;
   SplashModel get state => _splashState;
 
@@ -52,10 +49,6 @@ class SplashViewModel extends ChangeNotifier {
 
   // Callback para quando a animação do traço está pronta
   VoidCallback? onLineAnimationReady;
-
-  void navigateToMenu() {
-    onNavigateToMenu?.call();
-  }
 
   @override
   void dispose() {

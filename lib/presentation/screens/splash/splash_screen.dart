@@ -44,20 +44,12 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.addStatusListener(_startBoardAnimation);
 
     // Espera a animação do traço terminar para navegar
-    _lineAnimationController.addStatusListener(_navigateToMenu);
+    //_lineAnimationController.addStatusListener(_navigateToMenu);
 
     // Configura callbacks do ViewModel
     _viewModel.onLineAnimationReady = () {
       if (mounted) {
         _lineAnimationController.forward();
-      }
-    };
-
-    _viewModel.onNavigateToMenu = () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const MenuScreen()),
-        );
       }
     };
 
@@ -74,14 +66,15 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _navigateToMenu(AnimationStatus status) {
     if (status == AnimationStatus.completed && mounted) {
-      _viewModel.navigateToMenu();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const MenuScreen()),
+      );
     }
   }
 
   @override
   void dispose() {
     _animationController.removeStatusListener(_startBoardAnimation);
-    _lineAnimationController.removeStatusListener(_navigateToMenu);
     _animationController.dispose();
     _lineAnimationController.dispose();
     _viewModel.dispose();
