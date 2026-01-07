@@ -15,50 +15,42 @@ class RoundEndBannerComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: roundWinner == PlayerEnum.x
-              ? Colors.blue.shade700
-              : roundWinner == PlayerEnum.o
-              ? Colors.red.shade700
-              : Colors.grey.shade700,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.2),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  roundEndMessage,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: onNextRound,
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-                child: const Text('Próximo Round'),
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: roundWinner == PlayerEnum.x
+            ? Colors.blue.shade700
+            : roundWinner == PlayerEnum.o
+            ? Colors.red.shade700
+            : Colors.grey.shade700,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(
+              roundEndMessage,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onNextRound,
+            style: TextButton.styleFrom(foregroundColor: Colors.white),
+            child: const Text('Próximo Round'),
+          ),
+        ],
       ),
     );
   }

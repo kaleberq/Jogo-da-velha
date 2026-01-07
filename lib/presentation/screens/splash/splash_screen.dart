@@ -122,12 +122,13 @@ class _SplashScreenState extends State<SplashScreen>
             width: 350,
             height: 350,
             child: ClipRect(
-              child: Transform.scale(
-                scale: 0.8, // Escala baseada no board interno (300x300)
-                alignment: Alignment.center,
-                child: GameBoardComponent(
-                  game: _game,
-                  winningLineAnimation: _lineAnimation,
+              child: Center(
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: GameBoardComponent(
+                    game: _game,
+                    winningLineAnimation: _lineAnimation,
+                  ),
                 ),
               ),
             ),

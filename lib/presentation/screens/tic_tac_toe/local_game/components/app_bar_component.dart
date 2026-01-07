@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
   final int? currentMaxRounds;
   final Function(int)? onMaxRoundsChanged;
+  final PlayerEnum currentPlayer;
 
   const AppBarComponent({
     super.key,
     this.onResetPressed,
     this.currentMaxRounds,
     this.onMaxRoundsChanged,
+    required this.currentPlayer,
   });
 
   @override
@@ -20,6 +24,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
         tooltip: 'Voltar',
       ),
+      title: CurrentPlayerIndicatorComponent(currentPlayer: currentPlayer),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),

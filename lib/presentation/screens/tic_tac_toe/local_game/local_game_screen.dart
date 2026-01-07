@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_banner_component.dart';
 
 class LocalGameScreen extends StatefulWidget {
   const LocalGameScreen({super.key});
@@ -188,14 +187,15 @@ class _LocalGameScreenState extends State<LocalGameScreen>
             onResetPressed: resetAll,
             currentMaxRounds: viewModel.game.maxRounds,
             onMaxRoundsChanged: onMaxRoundsChanged,
+            currentPlayer: viewModel.game.currentPlayer,
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               spacing: 24,
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CurrentPlayerIndicatorComponent(game: viewModel.game),
                 ScoreDisplayComponent(game: viewModel.game),
                 GameBoardComponent(
                   game: viewModel.game,
