@@ -122,11 +122,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "v0.0.12"
-      resolved-ref: "1472c725c149189538da14bd8b2f8be9cdf4c3b1"
+      ref: "v0.0.13"
+      resolved-ref: "0b63d7903a8cbd0560a2aebb0c50a16640d6f748"
       url: "git@github.com:kaleberq/flutter_design_system.git"
     source: git
-    version: "0.0.12"
+    version: "0.0.13"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
