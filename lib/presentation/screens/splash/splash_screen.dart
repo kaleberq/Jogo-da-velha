@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_design_system/tokens/ds_colors.dart';
-import 'package:flutter_design_system/tokens/ds_typography.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -89,11 +88,11 @@ class _SplashScreenState extends State<SplashScreen>
       listenable: _viewModel,
       builder: (context, _) {
         return Scaffold(
-          backgroundColor: const Color(0xFF1565C0),
+          backgroundColor: DSColors.primary,
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 50,
+              spacing: DSSpacing.xxl,
               children: [
                 SizedBox(
                   height: 200,

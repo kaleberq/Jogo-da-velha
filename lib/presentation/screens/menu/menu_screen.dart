@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_screen.dart';
 
@@ -13,20 +14,25 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Jogo da Velha'), centerTitle: true),
+      appBar: AppBar(
+        title: Text(
+          'Escolha um modo de jogo',
+          style: DSTypographySemiBold.labelLarge.copyWith(
+            color: DSColors.textPrimary,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(
+            vertical: DSSpacing.md,
+            horizontal: DSSpacing.lg,
+          ),
           child: Column(
+            spacing: DSSpacing.lg,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Escolha um modo de jogo',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 48),
-
-              // Modo Local
               Card(
                 elevation: 4,
                 child: InkWell(
@@ -37,46 +43,45 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     );
                   },
-                  borderRadius: BorderRadius.circular(12),
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(DSSpacing.lg),
                     child: Row(
+                      spacing: DSSpacing.md,
                       children: [
                         const Icon(
                           Icons.phone_android,
                           size: 48,
-                          color: Colors.blue,
+                          color: DSColors.primary,
                         ),
-                        const SizedBox(width: 16),
-                        const Expanded(
+                        Expanded(
                           child: Column(
+                            spacing: DSSpacing.xs,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Modo Local',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                style: DSTypographySemiBold.labelLarge.copyWith(
+                                  color: DSColors.textPrimary,
                                 ),
                               ),
-                              SizedBox(height: 4),
                               Text(
                                 'Jogue no mesmo dispositivo',
-                                style: TextStyle(color: Colors.grey),
+                                style: DSTypographyMedium.labelSmall.copyWith(
+                                  color: DSColors.textSecondary,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: DSColors.primary,
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              // Jogar Online
               Card(
                 elevation: 4,
                 child: InkWell(
@@ -87,33 +92,40 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                     );
                   },
-                  borderRadius: BorderRadius.circular(12),
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(DSSpacing.lg),
                     child: Row(
+                      spacing: DSSpacing.md,
                       children: [
-                        const Icon(Icons.wifi, size: 48, color: Colors.blue),
-                        const SizedBox(width: 16),
-                        const Expanded(
+                        const Icon(
+                          Icons.wifi,
+                          size: 48,
+                          color: DSColors.primary,
+                        ),
+                        Expanded(
                           child: Column(
-                            spacing: 4,
+                            spacing: DSSpacing.xs,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Jogar Online',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                style: DSTypographySemiBold.labelLarge.copyWith(
+                                  color: DSColors.textPrimary,
                                 ),
                               ),
                               Text(
                                 'Jogue com outro jogador online',
-                                style: TextStyle(color: Colors.grey),
+                                style: DSTypographyMedium.labelSmall.copyWith(
+                                  color: DSColors.textSecondary,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(Icons.arrow_forward_ios),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          color: DSColors.primary,
+                        ),
                       ],
                     ),
                   ),
