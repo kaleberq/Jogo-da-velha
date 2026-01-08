@@ -18,7 +18,7 @@ class _MenuScreenState extends State<MenuScreen> {
         title: Text(
           'Escolha um modo de jogo',
           style: DSTypographySemiBold.labelLarge.copyWith(
-            color: DSColors.textPrimary,
+            color: context.colorScheme.onSurface,
           ),
         ),
         centerTitle: true,
@@ -48,10 +48,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Row(
                       spacing: DSSpacing.md,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.phone_android,
                           size: 48,
-                          color: DSColors.primary,
+                          color: context.colorScheme.primary,
                         ),
                         Expanded(
                           child: Column(
@@ -61,21 +61,21 @@ class _MenuScreenState extends State<MenuScreen> {
                               Text(
                                 'Modo Local',
                                 style: DSTypographySemiBold.labelLarge.copyWith(
-                                  color: DSColors.textPrimary,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                               Text(
                                 'Jogue no mesmo dispositivo',
                                 style: DSTypographyMedium.labelSmall.copyWith(
-                                  color: DSColors.textSecondary,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios,
-                          color: DSColors.primary,
+                          color: context.colorScheme.primary,
                         ),
                       ],
                     ),
@@ -97,10 +97,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Row(
                       spacing: DSSpacing.md,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.wifi,
                           size: 48,
-                          color: DSColors.primary,
+                          color: context.colorScheme.primary,
                         ),
                         Expanded(
                           child: Column(
@@ -110,21 +110,21 @@ class _MenuScreenState extends State<MenuScreen> {
                               Text(
                                 'Jogar Online',
                                 style: DSTypographySemiBold.labelLarge.copyWith(
-                                  color: DSColors.textPrimary,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                               Text(
                                 'Jogue com outro jogador online',
                                 style: DSTypographyMedium.labelSmall.copyWith(
-                                  color: DSColors.textSecondary,
+                                  color: context.colorScheme.onSurface,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           Icons.arrow_forward_ios,
-                          color: DSColors.primary,
+                          color: context.colorScheme.primary,
                         ),
                       ],
                     ),
