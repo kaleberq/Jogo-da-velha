@@ -38,7 +38,7 @@ dependencies:
   flutter_design_system:
     git:
       url: git@github.com:kaleberq/flutter_design_system.git
-      ref: v0.0.18
+      ref: v0.0.21
 
 dev_dependencies:
   flutter_test:

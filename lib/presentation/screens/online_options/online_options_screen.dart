@@ -3,22 +3,23 @@ import 'package:jogo_da_velha/presentation/screens/online_options/online_options
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
 
 class OnlineOptionsScreen extends StatefulWidget {
-  const OnlineOptionsScreen({super.key});
+  final OnlineOptionsViewModel viewModel;
+
+  const OnlineOptionsScreen({super.key, required this.viewModel});
 
   @override
   State<OnlineOptionsScreen> createState() => _OnlineOptionsScreenState();
 }
 
 class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
-  final OnlineOptionsViewModel _viewModel = OnlineOptionsViewModel();
   final TextEditingController _ipController = TextEditingController();
   bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
-    _viewModel.addListener(_onViewModelChanged);
-    _viewModel.onError = (error) {
+    widget.viewModel.addListener(_onViewModelChanged);
+    widget.viewModel.onError = (error) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -31,9 +32,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
     if (!mounted || _hasNavigated) return;
 
     // Navega para o jogo quando conectado
-    if (_viewModel.onlineOptions.navigatingToGame) {
+    if (widget.viewModel.onlineOptions.navigatingToGame) {
       _hasNavigated = true;
-      final isHost = _viewModel.onlineOptions.serverIP != null;
+      final isHost = widget.viewModel.onlineOptions.serverIP != null;
       Future.microtask(() {
         if (mounted) {
           Navigator.of(context).pushReplacement(
@@ -48,14 +49,14 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
-    _viewModel.dispose();
+    widget.viewModel.removeListener(_onViewModelChanged);
+    widget.viewModel.dispose();
     _ipController.dispose();
     super.dispose();
   }
 
   Future<void> _createServer() async {
-    final ip = await _viewModel.createServer();
+    final ip = await widget.viewModel.createServer();
     if (ip == null && mounted) {
       ScaffoldMessenger.of(
         context,
@@ -71,7 +72,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
       return;
     }
 
-    final connected = await _viewModel.connectToServer(_ipController.text);
+    final connected = await widget.viewModel.connectToServer(
+      _ipController.text,
+    );
     if (!connected && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao conectar ao servidor')),
@@ -82,7 +85,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _viewModel,
+      listenable: widget.viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(title: const Text('Jogar Online'), centerTitle: true),
@@ -101,13 +104,13 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                   // Criar Servidor (Host)
                   Card(
                     elevation: 4,
-                    color: _viewModel.onlineOptions.serverIP != null
+                    color: widget.viewModel.onlineOptions.serverIP != null
                         ? Colors.green.shade50
                         : null,
                     child: InkWell(
                       onTap:
-                          _viewModel.onlineOptions.isCreatingServer ||
-                              _viewModel.onlineOptions.serverIP != null
+                          widget.viewModel.onlineOptions.isCreatingServer ||
+                              widget.viewModel.onlineOptions.serverIP != null
                           ? null
                           : _createServer,
                       borderRadius: BorderRadius.circular(12),
@@ -118,7 +121,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                             Icon(
                               Icons.wifi,
                               size: 48,
-                              color: _viewModel.onlineOptions.serverIP != null
+                              color:
+                                  widget.viewModel.onlineOptions.serverIP !=
+                                      null
                                   ? Colors.green
                                   : Colors.grey,
                             ),
@@ -135,13 +140,14 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (_viewModel.onlineOptions.serverIP != null)
+                                  if (widget.viewModel.onlineOptions.serverIP !=
+                                      null)
                                     Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'IP: ${_viewModel.onlineOptions.serverIP}',
+                                          'IP: ${widget.viewModel.onlineOptions.serverIP}',
                                           style: const TextStyle(
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold,
@@ -157,7 +163,8 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                         ),
                                       ],
                                     )
-                                  else if (_viewModel
+                                  else if (widget
+                                      .viewModel
                                       .onlineOptions
                                       .isCreatingServer)
                                     const Text(
@@ -172,9 +179,10 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                 ],
                               ),
                             ),
-                            if (_viewModel.onlineOptions.isCreatingServer)
+                            if (widget.viewModel.onlineOptions.isCreatingServer)
                               const CircularProgressIndicator()
-                            else if (_viewModel.onlineOptions.serverIP != null)
+                            else if (widget.viewModel.onlineOptions.serverIP !=
+                                null)
                               const Icon(
                                 Icons.check_circle,
                                 color: Colors.green,
@@ -231,7 +239,8 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _viewModel.onlineOptions.isConnecting
+                              onPressed:
+                                  widget.viewModel.onlineOptions.isConnecting
                                   ? null
                                   : _connectToServer,
                               style: ElevatedButton.styleFrom(
@@ -242,7 +251,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: _viewModel.onlineOptions.isConnecting
+                              child: widget.viewModel.onlineOptions.isConnecting
                                   ? const CircularProgressIndicator()
                                   : const Text(
                                       'Conectar',
