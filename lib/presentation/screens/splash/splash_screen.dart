@@ -109,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   'Jogo da Velha',
                   style: DSTypographySemiBold.labelXLarge.copyWith(
-                    color: DSColors.background,
+                    color: DSColors.dark,
                   ),
                 ),
               ],
