@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_design_system/themes/ds_theme.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_screen.dart';
 
 void main() {
@@ -16,10 +17,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Jogo da Velha',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      theme: DSTheme.light(),
+      darkTheme: DSTheme.dark(),
+      themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );
   }
