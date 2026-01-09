@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/current_player_indicator_component.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
@@ -24,7 +23,14 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
         tooltip: 'Voltar',
       ),
-      title: CurrentPlayerIndicatorComponent(currentPlayer: currentPlayer),
+      title: Text(
+        'Vez do jogador: ${currentPlayer.value}',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: currentPlayer == PlayerEnum.x ? Colors.blue : Colors.red,
+        ),
+      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),
