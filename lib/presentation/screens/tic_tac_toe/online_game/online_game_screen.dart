@@ -8,9 +8,9 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/onlin
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/dialogs/disconnected_dialog.dart';
 
 class OnlineGameScreen extends StatefulWidget {
-  final bool isHost;
+  final OnlineGameViewModel viewModel;
 
-  const OnlineGameScreen({super.key, required this.isHost});
+  const OnlineGameScreen({super.key, required this.viewModel});
 
   @override
   State<OnlineGameScreen> createState() => _OnlineGameScreenState();
@@ -22,10 +22,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   bool _isMyTurn = true;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
-
-  late final OnlineGameViewModel viewModel = OnlineGameViewModel(
-    isHost: widget.isHost,
-  );
 
   @override
   void initState() {
@@ -43,50 +39,50 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       ),
     );
 
-    _isMyTurn = widget.isHost;
+    _isMyTurn = widget.viewModel.isHost;
     _setupViewModelCallbacks();
   }
 
   void _setupViewModelCallbacks() {
-    viewModel.onOpponentDisconnected = () {
+    widget.viewModel.onOpponentDisconnected = () {
       if (mounted) {
         DisconnectedDialog.show(context);
       }
     };
-    viewModel.onError = (error) {
+    widget.viewModel.onError = (error) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(error)));
       }
     };
-    viewModel.onMoveReceived = (row, col, player) {
+    widget.viewModel.onMoveReceived = (row, col, player) {
       if (mounted) {
-        viewModel.makeMoveWithPlayer(row, col, player);
+        widget.viewModel.makeMoveWithPlayer(row, col, player);
         _isMyTurn = true;
         _checkGameOver();
       }
     };
-    viewModel.onResetReceived = () {
+    widget.viewModel.onResetReceived = () {
       if (mounted) {
-        viewModel.resetAll();
-        _isMyTurn = widget.isHost;
+        widget.viewModel.resetAll();
+        _isMyTurn = widget.viewModel.isHost;
         setState(() {});
       }
     };
-    viewModel.onNextRoundReceived = () {
+    widget.viewModel.onNextRoundReceived = () {
       if (mounted) {
-        viewModel.nextRound();
-        _isMyTurn = widget.isHost;
+        widget.viewModel.nextRound();
+        _isMyTurn = widget.viewModel.isHost;
         _hideRoundEndMessage();
         setState(() {});
       }
     };
-    viewModel.onConfigReceived = (maxRounds) {
+    widget.viewModel.onConfigReceived = (maxRounds) {
       if (mounted) {
-        viewModel.setMaxRounds(maxRounds);
+        widget.viewModel.setMaxRounds(maxRounds);
         setState(() {
-          _isMyTurn = widget.isHost;
+          _isMyTurn = widget.viewModel.isHost;
         });
       }
     };
@@ -100,17 +96,17 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       return;
     }
 
-    final playerWhoMoved = viewModel.game.currentPlayer;
-    if (viewModel.makeMove(rowIndex, columnIndex)) {
-      viewModel.sendMove(rowIndex, columnIndex, playerWhoMoved);
+    final playerWhoMoved = widget.viewModel.game.currentPlayer;
+    if (widget.viewModel.makeMove(rowIndex, columnIndex)) {
+      widget.viewModel.sendMove(rowIndex, columnIndex, playerWhoMoved);
       _isMyTurn = false;
       _checkGameOver();
     }
   }
 
   void _checkGameOver() {
-    if (viewModel.game.isGameOver) {
-      if (viewModel.game.winningLine != null) {
+    if (widget.viewModel.game.isGameOver) {
+      if (widget.viewModel.game.winningLine != null) {
         _winningLineAnimationController.reset();
         _winningLineAnimationController.forward();
       }
@@ -121,9 +117,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   }
 
   void _handleRoundEnd() {
-    viewModel.updateScore();
+    widget.viewModel.updateScore();
 
-    if (viewModel.isAllRoundsFinished) {
+    if (widget.viewModel.isAllRoundsFinished) {
       _showFinalScoreDialog();
     } else {
       _showRoundEnd();
@@ -132,7 +128,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
   void _showFinalScoreDialog() {
     String winnerMessage;
-    final PlayerEnum? overallWinner = viewModel.overallWinner;
+    final PlayerEnum? overallWinner = widget.viewModel.overallWinner;
     if (overallWinner == PlayerEnum.x) {
       winnerMessage = 'Jogador X venceu o jogo!';
     } else if (overallWinner == PlayerEnum.o) {
@@ -164,7 +160,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
               ),
               const SizedBox(height: 8),
               Text(
-                'Jogador X: ${viewModel.game.scoreX}',
+                'Jogador X: ${widget.viewModel.game.scoreX}',
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.blue,
@@ -172,7 +168,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                 ),
               ),
               Text(
-                'Jogador O: ${viewModel.game.scoreO}',
+                'Jogador O: ${widget.viewModel.game.scoreO}',
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.red,
@@ -197,14 +193,15 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
   void _showRoundEnd() {
     String message;
-    if (viewModel.game.winner != null) {
-      message = 'Jogador ${viewModel.game.winner?.value} venceu este round!';
+    if (widget.viewModel.game.winner != null) {
+      message =
+          'Jogador ${widget.viewModel.game.winner?.value} venceu este round!';
     } else {
       message = 'Deu Velha';
     }
 
     setState(() {
-      _roundWinner = viewModel.game.winner;
+      _roundWinner = widget.viewModel.game.winner;
     });
 
     showModalBottomSheet(
@@ -218,9 +215,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
           onNextRound: () {
             _hideRoundEndMessage();
             _winningLineAnimationController.reset();
-            viewModel.sendNextRound();
-            viewModel.nextRound();
-            _isMyTurn = widget.isHost;
+            widget.viewModel.sendNextRound();
+            widget.viewModel.nextRound();
+            _isMyTurn = widget.viewModel.isHost;
 
             Navigator.of(context).pop();
             setState(() {});
@@ -238,27 +235,27 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
   void resetAll() {
     _winningLineAnimationController.reset();
-    viewModel.sendReset();
-    viewModel.resetAll();
-    _isMyTurn = widget.isHost;
+    widget.viewModel.sendReset();
+    widget.viewModel.resetAll();
+    _isMyTurn = widget.viewModel.isHost;
     setState(() {});
   }
 
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
-    viewModel.dispose();
+    widget.viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: viewModel,
+      listenable: widget.viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBarComponent(
-            isHost: widget.isHost,
+            isHost: widget.viewModel.isHost,
             isMyTurn: _isMyTurn,
             onResetPressed: resetAll,
           ),
@@ -268,9 +265,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
               spacing: 24,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ScoreDisplayComponent(game: viewModel.game),
+                ScoreDisplayComponent(game: widget.viewModel.game),
                 GameBoardComponent(
-                  game: viewModel.game,
+                  game: widget.viewModel.game,
                   winningLineAnimation: _winningLineAnimation,
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
