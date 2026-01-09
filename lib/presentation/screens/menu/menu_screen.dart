@@ -49,11 +49,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Row(
                       spacing: DSSpacing.md,
                       children: [
-                        Icon(
-                          Icons.phone_android,
-                          size: 48,
-                          color: context.colorScheme.primary,
-                        ),
+                        Icon(Icons.phone_android, size: 48),
                         Expanded(
                           child: Column(
                             spacing: DSSpacing.xs,
@@ -70,10 +66,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             ],
                           ),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: context.colorScheme.primary,
-                        ),
+                        Icon(Icons.arrow_forward_ios),
                       ],
                     ),
                   ),
@@ -95,11 +88,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Row(
                       spacing: DSSpacing.md,
                       children: [
-                        Icon(
-                          Icons.wifi,
-                          size: 48,
-                          color: context.colorScheme.primary,
-                        ),
+                        Icon(Icons.wifi, size: 48),
                         Expanded(
                           child: Column(
                             spacing: DSSpacing.xs,
@@ -116,10 +105,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             ],
                           ),
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: context.colorScheme.primary,
-                        ),
+                        Icon(Icons.arrow_forward_ios),
                       ],
                     ),
                   ),
