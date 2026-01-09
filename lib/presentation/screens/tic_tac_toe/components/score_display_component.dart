@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 
 class ScoreDisplayComponent extends StatelessWidget {
   final TicTacToeGameModel game;
@@ -22,7 +23,7 @@ class ScoreDisplayComponent extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'X' * game.scoreX,
+                PlayerEnum.x.value * game.scoreX,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -45,7 +46,7 @@ class ScoreDisplayComponent extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'O' * game.scoreO,
+                PlayerEnum.o.value * game.scoreO,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

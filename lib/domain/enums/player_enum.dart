@@ -1,6 +1,6 @@
 enum PlayerEnum {
-  x('x'),
-  o('o'),
+  x('✕'),
+  o('◯'),
   none('');
 
   final String value;

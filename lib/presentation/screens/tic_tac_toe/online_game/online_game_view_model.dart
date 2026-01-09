@@ -85,7 +85,9 @@ class OnlineGameViewModel extends ChangeNotifier {
           final row = data['row'] as int;
           final col = data['col'] as int;
           final playerStr = data['player'] as String;
-          final player = playerStr == 'x' ? PlayerEnum.x : PlayerEnum.o;
+          final player = playerStr == PlayerEnum.x.value
+              ? PlayerEnum.x
+              : PlayerEnum.o;
           onMoveReceived?.call(row, col, player);
           break;
         case 'reset':
