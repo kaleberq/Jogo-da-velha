@@ -106,7 +106,6 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
 
                   // Criar Servidor (Host)
                   Card(
-                    elevation: 4,
                     color: widget.viewModel.onlineOptions.serverIP != null
                         ? Colors.green.shade50
                         : null,
@@ -200,7 +199,6 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
 
                   // Conectar ao Servidor (Cliente)
                   Card(
-                    elevation: 4,
                     child: Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Column(

@@ -35,7 +35,6 @@ class _MenuScreenState extends State<MenuScreen> {
                 textAlign: TextAlign.center,
               ),
               Card(
-                elevation: 4,
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context).push(
@@ -81,7 +80,6 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
               ),
               Card(
-                elevation: 4,
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context).push(
