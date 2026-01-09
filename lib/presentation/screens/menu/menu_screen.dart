@@ -17,11 +17,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Escolha um modo de jogo',
-          style: DSTypographySemiBold.labelLarge,
-        ),
-        centerTitle: true,
+        title: Text('Menu', style: DSTypographySemiBold.labelLarge),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -33,6 +29,11 @@ class _MenuScreenState extends State<MenuScreen> {
             spacing: DSSpacing.lg,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                'Escolha um modo de jogo',
+                style: DSTypographySemiBold.labelLarge,
+                textAlign: TextAlign.center,
+              ),
               Card(
                 elevation: 4,
                 child: InkWell(
