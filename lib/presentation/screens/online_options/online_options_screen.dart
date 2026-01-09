@@ -147,12 +147,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                         ),
                                         Text(
                                           'Aguardando jogador se conectar...',
-                                          style: DSTypographyMedium.labelSmall
-                                              .copyWith(
-                                                color: context
-                                                    .colorScheme
-                                                    .secondary,
-                                              ),
+                                          style: DSTypographyMedium.labelSmall,
                                         ),
                                       ],
                                     )
