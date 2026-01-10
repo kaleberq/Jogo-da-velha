@@ -28,4 +28,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onlineModeDescription => 'Play with another player online';
+
+  @override
+  String get onlineOptionsTitle => 'Online Play';
+
+  @override
+  String get onlineOptionsChoose => 'Choose an option';
+
+  @override
+  String get createRoomTitle => 'Create a Room';
+
+  @override
+  String get createRoomDescription => 'Create a room for others to join';
+
+  @override
+  String get waitingPlayer => 'Waiting for a player to connect...';
+
+  @override
+  String get serverIpLabel => 'IP:';
+
+  @override
+  String get connectRoomTitle => 'Join a Room';
+
+  @override
+  String get serverIpInputLabel => 'Server IP';
+
+  @override
+  String get serverIpInputHint => 'e.g. 192.168.1.100';
+
+  @override
+  String get connectButton => 'Connect';
+
+  @override
+  String get errorCreateServer => 'Error creating server';
+
+  @override
+  String get errorEmptyIp => 'Please enter the server IP';
+
+  @override
+  String get errorConnectServer => 'Error connecting to server';
 }

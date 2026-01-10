@@ -1,10 +1,26 @@
 {
   "@@locale": "en",
+
   "appTitle": "Tic Tac Toe",
+
   "menuTitle": "Menu",
   "chooseGameMode": "Choose a game mode.",
   "localModeTitle": "Local Mode",
   "localModeDescription": "Play on the same device",
   "onlineModeTitle": "Online Play",
-  "onlineModeDescription": "Play with another player online"
+  "onlineModeDescription": "Play with another player online",
+
+  "onlineOptionsTitle": "Online Play",
+  "onlineOptionsChoose": "Choose an option",
+  "createRoomTitle": "Create a Room",
+  "createRoomDescription": "Create a room for others to join",
+  "waitingPlayer": "Waiting for a player to connect...",
+  "serverIpLabel": "IP:",
+  "connectRoomTitle": "Join a Room",
+  "serverIpInputLabel": "Server IP",
+  "serverIpInputHint": "e.g. 192.168.1.100",
+  "connectButton": "Connect",
+  "errorCreateServer": "Error creating server",
+  "errorEmptyIp": "Please enter the server IP",
+  "errorConnectServer": "Error connecting to server"
 }

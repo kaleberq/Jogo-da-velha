@@ -1,10 +1,26 @@
 {
   "@@locale": "pt",
+
   "appTitle": "Jogo da Velha",
+
   "menuTitle": "Menu",
   "chooseGameMode": "Escolha um modo de jogo",
   "localModeTitle": "Modo Local",
   "localModeDescription": "Jogue no mesmo dispositivo",
   "onlineModeTitle": "Jogar Online",
-  "onlineModeDescription": "Jogue com outro jogador online"
+  "onlineModeDescription": "Jogue com outro jogador online",
+
+  "onlineOptionsTitle": "Jogar Online",
+  "onlineOptionsChoose": "Escolha uma opção",
+  "createRoomTitle": "Criar uma Sala",
+  "createRoomDescription": "Criar uma sala para outros se conectarem",
+  "waitingPlayer": "Aguardando jogador se conectar...",
+  "serverIpLabel": "IP:",
+  "connectRoomTitle": "Conectar a uma Sala",
+  "serverIpInputLabel": "IP do Servidor",
+  "serverIpInputHint": "Ex: 192.168.1.100",
+  "connectButton": "Conectar",
+  "errorCreateServer": "Erro ao criar servidor",
+  "errorEmptyIp": "Por favor, insira o IP do servidor",
+  "errorConnectServer": "Erro ao conectar ao servidor"
 }

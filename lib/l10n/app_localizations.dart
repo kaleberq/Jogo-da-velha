@@ -136,6 +136,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Play with another player online'**
   String get onlineModeDescription;
+
+  /// No description provided for @onlineOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Play'**
+  String get onlineOptionsTitle;
+
+  /// No description provided for @onlineOptionsChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option'**
+  String get onlineOptionsChoose;
+
+  /// No description provided for @createRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a Room'**
+  String get createRoomTitle;
+
+  /// No description provided for @createRoomDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a room for others to join'**
+  String get createRoomDescription;
+
+  /// No description provided for @waitingPlayer.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a player to connect...'**
+  String get waitingPlayer;
+
+  /// No description provided for @serverIpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IP:'**
+  String get serverIpLabel;
+
+  /// No description provided for @connectRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a Room'**
+  String get connectRoomTitle;
+
+  /// No description provided for @serverIpInputLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Server IP'**
+  String get serverIpInputLabel;
+
+  /// No description provided for @serverIpInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 192.168.1.100'**
+  String get serverIpInputHint;
+
+  /// No description provided for @connectButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connectButton;
+
+  /// No description provided for @errorCreateServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating server'**
+  String get errorCreateServer;
+
+  /// No description provided for @errorEmptyIp.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the server IP'**
+  String get errorEmptyIp;
+
+  /// No description provided for @errorConnectServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Error connecting to server'**
+  String get errorConnectServer;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

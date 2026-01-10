@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
@@ -64,15 +65,15 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
     if (ip == null && mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Erro ao criar servidor')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.errorCreateServer)));
     }
   }
 
   Future<void> _connectToServer() async {
     if (_ipController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, insira o IP do servidor')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.errorEmptyIp)));
       return;
     }
 
@@ -80,9 +81,9 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
       _ipController.text,
     );
     if (!connected && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao conectar ao servidor')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.errorConnectServer)));
     }
   }
 
@@ -93,7 +94,10 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Jogar Online', style: DSTypographySemiBold.labelLarge),
+            title: Text(
+              context.l10n.onlineOptionsTitle,
+              style: DSTypographySemiBold.labelLarge,
+            ),
             centerTitle: true,
           ),
           body: SingleChildScrollView(
@@ -107,7 +111,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Escolha uma opção',
+                    context.l10n.onlineOptionsChoose,
                     style: DSTypographySemiBold.labelLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -132,7 +136,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Criar uma Sala',
+                                    context.l10n.createRoomTitle,
                                     style: DSTypographySemiBold.labelLarge,
                                   ),
                                   if (widget.viewModel.onlineOptions.serverIP !=
@@ -142,18 +146,18 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'IP: ${widget.viewModel.onlineOptions.serverIP}',
+                                          '${context.l10n.serverIpLabel} ${widget.viewModel.onlineOptions.serverIP}',
                                           style: DSTypographyMedium.labelSmall,
                                         ),
                                         Text(
-                                          'Aguardando jogador se conectar...',
+                                          context.l10n.waitingPlayer,
                                           style: DSTypographyMedium.labelSmall,
                                         ),
                                       ],
                                     )
                                   else
                                     Text(
-                                      'Criar uma sala para outros se conectarem',
+                                      context.l10n.createRoomDescription,
                                       style: DSTypographyMedium.labelSmall,
                                     ),
                                 ],
@@ -178,7 +182,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                               Icon(Icons.wifi_find, size: 48),
                               Expanded(
                                 child: Text(
-                                  'Conectar a uma Sala',
+                                  context.l10n.connectRoomTitle,
                                   style: DSTypographySemiBold.labelLarge,
                                 ),
                               ),
@@ -187,8 +191,8 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                           TextField(
                             controller: _ipController,
                             decoration: InputDecoration(
-                              labelText: 'IP do Servidor',
-                              hintText: 'Ex: 192.168.1.100',
+                              labelText: context.l10n.serverIpInputLabel,
+                              hintText: context.l10n.serverIpInputHint,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                   DSRadius.sm,
@@ -218,7 +222,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                               child: widget.viewModel.onlineOptions.isConnecting
                                   ? const CircularProgressIndicator()
                                   : Text(
-                                      'Conectar',
+                                      context.l10n.connectButton,
                                       style: DSTypographySemiBold.labelMedium,
                                     ),
                             ),
