@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
@@ -17,7 +18,10 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Menu', style: DSTypographySemiBold.labelLarge),
+        title: Text(
+          context.l10n.menuTitle,
+          style: DSTypographySemiBold.labelLarge,
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -30,7 +34,7 @@ class _MenuScreenState extends State<MenuScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Escolha um modo de jogo',
+                context.l10n.chooseGameMode,
                 style: DSTypographySemiBold.labelLarge,
                 textAlign: TextAlign.center,
               ),
@@ -56,11 +60,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Modo Local',
+                                context.l10n.localModeTitle,
                                 style: DSTypographySemiBold.labelLarge,
                               ),
                               Text(
-                                'Jogue no mesmo dispositivo',
+                                context.l10n.localModeDescription,
                                 style: DSTypographyMedium.labelSmall,
                               ),
                             ],
@@ -95,11 +99,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Jogar Online',
+                                context.l10n.onlineModeTitle,
                                 style: DSTypographySemiBold.labelLarge,
                               ),
                               Text(
-                                'Jogue com outro jogador online',
+                                context.l10n.onlineModeDescription,
                                 style: DSTypographyMedium.labelSmall,
                               ),
                             ],

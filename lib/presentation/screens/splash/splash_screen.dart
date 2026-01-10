@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -107,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
                 Text(
-                  'Jogo da Velha',
+                  context.l10n.appTitle,
                   style: DSTypographySemiBold.labelXLarge.copyWith(
                     color: DSColors.onPrimary,
                   ),

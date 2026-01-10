@@ -1,0 +1,10 @@
+{
+  "@@locale": "pt",
+  "appTitle": "Jogo da Velha",
+  "menuTitle": "Menu",
+  "chooseGameMode": "Escolha um modo de jogo",
+  "localModeTitle": "Modo Local",
+  "localModeDescription": "Jogue no mesmo dispositivo",
+  "onlineModeTitle": "Jogar Online",
+  "onlineModeDescription": "Jogue com outro jogador online"
+}

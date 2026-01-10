@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+  "appTitle": "Tic Tac Toe",
+  "menuTitle": "Menu",
+  "chooseGameMode": "Choose a game mode.",
+  "localModeTitle": "Local Mode",
+  "localModeDescription": "Play on the same device",
+  "onlineModeTitle": "Online Play",
+  "onlineModeDescription": "Play with another player online"
+}

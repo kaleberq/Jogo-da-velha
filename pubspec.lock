@@ -122,11 +122,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "v0.0.24"
-      resolved-ref: "32f66af710685fbec51f97b89c92816bdc156d94"
+      ref: "v0.0.25"
+      resolved-ref: "2f91ed069738b65494e4a2617b9df7d40347d259"
       url: "git@github.com:kaleberq/flutter_design_system.git"
     source: git
-    version: "0.0.24"
+    version: "0.0.25"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -143,6 +143,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -185,6 +190,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.6.0"
+  intl:
+    dependency: transitive
+    description:
+      name: intl
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.2"
   json_annotation:
     dependency: transitive
     description:
