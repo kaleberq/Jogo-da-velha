@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
@@ -86,57 +88,16 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       winnerMessage = 'Empate! Ninguém venceu.';
     }
 
-    showDialog(
+    showDSModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Fim do Jogo'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                winnerMessage,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Placar Final:',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Jogador X: ${widget.viewModel.game.scoreX}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Jogador O: ${widget.viewModel.game.scoreO}',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                resetAll();
-              },
-              child: const Text('Jogar Novamente'),
-            ),
-          ],
-        );
-      },
+      isDismissible: false,
+      enableDrag: false,
+      widget: FinalScoreBottomSheetComponent(
+        winnerMessage: winnerMessage,
+        scoreX: widget.viewModel.game.scoreX,
+        scoreO: widget.viewModel.game.scoreO,
+        resetAll: () => resetAll(),
+      ),
     );
   }
 
@@ -153,23 +114,21 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       _roundWinner = widget.viewModel.game.winner;
     });
 
-    showModalBottomSheet(
+    showDSModalBottomSheet(
       context: context,
       isDismissible: false,
       enableDrag: false,
-      builder: (context) {
-        return RoundEndBottomSheet(
-          roundEndMessage: message,
-          roundWinner: _roundWinner,
-          onNextRound: () {
-            _winningLineAnimationController.reset();
-            widget.viewModel.nextRound();
+      widget: RoundEndBottomSheet(
+        roundEndMessage: message,
+        roundWinner: _roundWinner,
+        onNextRound: () {
+          _winningLineAnimationController.reset();
+          widget.viewModel.nextRound();
 
-            Navigator.of(context).pop();
-            setState(() {});
-          },
-        );
-      },
+          Navigator.of(context).pop();
+          setState(() {});
+        },
+      ),
     );
   }
 

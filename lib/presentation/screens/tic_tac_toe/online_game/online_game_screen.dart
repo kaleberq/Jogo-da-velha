@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
@@ -204,26 +205,24 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       _roundWinner = widget.viewModel.game.winner;
     });
 
-    showModalBottomSheet(
+    showDSModalBottomSheet(
       context: context,
       isDismissible: false,
       enableDrag: false,
-      builder: (context) {
-        return RoundEndBottomSheet(
-          roundEndMessage: message,
-          roundWinner: _roundWinner,
-          onNextRound: () {
-            _hideRoundEndMessage();
-            _winningLineAnimationController.reset();
-            widget.viewModel.sendNextRound();
-            widget.viewModel.nextRound();
-            _isMyTurn = widget.viewModel.isHost;
+      widget: RoundEndBottomSheet(
+        roundEndMessage: message,
+        roundWinner: _roundWinner,
+        onNextRound: () {
+          _hideRoundEndMessage();
+          _winningLineAnimationController.reset();
+          widget.viewModel.sendNextRound();
+          widget.viewModel.nextRound();
+          _isMyTurn = widget.viewModel.isHost;
 
-            Navigator.of(context).pop();
-            setState(() {});
-          },
-        );
-      },
+          Navigator.of(context).pop();
+          setState(() {});
+        },
+      ),
     );
   }
 
