@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 
 class FinalScoreBottomSheetComponent extends StatelessWidget {
   final String winnerMessage;
@@ -16,54 +17,79 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
+    return Padding(
+      padding: const EdgeInsets.all(DSSpacing.lg),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: DSSpacing.lg,
         children: [
-          Text('Fim do Jogo'),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                winnerMessage,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Placar Final:',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Jogador X: $scoreX',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Jogador O: $scoreO',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+          // Título da Bottom Sheet
+          Text('Fim de Jogo', style: DSTypographySemiBold.labelXLarge),
+          //const DSDivider.horizontal(),
+
+          // Mensagem do Vencedor
+          Text(
+            winnerMessage,
+            style: DSTypographyMedium.labelLarge,
+            textAlign: TextAlign.center,
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              resetAll();
-            },
-            child: const Text('Jogar Novamente'),
+
+          // Placar Final
+          _buildScoreDetails(context),
+
+          //const DSDivider.horizontal(),
+
+          // Botão de Ação
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                resetAll();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: DSColors.primary,
+                foregroundColor: DSColors.onPrimary,
+                padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
+              ),
+              child: Text(
+                'Jogar Novamente',
+                style: DSTypographySemiBold.labelLarge,
+              ),
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildScoreDetails(BuildContext context) {
+    return Column(
+      spacing: DSSpacing.sm,
+      children: [
+        Text('Placar Final', style: DSTypographyRegular.labelMedium),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildPlayerScore(context, player: 'Jogador X', score: scoreX),
+            _buildPlayerScore(context, player: 'Jogador O', score: scoreO),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlayerScore(
+    BuildContext context, {
+    required String player,
+    required int score,
+  }) {
+    return Column(
+      spacing: DSSpacing.md,
+      children: [
+        Text(player, style: DSTypographyMedium.labelLarge),
+        Text(score.toString()),
+      ],
     );
   }
 }
