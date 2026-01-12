@@ -22,5 +22,59 @@
   "connectButton": "Connect",
   "errorCreateServer": "Error creating server",
   "errorEmptyIp": "Please enter the server IP",
-  "errorConnectServer": "Error connecting to server"
+  "errorConnectServer": "Error connecting to server",
+
+  "gameEndTitle": "Game Over",
+  "finalScore": "Final Score",
+  "playAgain": "Play Again",
+  "nextRound": "Next Round",
+  "playerXWonGame": "Player X won the game!",
+  "playerOWonGame": "Player O won the game!",
+  "tieGame": "Tie! No one won.",
+  "playerWonRound": "Player {player} won this round!",
+  "@playerWonRound": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "drawRound": "Draw",
+  "back": "Back",
+  "playerTurn": "Player {player}'s turn",
+  "@playerTurn": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "settings": "Settings",
+  "numberOfRounds": "Number of Rounds",
+  "chooseRoundsRange": "Choose between 1 and 20 rounds",
+  "apply": "Apply",
+  "resetAll": "Reset All",
+  "yourTurn": "Your Turn",
+  "waiting": "Waiting...",
+  "waitYourTurn": "Wait your turn!",
+  "finalScoreLabel": "Final Score:",
+  "playerXScore": "Player X: {score}",
+  "@playerXScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "playerOScore": "Player O: {score}",
+  "@playerOScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "connectionLost": "Connection Lost",
+  "connectionLostMessage": "The connection with the other player was lost.",
+  "backToMenu": "Back to Menu"
 }

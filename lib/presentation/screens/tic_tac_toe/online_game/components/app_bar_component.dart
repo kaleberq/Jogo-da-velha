@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final bool isHost;
@@ -27,9 +28,9 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Sua Vez',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                context.l10n.yourTurn,
+                style: const TextStyle(color: Colors.white),
               ),
             )
           : Container(
@@ -38,9 +39,9 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                 color: Colors.orange,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Aguardando...',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                context.l10n.waiting,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
     );

@@ -22,5 +22,59 @@
   "connectButton": "Conectar",
   "errorCreateServer": "Erro ao criar servidor",
   "errorEmptyIp": "Por favor, insira o IP do servidor",
-  "errorConnectServer": "Erro ao conectar ao servidor"
+  "errorConnectServer": "Erro ao conectar ao servidor",
+
+  "gameEndTitle": "Fim de Jogo",
+  "finalScore": "Placar Final",
+  "playAgain": "Jogar Novamente",
+  "nextRound": "Próximo Round",
+  "playerXWonGame": "Jogador X venceu o jogo!",
+  "playerOWonGame": "Jogador O venceu o jogo!",
+  "tieGame": "Empate! Ninguém venceu.",
+  "playerWonRound": "Jogador {player} venceu este round!",
+  "@playerWonRound": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "drawRound": "Deu Velha",
+  "back": "Voltar",
+  "playerTurn": "Vez do jogador: {player}",
+  "@playerTurn": {
+    "placeholders": {
+      "player": {
+        "type": "String"
+      }
+    }
+  },
+  "settings": "Configurações",
+  "numberOfRounds": "Número de Rounds",
+  "chooseRoundsRange": "Escolha entre 1 e 20 rounds",
+  "apply": "Aplicar",
+  "resetAll": "Reiniciar Tudo",
+  "yourTurn": "Sua Vez",
+  "waiting": "Aguardando...",
+  "waitYourTurn": "Aguarde sua vez!",
+  "finalScoreLabel": "Placar Final:",
+  "playerXScore": "Jogador X: {score}",
+  "@playerXScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "playerOScore": "Jogador O: {score}",
+  "@playerOScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "connectionLost": "Conexão Perdida",
+  "connectionLostMessage": "A conexão com o outro jogador foi perdida.",
+  "backToMenu": "Voltar ao Menu"
 }

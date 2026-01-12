@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/player_score_component.dart';
 
 class FinalScoreBottomSheetComponent extends StatelessWidget {
@@ -27,7 +28,10 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Fim de Jogo', style: DSTypographySemiBold.labelXLarge),
+          Text(
+            context.l10n.gameEndTitle,
+            style: DSTypographySemiBold.labelXLarge,
+          ),
           const SizedBox(height: DSSpacing.sm),
           Text(
             winnerMessage,
@@ -41,7 +45,10 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
             child: Column(
               spacing: DSSpacing.md,
               children: [
-                Text('Placar Final', style: DSTypographyMedium.labelMedium),
+                Text(
+                  context.l10n.finalScore,
+                  style: DSTypographyMedium.labelMedium,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -60,7 +67,7 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
                 Navigator.of(context).pop();
                 resetAll();
               },
-              child: const Text('Jogar Novamente'),
+              child: Text(context.l10n.playAgain),
             ),
           ),
         ],

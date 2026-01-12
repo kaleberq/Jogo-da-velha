@@ -67,4 +67,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorConnectServer => 'Error connecting to server';
+
+  @override
+  String get gameEndTitle => 'Game Over';
+
+  @override
+  String get finalScore => 'Final Score';
+
+  @override
+  String get playAgain => 'Play Again';
+
+  @override
+  String get nextRound => 'Next Round';
+
+  @override
+  String get playerXWonGame => 'Player X won the game!';
+
+  @override
+  String get playerOWonGame => 'Player O won the game!';
+
+  @override
+  String get tieGame => 'Tie! No one won.';
+
+  @override
+  String playerWonRound(String player) {
+    return 'Player $player won this round!';
+  }
+
+  @override
+  String get drawRound => 'Draw';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String playerTurn(String player) {
+    return 'Player $player\'s turn';
+  }
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get numberOfRounds => 'Number of Rounds';
+
+  @override
+  String get chooseRoundsRange => 'Choose between 1 and 20 rounds';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get resetAll => 'Reset All';
+
+  @override
+  String get yourTurn => 'Your Turn';
+
+  @override
+  String get waiting => 'Waiting...';
+
+  @override
+  String get waitYourTurn => 'Wait your turn!';
+
+  @override
+  String get finalScoreLabel => 'Final Score:';
+
+  @override
+  String playerXScore(int score) {
+    return 'Player X: $score';
+  }
+
+  @override
+  String playerOScore(int score) {
+    return 'Player O: $score';
+  }
+
+  @override
+  String get connectionLost => 'Connection Lost';
+
+  @override
+  String get connectionLostMessage => 'The connection with the other player was lost.';
+
+  @override
+  String get backToMenu => 'Back to Menu';
 }

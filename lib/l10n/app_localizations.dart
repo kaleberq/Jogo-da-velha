@@ -214,6 +214,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error connecting to server'**
   String get errorConnectServer;
+
+  /// No description provided for @gameEndTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Game Over'**
+  String get gameEndTitle;
+
+  /// No description provided for @finalScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Score'**
+  String get finalScore;
+
+  /// No description provided for @playAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Again'**
+  String get playAgain;
+
+  /// No description provided for @nextRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Round'**
+  String get nextRound;
+
+  /// No description provided for @playerXWonGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Player X won the game!'**
+  String get playerXWonGame;
+
+  /// No description provided for @playerOWonGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Player O won the game!'**
+  String get playerOWonGame;
+
+  /// No description provided for @tieGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Tie! No one won.'**
+  String get tieGame;
+
+  /// No description provided for @playerWonRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Player {player} won this round!'**
+  String playerWonRound(String player);
+
+  /// No description provided for @drawRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Draw'**
+  String get drawRound;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @playerTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Player {player}\'s turn'**
+  String playerTurn(String player);
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// No description provided for @numberOfRounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Rounds'**
+  String get numberOfRounds;
+
+  /// No description provided for @chooseRoundsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose between 1 and 20 rounds'**
+  String get chooseRoundsRange;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @resetAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset All'**
+  String get resetAll;
+
+  /// No description provided for @yourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Turn'**
+  String get yourTurn;
+
+  /// No description provided for @waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting...'**
+  String get waiting;
+
+  /// No description provided for @waitYourTurn.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait your turn!'**
+  String get waitYourTurn;
+
+  /// No description provided for @finalScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Score:'**
+  String get finalScoreLabel;
+
+  /// No description provided for @playerXScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Player X: {score}'**
+  String playerXScore(int score);
+
+  /// No description provided for @playerOScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Player O: {score}'**
+  String playerOScore(int score);
+
+  /// No description provided for @connectionLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Lost'**
+  String get connectionLost;
+
+  /// No description provided for @connectionLostMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection with the other player was lost.'**
+  String get connectionLostMessage;
+
+  /// No description provided for @backToMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Menu'**
+  String get backToMenu;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

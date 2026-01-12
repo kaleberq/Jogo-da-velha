@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
@@ -81,11 +82,11 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     String winnerMessage;
     final PlayerEnum? overallWinner = widget.viewModel.overallWinner;
     if (overallWinner == PlayerEnum.x) {
-      winnerMessage = 'Jogador X venceu o jogo!';
+      winnerMessage = context.l10n.playerXWonGame;
     } else if (overallWinner == PlayerEnum.o) {
-      winnerMessage = 'Jogador O venceu o jogo!';
+      winnerMessage = context.l10n.playerOWonGame;
     } else {
-      winnerMessage = 'Empate! Ninguém venceu.';
+      winnerMessage = context.l10n.tieGame;
     }
 
     showDSModalBottomSheet(
@@ -104,10 +105,9 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   void showRoundEnd() {
     String message;
     if (widget.viewModel.game.winner != null) {
-      message =
-          'Jogador ${widget.viewModel.game.winner?.value} venceu este round!';
+      message = context.l10n.playerWonRound(widget.viewModel.game.winner!.value);
     } else {
-      message = 'Deu Velha';
+      message = context.l10n.drawRound;
     }
 
     setState(() {

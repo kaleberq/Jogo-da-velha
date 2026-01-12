@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
@@ -21,10 +22,10 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),
-        tooltip: 'Voltar',
+        tooltip: context.l10n.back,
       ),
       title: Text(
-        'Vez do jogador: ${currentPlayer.value}',
+        context.l10n.playerTurn(currentPlayer.value),
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -35,7 +36,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: const Icon(Icons.settings),
           onPressed: () => _showSettingsBottomSheet(context),
-          tooltip: 'Configurações',
+          tooltip: context.l10n.settings,
         ),
       ],
     );
@@ -55,19 +56,22 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Configurações',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Text(
+                    context.l10n.settings,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   // Opção de aumentar número de rounds
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Número de Rounds',
-                          style: TextStyle(fontSize: 16),
+                          context.l10n.numberOfRounds,
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
                       Row(
@@ -105,7 +109,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Escolha entre 1 e 20 rounds',
+                    context.l10n.chooseRoundsRange,
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 24),
@@ -120,7 +124,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                         }
                         Navigator.of(bottomSheetContext).pop();
                       },
-                      child: const Text('Aplicar'),
+                      child: Text(context.l10n.apply),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -135,7 +139,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                         }
                       },
                       icon: const Icon(Icons.refresh),
-                      label: const Text('Reiniciar Tudo'),
+                      label: Text(context.l10n.resetAll),
                     ),
                   ),
                 ],

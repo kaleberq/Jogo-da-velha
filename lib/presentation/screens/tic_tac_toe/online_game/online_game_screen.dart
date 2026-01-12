@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/score_display_component.dart';
@@ -93,7 +94,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     if (!_isMyTurn) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Aguarde sua vez!')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.waitYourTurn)));
       return;
     }
 
@@ -131,11 +132,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     String winnerMessage;
     final PlayerEnum? overallWinner = widget.viewModel.overallWinner;
     if (overallWinner == PlayerEnum.x) {
-      winnerMessage = 'Jogador X venceu o jogo!';
+      winnerMessage = context.l10n.playerXWonGame;
     } else if (overallWinner == PlayerEnum.o) {
-      winnerMessage = 'Jogador O venceu o jogo!';
+      winnerMessage = context.l10n.playerOWonGame;
     } else {
-      winnerMessage = 'Empate! Ninguém venceu.';
+      winnerMessage = context.l10n.tieGame;
     }
 
     showDialog(
@@ -143,7 +144,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Fim do Jogo'),
+          title: Text(context.l10n.gameEndTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -156,12 +157,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
               ),
               const SizedBox(height: 16),
               Text(
-                'Placar Final:',
+                context.l10n.finalScoreLabel,
                 style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
               ),
               const SizedBox(height: 8),
               Text(
-                'Jogador X: ${widget.viewModel.game.scoreX}',
+                context.l10n.playerXScore(widget.viewModel.game.scoreX),
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.blue,
@@ -169,7 +170,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                 ),
               ),
               Text(
-                'Jogador O: ${widget.viewModel.game.scoreO}',
+                context.l10n.playerOScore(widget.viewModel.game.scoreO),
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.red,
@@ -184,7 +185,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                 Navigator.of(context).pop();
                 resetAll();
               },
-              child: const Text('Jogar Novamente'),
+              child: Text(context.l10n.playAgain),
             ),
           ],
         );
@@ -195,10 +196,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   void _showRoundEnd() {
     String message;
     if (widget.viewModel.game.winner != null) {
-      message =
-          'Jogador ${widget.viewModel.game.winner?.value} venceu este round!';
+      message = context.l10n.playerWonRound(
+        widget.viewModel.game.winner!.value,
+      );
     } else {
-      message = 'Deu Velha';
+      message = context.l10n.drawRound;
     }
 
     setState(() {

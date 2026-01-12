@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class RoundEndBottomSheet extends StatelessWidget {
   final String roundEndMessage;
@@ -27,7 +28,7 @@ class RoundEndBottomSheet extends StatelessWidget {
           Expanded(child: Text(roundEndMessage)),
           TextButton(
             onPressed: onNextRound,
-            child: const Text('Próximo Round'),
+            child: Text(context.l10n.nextRound),
           ),
         ],
       ),

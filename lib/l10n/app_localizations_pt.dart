@@ -67,4 +67,87 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get errorConnectServer => 'Erro ao conectar ao servidor';
+
+  @override
+  String get gameEndTitle => 'Fim de Jogo';
+
+  @override
+  String get finalScore => 'Placar Final';
+
+  @override
+  String get playAgain => 'Jogar Novamente';
+
+  @override
+  String get nextRound => 'Próximo Round';
+
+  @override
+  String get playerXWonGame => 'Jogador X venceu o jogo!';
+
+  @override
+  String get playerOWonGame => 'Jogador O venceu o jogo!';
+
+  @override
+  String get tieGame => 'Empate! Ninguém venceu.';
+
+  @override
+  String playerWonRound(String player) {
+    return 'Jogador $player venceu este round!';
+  }
+
+  @override
+  String get drawRound => 'Deu Velha';
+
+  @override
+  String get back => 'Voltar';
+
+  @override
+  String playerTurn(String player) {
+    return 'Vez do jogador: $player';
+  }
+
+  @override
+  String get settings => 'Configurações';
+
+  @override
+  String get numberOfRounds => 'Número de Rounds';
+
+  @override
+  String get chooseRoundsRange => 'Escolha entre 1 e 20 rounds';
+
+  @override
+  String get apply => 'Aplicar';
+
+  @override
+  String get resetAll => 'Reiniciar Tudo';
+
+  @override
+  String get yourTurn => 'Sua Vez';
+
+  @override
+  String get waiting => 'Aguardando...';
+
+  @override
+  String get waitYourTurn => 'Aguarde sua vez!';
+
+  @override
+  String get finalScoreLabel => 'Placar Final:';
+
+  @override
+  String playerXScore(int score) {
+    return 'Jogador X: $score';
+  }
+
+  @override
+  String playerOScore(int score) {
+    return 'Jogador O: $score';
+  }
+
+  @override
+  String get connectionLost => 'Conexão Perdida';
+
+  @override
+  String get connectionLostMessage => 'A conexão com o outro jogador foi perdida.';
+
+  @override
+  String get backToMenu => 'Voltar ao Menu';
 }

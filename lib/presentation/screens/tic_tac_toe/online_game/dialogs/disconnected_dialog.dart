@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class DisconnectedDialog {
   static void show(BuildContext context) {
@@ -6,14 +7,14 @@ class DisconnectedDialog {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text('Conexão Perdida'),
-        content: const Text('A conexão com o outro jogador foi perdida.'),
+        title: Text(context.l10n.connectionLost),
+        content: Text(context.l10n.connectionLostMessage),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
-            child: const Text('Voltar ao Menu'),
+            child: Text(context.l10n.backToMenu),
           ),
         ],
       ),
