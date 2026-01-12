@@ -41,7 +41,7 @@
   },
   "drawRound": "Draw",
   "back": "Back",
-  "playerTurn": "Player {player}'s turn",
+  "playerTurn": "Player {player} turn",
   "@playerTurn": {
     "placeholders": {
       "player": {

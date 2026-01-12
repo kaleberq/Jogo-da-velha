@@ -278,7 +278,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerTurn.
   ///
   /// In en, this message translates to:
-  /// **'Player {player}\'s turn'**
+  /// **'Player {player} turn'**
   String playerTurn(String player);
 
   /// No description provided for @settings.

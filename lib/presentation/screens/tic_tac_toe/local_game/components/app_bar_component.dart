@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
@@ -15,6 +16,9 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
     this.onMaxRoundsChanged,
     required this.currentPlayer,
   });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -51,19 +55,16 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return Container(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(DSSpacing.lg),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     context.l10n.settings,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: DSTypographySemiBold.labelLarge,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: DSSpacing.lg),
                   // Opção de aumentar número de rounds
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,12 +108,12 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: DSSpacing.sm),
                   Text(
                     context.l10n.chooseRoundsRange,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: DSTypographyMedium.labelSmall,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: DSSpacing.lg),
                   // Botão para aplicar mudanças
                   SizedBox(
                     width: double.infinity,
@@ -127,19 +128,27 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                       child: Text(context.l10n.apply),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: DSSpacing.sm),
                   // Opção de reiniciar
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: DSColors.error(context)),
+                      ),
                       onPressed: () {
                         Navigator.of(bottomSheetContext).pop();
                         if (onResetPressed != null) {
                           onResetPressed!();
                         }
                       },
-                      icon: const Icon(Icons.refresh),
-                      label: Text(context.l10n.resetAll),
+                      icon: Icon(Icons.refresh, color: DSColors.error(context)),
+                      label: Text(
+                        context.l10n.resetAll,
+                        style: DSTypographySemiBold.labelSmall.copyWith(
+                          color: DSColors.error(context),
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -150,7 +159,4 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       },
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

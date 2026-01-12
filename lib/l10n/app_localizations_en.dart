@@ -102,7 +102,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String playerTurn(String player) {
-    return 'Player $player\'s turn';
+    return 'Player $player turn';
   }
 
   @override

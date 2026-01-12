@@ -105,7 +105,9 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   void showRoundEnd() {
     String message;
     if (widget.viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(widget.viewModel.game.winner!.value);
+      message = context.l10n.playerWonRound(
+        widget.viewModel.game.winner!.value,
+      );
     } else {
       message = context.l10n.drawRound;
     }
@@ -164,9 +166,12 @@ class _LocalGameScreenState extends State<LocalGameScreen>
             currentPlayer: widget.viewModel.game.currentPlayer,
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.lg,
+              vertical: DSSpacing.md,
+            ),
             child: Column(
-              spacing: 24,
+              spacing: DSSpacing.lg,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
