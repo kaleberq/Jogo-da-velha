@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/player_score_component.dart';
 
 class FinalScoreBottomSheetComponent extends StatelessWidget {
   final String winnerMessage;
   final int scoreX;
   final int scoreO;
-  final Function() resetAll;
+  final VoidCallback resetAll;
 
   const FinalScoreBottomSheetComponent({
     required this.winnerMessage,
@@ -18,28 +20,39 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(DSSpacing.lg),
+      padding: const EdgeInsets.symmetric(
+        horizontal: DSSpacing.lg,
+        vertical: DSSpacing.md,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        spacing: DSSpacing.lg,
         children: [
-          // Título da Bottom Sheet
           Text('Fim de Jogo', style: DSTypographySemiBold.labelXLarge),
-          //const DSDivider.horizontal(),
-
-          // Mensagem do Vencedor
+          const SizedBox(height: DSSpacing.sm),
           Text(
             winnerMessage,
-            style: DSTypographyMedium.labelLarge,
+            style: DSTypographyMedium.labelMedium,
             textAlign: TextAlign.center,
           ),
-
-          // Placar Final
-          _buildScoreDetails(context),
-
-          //const DSDivider.horizontal(),
-
-          // Botão de Ação
+          const SizedBox(height: DSSpacing.xl),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(DSSpacing.lg),
+            child: Column(
+              spacing: DSSpacing.md,
+              children: [
+                Text('Placar Final', style: DSTypographyMedium.labelMedium),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    PlayerScore(player: PlayerEnum.x.value, score: scoreX),
+                    PlayerScore(player: PlayerEnum.o.value, score: scoreO),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: DSSpacing.xl),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -47,49 +60,11 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
                 Navigator.of(context).pop();
                 resetAll();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: DSColors.primary,
-                foregroundColor: DSColors.onPrimary,
-                padding: const EdgeInsets.symmetric(vertical: DSSpacing.md),
-              ),
-              child: Text(
-                'Jogar Novamente',
-                style: DSTypographySemiBold.labelLarge,
-              ),
+              child: const Text('Jogar Novamente'),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildScoreDetails(BuildContext context) {
-    return Column(
-      spacing: DSSpacing.sm,
-      children: [
-        Text('Placar Final', style: DSTypographyRegular.labelMedium),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildPlayerScore(context, player: 'Jogador X', score: scoreX),
-            _buildPlayerScore(context, player: 'Jogador O', score: scoreO),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPlayerScore(
-    BuildContext context, {
-    required String player,
-    required int score,
-  }) {
-    return Column(
-      spacing: DSSpacing.md,
-      children: [
-        Text(player, style: DSTypographyMedium.labelLarge),
-        Text(score.toString()),
-      ],
     );
   }
 }

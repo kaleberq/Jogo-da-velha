@@ -71,13 +71,13 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     widget.viewModel.updateScore();
 
     if (widget.viewModel.isAllRoundsFinished) {
-      _showFinalScoreDialog();
+      _showFinalScoreBottomSheet();
     } else {
       showRoundEnd();
     }
   }
 
-  void _showFinalScoreDialog() {
+  void _showFinalScoreBottomSheet() {
     String winnerMessage;
     final PlayerEnum? overallWinner = widget.viewModel.overallWinner;
     if (overallWinner == PlayerEnum.x) {
