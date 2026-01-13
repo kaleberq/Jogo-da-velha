@@ -35,7 +35,7 @@ class _MenuScreenState extends State<MenuScreen> {
             children: [
               Text(
                 context.l10n.chooseGameMode,
-                style: DSTypographySemiBold.labelLarge,
+                style: DSTypographyMedium.labelLarge,
                 textAlign: TextAlign.center,
               ),
               Card(
@@ -61,11 +61,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             children: [
                               Text(
                                 context.l10n.localModeTitle,
-                                style: DSTypographySemiBold.labelLarge,
+                                style: DSTypographyMedium.labelLarge,
                               ),
                               Text(
                                 context.l10n.localModeDescription,
-                                style: DSTypographyMedium.labelSmall,
+                                style: DSTypographyRegular.labelSmall,
                               ),
                             ],
                           ),
@@ -100,11 +100,11 @@ class _MenuScreenState extends State<MenuScreen> {
                             children: [
                               Text(
                                 context.l10n.onlineModeTitle,
-                                style: DSTypographySemiBold.labelLarge,
+                                style: DSTypographyMedium.labelLarge,
                               ),
                               Text(
                                 context.l10n.onlineModeDescription,
-                                style: DSTypographyMedium.labelSmall,
+                                style: DSTypographyRegular.labelSmall,
                               ),
                             ],
                           ),

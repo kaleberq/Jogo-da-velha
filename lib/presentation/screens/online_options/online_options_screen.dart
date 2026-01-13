@@ -112,7 +112,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                 children: [
                   Text(
                     context.l10n.onlineOptionsChoose,
-                    style: DSTypographySemiBold.labelLarge,
+                    style: DSTypographyMedium.labelLarge,
                     textAlign: TextAlign.center,
                   ),
 
@@ -137,7 +137,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                 children: [
                                   Text(
                                     context.l10n.createRoomTitle,
-                                    style: DSTypographySemiBold.labelLarge,
+                                    style: DSTypographyMedium.labelLarge,
                                   ),
                                   if (widget.viewModel.onlineOptions.serverIP !=
                                       null)
@@ -147,18 +147,18 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                       children: [
                                         Text(
                                           '${context.l10n.serverIpLabel} ${widget.viewModel.onlineOptions.serverIP}',
-                                          style: DSTypographyMedium.labelSmall,
+                                          style: DSTypographyRegular.labelSmall,
                                         ),
                                         Text(
                                           context.l10n.waitingPlayer,
-                                          style: DSTypographyMedium.labelSmall,
+                                          style: DSTypographyRegular.labelSmall,
                                         ),
                                       ],
                                     )
                                   else
                                     Text(
                                       context.l10n.createRoomDescription,
-                                      style: DSTypographyMedium.labelSmall,
+                                      style: DSTypographyRegular.labelSmall,
                                     ),
                                 ],
                               ),
@@ -183,7 +183,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                               Expanded(
                                 child: Text(
                                   context.l10n.connectRoomTitle,
-                                  style: DSTypographySemiBold.labelLarge,
+                                  style: DSTypographyMedium.labelLarge,
                                 ),
                               ),
                             ],
@@ -223,7 +223,7 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
                                   ? const CircularProgressIndicator()
                                   : Text(
                                       context.l10n.connectButton,
-                                      style: DSTypographySemiBold.labelMedium,
+                                      style: DSTypographyRegular.labelMedium,
                                     ),
                             ),
                           ),
