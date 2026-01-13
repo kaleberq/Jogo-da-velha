@@ -30,9 +30,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       ),
       title: Text(
         context.l10n.playerTurn(currentPlayer.value),
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+        style: DSTypographySemiBold.labelLarge.copyWith(
           color: currentPlayer == PlayerEnum.x ? Colors.blue : Colors.red,
         ),
       ),
@@ -65,7 +63,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                     style: DSTypographySemiBold.labelLarge,
                   ),
                   SizedBox(height: DSSpacing.lg),
-                  // Opção de aumentar número de rounds
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -114,7 +111,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                     style: DSTypographyMedium.labelSmall,
                   ),
                   const SizedBox(height: DSSpacing.lg),
-                  // Botão para aplicar mudanças
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -129,7 +125,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                   SizedBox(height: DSSpacing.sm),
-                  // Opção de reiniciar
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(

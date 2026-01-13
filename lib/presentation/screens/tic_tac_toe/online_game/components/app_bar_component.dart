@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
@@ -30,7 +31,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
               ),
               child: Text(
                 context.l10n.yourTurn,
-                style: const TextStyle(color: Colors.white),
+                style: DSTypographySemiBold.labelLarge,
               ),
             )
           : Container(

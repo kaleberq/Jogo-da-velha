@@ -3,7 +3,8 @@ import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_bottom_sheet_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_bottom_sheet_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
@@ -139,57 +140,16 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       winnerMessage = context.l10n.tieGame;
     }
 
-    showDialog(
+    showDSModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(context.l10n.gameEndTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                winnerMessage,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.finalScoreLabel,
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.playerXScore(widget.viewModel.game.scoreX),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                context.l10n.playerOScore(widget.viewModel.game.scoreO),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                resetAll();
-              },
-              child: Text(context.l10n.playAgain),
-            ),
-          ],
-        );
-      },
+      isDismissible: false,
+      enableDrag: false,
+      widget: FinalScoreBottomSheetComponent(
+        winnerMessage: winnerMessage,
+        scoreX: widget.viewModel.game.scoreX,
+        scoreO: widget.viewModel.game.scoreO,
+        resetAll: () => resetAll(),
+      ),
     );
   }
 
@@ -211,7 +171,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       context: context,
       isDismissible: false,
       enableDrag: false,
-      widget: RoundEndBottomSheet(
+      widget: RoundEnd(
         roundEndMessage: message,
         roundWinner: _roundWinner,
         onNextRound: () {
@@ -261,9 +221,12 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
             onResetPressed: resetAll,
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: DSSpacing.lg,
+              vertical: DSSpacing.md,
+            ),
             child: Column(
-              spacing: 24,
+              spacing: DSSpacing.lg,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ScoreDisplayComponent(game: widget.viewModel.game),
