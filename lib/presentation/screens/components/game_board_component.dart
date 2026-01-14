@@ -7,7 +7,6 @@ import 'package:jogo_da_velha/presentation/screens/components/winning_line_overl
 class GameBoardComponent extends StatelessWidget {
   final TicTacToeGameModel game;
   final Animation<double> winningLineAnimation;
-  final double lineSize;
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const GameBoardComponent({
@@ -15,77 +14,82 @@ class GameBoardComponent extends StatelessWidget {
     required this.game,
     required this.winningLineAnimation,
     this.onCellTap,
-    this.lineSize = 300,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: 300,
-          height: 300,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.grey.shade800, width: 3),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade400,
-                blurRadius: 10,
-                offset: const Offset(0, 5),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double size = constraints.maxWidth;
+
+        return Stack(
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade800, width: 3),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade400,
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            children: [
-              RowComponent(
-                rowIndex: 0,
-                row: game.board[0],
-                onCellTap:
-                    ({required int rowIndex, required int columnIndex}) =>
-                        onCellTap?.call(
-                          rowIndex: rowIndex,
-                          columnIndex: columnIndex,
-                        ),
+              child: Column(
+                children: [
+                  RowComponent(
+                    rowIndex: 0,
+                    row: game.board[0],
+                    onCellTap:
+                        ({required int rowIndex, required int columnIndex}) =>
+                            onCellTap?.call(
+                              rowIndex: rowIndex,
+                              columnIndex: columnIndex,
+                            ),
+                  ),
+                  const HorizontalDividerComponent(),
+                  RowComponent(
+                    rowIndex: 1,
+                    row: game.board[1],
+                    onCellTap:
+                        ({required int rowIndex, required int columnIndex}) =>
+                            onCellTap?.call(
+                              rowIndex: rowIndex,
+                              columnIndex: columnIndex,
+                            ),
+                  ),
+                  const HorizontalDividerComponent(),
+                  RowComponent(
+                    rowIndex: 2,
+                    row: game.board[2],
+                    onCellTap:
+                        ({required int rowIndex, required int columnIndex}) =>
+                            onCellTap?.call(
+                              rowIndex: rowIndex,
+                              columnIndex: columnIndex,
+                            ),
+                  ),
+                ],
               ),
-              const HorizontalDividerComponent(),
-              RowComponent(
-                rowIndex: 1,
-                row: game.board[1],
-                onCellTap:
-                    ({required int rowIndex, required int columnIndex}) =>
-                        onCellTap?.call(
-                          rowIndex: rowIndex,
-                          columnIndex: columnIndex,
-                        ),
+            ),
+            if (game.winningLine != null)
+              AnimatedBuilder(
+                animation: winningLineAnimation,
+                builder: (context, child) {
+                  return WinningLineOverlayComponent(
+                    winningLine: game.winningLine,
+                    boardSize: size,
+                    animationProgress: winningLineAnimation.value,
+                  );
+                },
               ),
-              const HorizontalDividerComponent(),
-              RowComponent(
-                rowIndex: 2,
-                row: game.board[2],
-                onCellTap:
-                    ({required int rowIndex, required int columnIndex}) =>
-                        onCellTap?.call(
-                          rowIndex: rowIndex,
-                          columnIndex: columnIndex,
-                        ),
-              ),
-            ],
-          ),
-        ),
-        if (game.winningLine != null)
-          AnimatedBuilder(
-            animation: winningLineAnimation,
-            builder: (context, child) {
-              return WinningLineOverlayComponent(
-                winningLine: game.winningLine,
-                boardSize: lineSize,
-                animationProgress: winningLineAnimation.value,
-              );
-            },
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

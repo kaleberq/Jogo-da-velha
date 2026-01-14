@@ -15,7 +15,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
   final SplashViewModel _viewModel = SplashViewModel();
@@ -25,10 +24,6 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
     _lineAnimationController = AnimationController(
@@ -95,17 +90,19 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               spacing: DSSpacing.xxl,
               children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: GameBoardComponent(
-                      game: _viewModel.game,
-                      winningLineAnimation: _lineAnimation,
-                      lineSize: 200,
-                    ),
-                  ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double size = constraints.maxWidth / 2;
+
+                    return SizedBox(
+                      width: size,
+                      height: size,
+                      child: GameBoardComponent(
+                        game: _viewModel.game,
+                        winningLineAnimation: _lineAnimation,
+                      ),
+                    );
+                  },
                 ),
                 Text(
                   context.l10n.appTitle,
