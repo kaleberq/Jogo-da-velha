@@ -1,13 +1,15 @@
-import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 
 /// Implementação concreta do IGameRepository
 /// Usa INetworkService para executar operações de rede
+/// Constructor Injection: recebe dependência via construtor
 class GameRepository implements IGameRepository {
-  final INetworkService _networkService = NetworkService();
+  final INetworkService _networkService;
 
-  GameRepository();
+  /// Constructor Injection: INetworkService é obrigatório via construtor
+  GameRepository({required INetworkService networkService})
+    : _networkService = networkService;
 
   @override
   set onMessageReceived(Function(String)? callback) {

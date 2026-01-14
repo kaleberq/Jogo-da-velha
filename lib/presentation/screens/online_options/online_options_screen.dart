@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
@@ -43,7 +44,10 @@ class _OnlineOptionsScreenState extends State<OnlineOptionsScreen> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => OnlineGameScreen(
-                viewModel: OnlineGameViewModel(isHost: isHost),
+                viewModel: OnlineGameViewModel(
+                  isHost: isHost,
+                  gameRepository: DependencyContainer.getGameRepository(),
+                ),
               ),
             ),
           );

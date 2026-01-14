@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/models/online_options_model.dart';
-import 'package:jogo_da_velha/data/repositories/game_repository.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 
+/// ViewModel para tela de opções online
+/// Constructor Injection: recebe IGameRepository via construtor
 class OnlineOptionsViewModel extends ChangeNotifier {
-  final IGameRepository _gameRepository = GameRepository();
+  final IGameRepository _gameRepository;
   final OnlineOptionsModel _onlineOptions = OnlineOptionsModel();
 
-  OnlineOptionsViewModel() {
+  /// Constructor Injection: IGameRepository é obrigatório via construtor
+  OnlineOptionsViewModel({required IGameRepository gameRepository})
+    : _gameRepository = gameRepository {
     _setupNetworkCallbacks();
   }
 

@@ -6,9 +6,10 @@ import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
-import 'package:jogo_da_velha/data/repositories/game_repository.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 
+/// ViewModel para jogo online
+/// Constructor Injection: recebe IGameRepository via construtor
 class OnlineGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   final bool isHost;
@@ -25,8 +26,12 @@ class OnlineGameViewModel extends ChangeNotifier {
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
 
-  OnlineGameViewModel({required this.isHost, int? maxRounds})
-    : _gameRepository = GameRepository() {
+  /// Constructor Injection: IGameRepository é obrigatório via construtor
+  OnlineGameViewModel({
+    required this.isHost,
+    required IGameRepository gameRepository,
+    int? maxRounds,
+  }) : _gameRepository = gameRepository {
     _game = TicTacToeGameModel(maxRounds: maxRounds);
     if (isHost) {
       _game.currentPlayer = PlayerEnum.x;

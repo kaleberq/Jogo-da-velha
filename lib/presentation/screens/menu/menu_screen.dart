@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/online_options/online_options_screen.dart';
@@ -82,7 +83,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => OnlineOptionsScreen(
-                          viewModel: OnlineOptionsViewModel(),
+                          viewModel: OnlineOptionsViewModel(
+                            gameRepository:
+                                DependencyContainer.getGameRepository(),
+                          ),
                         ),
                       ),
                     );
