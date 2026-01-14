@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - integration_test (0.0.1):
+    - Flutter
   - network_info_plus (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
@@ -8,12 +10,15 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   path_provider_foundation:
@@ -21,6 +26,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   network_info_plus: cf61925ab5205dce05a4f0895989afdb6aade5fc
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
 
