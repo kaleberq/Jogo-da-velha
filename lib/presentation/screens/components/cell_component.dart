@@ -17,33 +17,31 @@ class CellComponent extends StatelessWidget {
             border: Border.all(color: Colors.transparent),
           ),
           child: Center(
-            child: Center(
-              child: Builder(
-                builder: (context) {
-                  switch (player) {
-                    case PlayerEnum.x:
-                      return Text(
-                        PlayerEnum.x.value.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      );
-                    case PlayerEnum.o:
-                      return Text(
-                        PlayerEnum.o.value.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      );
-                    case PlayerEnum.none:
-                      return const SizedBox.shrink();
-                  }
-                },
-              ),
+            child: Builder(
+              builder: (context) {
+                switch (player) {
+                  case PlayerEnum.x:
+                    return Text(
+                      PlayerEnum.x.value.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    );
+                  case PlayerEnum.o:
+                    return Text(
+                      PlayerEnum.o.value.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    );
+                  case PlayerEnum.none:
+                    return const SizedBox.shrink();
+                }
+              },
             ),
           ),
         ),
