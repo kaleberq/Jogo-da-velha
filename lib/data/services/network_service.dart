@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
@@ -151,7 +152,7 @@ class NetworkService implements INetworkService {
   }
 
   @override
-  void sendMove(int row, int col, String player) {
+  void sendMove(int row, int col, PlayerEnum player) {
     _connectionManager?.sendMove(row, col, player);
   }
 
@@ -255,12 +256,13 @@ class NetworkConnectionManager {
     }
   }
 
-  void sendMove(int row, int col, String player) {
+  void sendMove(int row, int col, PlayerEnum player) {
     final data = jsonEncode({
       'type': 'move',
       'row': row,
       'col': col,
-      'player': player,
+      'player':
+          player.name, // Converte enum para String (retorna "x", "o" ou "none")
     });
     sendMessage(data);
   }

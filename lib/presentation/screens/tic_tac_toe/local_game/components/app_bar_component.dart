@@ -28,12 +28,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
         tooltip: context.l10n.back,
       ),
-      title: Text(
-        context.l10n.playerTurn(currentPlayer.value),
-        style: DSTypographySemiBold.labelLarge.copyWith(
-          color: currentPlayer == PlayerEnum.x ? Colors.blue : Colors.red,
-        ),
-      ),
+      title: Icon(currentPlayer.value, size: 24),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),

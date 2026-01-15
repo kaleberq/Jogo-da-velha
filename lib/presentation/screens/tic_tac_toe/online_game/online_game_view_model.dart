@@ -90,10 +90,13 @@ class OnlineGameViewModel extends ChangeNotifier {
           final row = data['row'] as int;
           final col = data['col'] as int;
           final playerStr = data['player'] as String;
-          final player = playerStr == PlayerEnum.x.value
-              ? PlayerEnum.x
-              : PlayerEnum.o;
-          onMoveReceived?.call(row, col, player);
+
+          // Converte String de volta para PlayerEnum usando byName
+          final player = PlayerEnum.values.byName(playerStr);
+
+          if (player != PlayerEnum.none) {
+            onMoveReceived?.call(row, col, player);
+          }
           break;
         case 'reset':
           onResetReceived?.call();
@@ -113,7 +116,7 @@ class OnlineGameViewModel extends ChangeNotifier {
 
   // Métodos para enviar eventos de rede
   void sendMove(int row, int col, PlayerEnum player) {
-    _gameRepository.sendMove(row, col, player.value);
+    _gameRepository.sendMove(row, col, player);
   }
 
   void sendReset() {

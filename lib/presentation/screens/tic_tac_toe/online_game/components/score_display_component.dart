@@ -22,15 +22,11 @@ class ScoreDisplayComponent extends StatelessWidget {
               border: Border.all(color: Colors.blue.shade200),
             ),
             child: Center(
-              child: Text(
-                PlayerEnum.x.value * game.scoreX,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
+              child: Row(
+                children: [
+                  Icon(PlayerEnum.x.value, size: 24),
+                  Text(game.scoreX.toString(), textAlign: TextAlign.center),
+                ],
               ),
             ),
           ),
@@ -45,15 +41,11 @@ class ScoreDisplayComponent extends StatelessWidget {
               border: Border.all(color: Colors.red.shade200),
             ),
             child: Center(
-              child: Text(
-                PlayerEnum.o.value * game.scoreO,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.red,
-                  letterSpacing: 2,
-                ),
-                textAlign: TextAlign.center,
+              child: Row(
+                children: [
+                  Icon(PlayerEnum.o.value, size: 24),
+                  Text(game.scoreO.toString(), textAlign: TextAlign.center),
+                ],
               ),
             ),
           ),

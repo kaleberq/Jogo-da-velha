@@ -1,9 +1,11 @@
-enum PlayerEnum {
-  x('✕'),
-  o('◯'),
-  none('');
+import 'package:flutter/material.dart';
 
-  final String value;
+enum PlayerEnum {
+  x(Icons.close),
+  o(Icons.radio_button_unchecked),
+  none(Icons.question_mark);
+
+  final IconData value;
 
   const PlayerEnum(this.value);
 }

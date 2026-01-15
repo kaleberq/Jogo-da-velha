@@ -1,3 +1,4 @@
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 
@@ -42,7 +43,7 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendMove(int row, int col, String player) {
+  void sendMove(int row, int col, PlayerEnum player) {
     _networkService.sendMove(row, col, player);
   }
 

@@ -17,30 +17,30 @@ class CellComponent extends StatelessWidget {
             border: Border.all(color: Colors.transparent),
           ),
           child: Center(
-            child: Builder(
-              builder: (context) {
-                switch (player) {
-                  case PlayerEnum.x:
-                    return Text(
-                      PlayerEnum.x.value.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    );
-                  case PlayerEnum.o:
-                    return Text(
-                      PlayerEnum.o.value.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                      ),
-                    );
-                  case PlayerEnum.none:
-                    return const SizedBox.shrink();
-                }
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final double size = constraints.maxWidth;
+
+                return Builder(
+                  builder: (context) {
+                    switch (player) {
+                      case PlayerEnum.x:
+                        return Icon(
+                          player.value,
+                          size: size,
+                          color: Colors.blue,
+                        );
+                      case PlayerEnum.o:
+                        return Icon(
+                          player.value,
+                          size: size,
+                          color: Colors.red,
+                        );
+                      case PlayerEnum.none:
+                        return const SizedBox.shrink();
+                    }
+                  },
+                );
               },
             ),
           ),

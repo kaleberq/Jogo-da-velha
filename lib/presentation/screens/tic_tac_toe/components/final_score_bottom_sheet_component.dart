@@ -52,8 +52,8 @@ class FinalScoreBottomSheetComponent extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    PlayerScore(player: PlayerEnum.x.value, score: scoreX),
-                    PlayerScore(player: PlayerEnum.o.value, score: scoreO),
+                    PlayerScore(player: PlayerEnum.x, score: scoreX),
+                    PlayerScore(player: PlayerEnum.o, score: scoreO),
                   ],
                 ),
               ],
