@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PlayerScore extends StatelessWidget {
   final PlayerEnum player;
@@ -13,7 +14,7 @@ class PlayerScore extends StatelessWidget {
     return Column(
       spacing: DSSpacing.xs,
       children: [
-        Icon(player.value, size: 20),
+        SvgPicture.asset(player.assetPath, width: 20, height: 20),
         Text(score.toString(), style: DSTypographySemiBold.labelXLarge),
       ],
     );

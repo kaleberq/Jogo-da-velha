@@ -5,7 +5,7 @@ import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_bottom_sheet_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/score_display_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/dialogs/disconnected_dialog.dart';
@@ -157,7 +157,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     String message;
     if (widget.viewModel.game.winner != null) {
       message = context.l10n.playerWonRound(
-        widget.viewModel.game.winner!.value.toString(),
+        widget.viewModel.game.winner!.assetPath,
       );
     } else {
       message = context.l10n.drawRound;

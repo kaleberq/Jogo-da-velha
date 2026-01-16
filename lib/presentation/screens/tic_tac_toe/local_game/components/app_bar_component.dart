@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
@@ -28,7 +29,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
         tooltip: context.l10n.back,
       ),
-      title: Icon(currentPlayer.value, size: 24),
+      title: SvgPicture.asset(currentPlayer.assetPath, width: 24, height: 24),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),

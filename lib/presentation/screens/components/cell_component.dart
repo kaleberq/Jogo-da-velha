@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CellComponent extends StatelessWidget {
   final PlayerEnum player;
@@ -25,16 +27,24 @@ class CellComponent extends StatelessWidget {
                   builder: (context) {
                     switch (player) {
                       case PlayerEnum.x:
-                        return Icon(
-                          player.value,
-                          size: size,
-                          color: Colors.blue,
+                        return SvgPicture.asset(
+                          player.assetPath,
+                          width: size,
+                          height: size,
+                          colorFilter: const ColorFilter.mode(
+                            DSColors.primary,
+                            BlendMode.srcIn,
+                          ),
                         );
                       case PlayerEnum.o:
-                        return Icon(
-                          player.value,
-                          size: size,
-                          color: Colors.red,
+                        return SvgPicture.asset(
+                          player.assetPath,
+                          width: size,
+                          height: size,
+                          colorFilter: const ColorFilter.mode(
+                            DSColors.primary,
+                            BlendMode.srcIn,
+                          ),
                         );
                       case PlayerEnum.none:
                         return const SizedBox.shrink();

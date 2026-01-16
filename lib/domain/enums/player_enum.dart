@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
-
 enum PlayerEnum {
-  x(Icons.close),
-  o(Icons.radio_button_unchecked),
-  none(Icons.question_mark);
+  x('assets/icons/x.svg'),
+  o('assets/icons/o.svg'),
+  none('');
 
-  final IconData value;
+  final String assetPath;
 
-  const PlayerEnum(this.value);
+  const PlayerEnum(this.assetPath);
 }

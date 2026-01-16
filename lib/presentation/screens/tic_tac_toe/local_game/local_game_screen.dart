@@ -105,9 +105,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   void showRoundEnd() {
     String message;
     if (widget.viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(
-        widget.viewModel.game.winner!.value.toString(),
-      );
+      message = context.l10n.playerWonRound(widget.viewModel.game.winner!.name);
     } else {
       message = context.l10n.drawRound;
     }

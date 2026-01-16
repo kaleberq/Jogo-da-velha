@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ScoreDisplayComponent extends StatelessWidget {
   final TicTacToeGameModel game;
@@ -10,23 +12,30 @@ class ScoreDisplayComponent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 16,
+      spacing: DSSpacing.md,
       children: [
         Expanded(
           flex: 1,
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.blue.shade200),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+              border: Border.all(color: DSColors.primary),
             ),
             child: Center(
               child: Row(
-                children: [
-                  Icon(PlayerEnum.x.value, size: 24),
-                  Text(game.scoreX.toString(), textAlign: TextAlign.center),
-                ],
+                children: List.generate(
+                  game.scoreX,
+                  (_) => SvgPicture.asset(
+                    PlayerEnum.x.assetPath,
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      DSColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -34,18 +43,25 @@ class ScoreDisplayComponent extends StatelessWidget {
         Expanded(
           flex: 1,
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(DSSpacing.md),
             decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.red.shade200),
+              borderRadius: BorderRadius.circular(DSRadius.sm),
+              border: Border.all(color: DSColors.primary),
             ),
             child: Center(
               child: Row(
-                children: [
-                  Icon(PlayerEnum.o.value, size: 24),
-                  Text(game.scoreO.toString(), textAlign: TextAlign.center),
-                ],
+                children: List.generate(
+                  game.scoreO,
+                  (_) => SvgPicture.asset(
+                    PlayerEnum.o.assetPath,
+                    width: 24,
+                    height: 24,
+                    colorFilter: const ColorFilter.mode(
+                      DSColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
