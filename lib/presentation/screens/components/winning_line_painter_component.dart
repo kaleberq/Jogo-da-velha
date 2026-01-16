@@ -17,12 +17,12 @@ class WinningLinePainterComponent extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.black
-      ..strokeWidth = 3
+      ..strokeWidth = boardSize / 50
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     final cellSize = boardSize / 3;
-    final padding = cellSize * 0.15; // 15% de padding em cada lado
+    final padding = cellSize * 0.15;
 
     switch (winningLine.type) {
       case WinningLineEnum.horizontal:

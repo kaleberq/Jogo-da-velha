@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
@@ -30,7 +31,7 @@ class GameBoardComponent extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.grey.shade800, width: 3),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(DSRadius.sm),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.shade400,
