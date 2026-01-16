@@ -15,6 +15,7 @@ class CellComponent extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
+          padding: EdgeInsets.all(DSSpacing.sm),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.transparent),
           ),
