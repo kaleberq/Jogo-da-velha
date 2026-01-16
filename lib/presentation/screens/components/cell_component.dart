@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -31,8 +30,8 @@ class CellComponent extends StatelessWidget {
                           player.assetPath,
                           width: size,
                           height: size,
-                          colorFilter: const ColorFilter.mode(
-                            DSColors.primary,
+                          colorFilter: ColorFilter.mode(
+                            PlayerEnum.x.color,
                             BlendMode.srcIn,
                           ),
                         );
@@ -41,8 +40,8 @@ class CellComponent extends StatelessWidget {
                           player.assetPath,
                           width: size,
                           height: size,
-                          colorFilter: const ColorFilter.mode(
-                            DSColors.primary,
+                          colorFilter: ColorFilter.mode(
+                            PlayerEnum.o.color,
                             BlendMode.srcIn,
                           ),
                         );
