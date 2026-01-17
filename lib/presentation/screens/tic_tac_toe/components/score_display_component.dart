@@ -12,66 +12,69 @@ class ScoreDisplayComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: DSSpacing.md,
-      children: [
-        Expanded(
-          flex: 1,
-          child: Container(
-            constraints: BoxConstraints(minHeight: 50),
-            padding: const EdgeInsets.all(DSSpacing.xs),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(DSRadius.md),
-              border: Border.all(color: AppColors.playerX, width: 5),
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Wrap(
-                children: List.generate(
-                  game.scoreX,
-                  (_) => SvgPicture.asset(
-                    PlayerEnum.x.assetPath,
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.playerX,
-                      BlendMode.srcIn,
+    return IntrinsicHeight(
+      child: Row(
+        spacing: DSSpacing.md,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              constraints: BoxConstraints(minHeight: 50),
+              padding: const EdgeInsets.all(DSSpacing.xs),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: AppColors.playerX, width: 5),
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  children: List.generate(
+                    game.scoreX,
+                    (_) => SvgPicture.asset(
+                      PlayerEnum.x.assetPath,
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.playerX,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            constraints: BoxConstraints(minHeight: 50),
-            padding: const EdgeInsets.all(DSSpacing.xs),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(DSRadius.md),
-              border: Border.all(color: AppColors.playerO, width: 5),
-            ),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Wrap(
-                children: List.generate(
-                  game.scoreO,
-                  (_) => SvgPicture.asset(
-                    PlayerEnum.o.assetPath,
-                    width: 24,
-                    height: 24,
-                    colorFilter: const ColorFilter.mode(
-                      AppColors.playerO,
-                      BlendMode.srcIn,
+          SvgPicture.asset(PlayerEnum.x.assetPath, width: 20),
+          Expanded(
+            flex: 1,
+            child: Container(
+              constraints: BoxConstraints(minHeight: 50),
+              padding: const EdgeInsets.all(DSSpacing.xs),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DSRadius.md),
+                border: Border.all(color: AppColors.playerO, width: 5),
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  children: List.generate(
+                    game.scoreO,
+                    (_) => SvgPicture.asset(
+                      PlayerEnum.o.assetPath,
+                      width: 24,
+                      height: 24,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.playerO,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

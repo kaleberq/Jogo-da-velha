@@ -4,13 +4,13 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/player_score_component.dart';
 
-class FinalScoreBottomSheetComponent extends StatelessWidget {
+class FinalScoreComponent extends StatelessWidget {
   final String winnerMessage;
   final int scoreX;
   final int scoreO;
   final VoidCallback resetAll;
 
-  const FinalScoreBottomSheetComponent({
+  const FinalScoreComponent({
     required this.winnerMessage,
     required this.scoreX,
     required this.scoreO,

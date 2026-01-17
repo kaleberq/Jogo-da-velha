@@ -29,7 +29,23 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.of(context).pop(),
         tooltip: context.l10n.back,
       ),
-      title: SvgPicture.asset(currentPlayer.assetPath, width: 24, height: 24),
+      title: Row(
+        spacing: DSSpacing.xs,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Vez do jogador',
+            style: DSTypographySemiBold.labelMedium.copyWith(
+              color: currentPlayer.color,
+            ),
+          ),
+          SvgPicture.asset(
+            currentPlayer.assetPath,
+            colorFilter: ColorFilter.mode(currentPlayer.color, BlendMode.srcIn),
+            width: 20,
+          ),
+        ],
+      ),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings),

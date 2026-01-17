@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_bottom_sheet_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
@@ -96,7 +96,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       context: context,
       isDismissible: false,
       enableDrag: false,
-      widget: FinalScoreBottomSheetComponent(
+      widget: FinalScoreComponent(
         winnerMessage: winnerMessage,
         scoreX: viewModel.game.scoreX,
         scoreO: viewModel.game.scoreO,
