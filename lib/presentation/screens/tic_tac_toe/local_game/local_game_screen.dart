@@ -12,7 +12,7 @@ import 'package:jogo_da_velha/presentation/screens/components/game_board_compone
 class LocalGameScreen extends StatefulWidget {
   final LocalGameViewModel viewModel;
 
-  const LocalGameScreen({super.key, required this.viewModel});
+  const LocalGameScreen({required this.viewModel, super.key});
 
   @override
   State<LocalGameScreen> createState() => _LocalGameScreenState();
@@ -23,9 +23,12 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   PlayerEnum? _roundWinner;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
+  late final LocalGameViewModel viewModel;
 
   @override
   void initState() {
+    viewModel = widget.viewModel;
+
     super.initState();
     _winningLineAnimationController = AnimationController(
       vsync: this,
@@ -42,23 +45,23 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void onMaxRoundsChanged(int maxRounds) {
     _winningLineAnimationController.reset();
-    widget.viewModel.setMaxRounds(maxRounds);
+    viewModel.setMaxRounds(maxRounds);
   }
 
   void resetAll() {
     _winningLineAnimationController.reset();
-    widget.viewModel.resetAll();
+    viewModel.resetAll();
   }
 
   void onCellTap({required int rowIndex, required int columnIndex}) {
-    if (widget.viewModel.makeMove(rowIndex, columnIndex)) {
+    if (viewModel.makeMove(rowIndex, columnIndex)) {
       checkGameOver();
     }
   }
 
   void checkGameOver() {
-    if (widget.viewModel.game.isGameOver) {
-      if (widget.viewModel.game.winningLine != null) {
+    if (viewModel.game.isGameOver) {
+      if (viewModel.game.winningLine != null) {
         _winningLineAnimationController.reset();
         _winningLineAnimationController.forward();
       }
@@ -69,9 +72,9 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   }
 
   void handleRoundEnd() {
-    widget.viewModel.updateScore();
+    viewModel.updateScore();
 
-    if (widget.viewModel.isAllRoundsFinished) {
+    if (viewModel.isAllRoundsFinished) {
       _showFinalScoreBottomSheet();
     } else {
       showRoundEnd();
@@ -80,7 +83,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void _showFinalScoreBottomSheet() {
     String winnerMessage;
-    final PlayerEnum? overallWinner = widget.viewModel.overallWinner;
+    final PlayerEnum? overallWinner = viewModel.overallWinner;
     if (overallWinner == PlayerEnum.x) {
       winnerMessage = context.l10n.playerXWonGame;
     } else if (overallWinner == PlayerEnum.o) {
@@ -95,8 +98,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       enableDrag: false,
       widget: FinalScoreBottomSheetComponent(
         winnerMessage: winnerMessage,
-        scoreX: widget.viewModel.game.scoreX,
-        scoreO: widget.viewModel.game.scoreO,
+        scoreX: viewModel.game.scoreX,
+        scoreO: viewModel.game.scoreO,
         resetAll: () => resetAll(),
       ),
     );
@@ -104,14 +107,14 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void showRoundEnd() {
     String message;
-    if (widget.viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(widget.viewModel.game.winner!.name);
+    if (viewModel.game.winner != null) {
+      message = context.l10n.playerWonRound(viewModel.game.winner!.name);
     } else {
       message = context.l10n.drawRound;
     }
 
     setState(() {
-      _roundWinner = widget.viewModel.game.winner;
+      _roundWinner = viewModel.game.winner;
     });
 
     showDSModalBottomSheet(
@@ -123,7 +126,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         roundWinner: _roundWinner,
         onNextRound: () {
           _winningLineAnimationController.reset();
-          widget.viewModel.nextRound();
+          viewModel.nextRound();
 
           Navigator.of(context).pop();
           setState(() {});
@@ -141,27 +144,27 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   void nextRound() {
     hideRoundEndMessage();
     _winningLineAnimationController.reset();
-    widget.viewModel.nextRound();
+    viewModel.nextRound();
   }
 
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
-    widget.viewModel.dispose();
+    viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.viewModel,
+      listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBarComponent(
             onResetPressed: resetAll,
-            currentMaxRounds: widget.viewModel.game.maxRounds,
+            currentMaxRounds: viewModel.game.maxRounds,
             onMaxRoundsChanged: onMaxRoundsChanged,
-            currentPlayer: widget.viewModel.game.currentPlayer,
+            currentPlayer: viewModel.game.currentPlayer,
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(
@@ -173,9 +176,9 @@ class _LocalGameScreenState extends State<LocalGameScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ScoreDisplayComponent(game: widget.viewModel.game),
+                ScoreDisplayComponent(game: viewModel.game),
                 GameBoardComponent(
-                  game: widget.viewModel.game,
+                  game: viewModel.game,
                   winningLineAnimation: _winningLineAnimation,
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
