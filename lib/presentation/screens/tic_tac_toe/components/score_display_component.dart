@@ -44,7 +44,14 @@ class ScoreDisplayComponent extends StatelessWidget {
               ),
             ),
           ),
-          SvgPicture.asset(PlayerEnum.x.assetPath, width: 20),
+          SvgPicture.asset(
+            PlayerEnum.x.assetPath,
+            width: 20,
+            colorFilter: ColorFilter.mode(
+              DSColors.onBackground(context),
+              BlendMode.srcIn,
+            ),
+          ),
           Expanded(
             flex: 1,
             child: Container(
