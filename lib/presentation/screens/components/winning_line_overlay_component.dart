@@ -11,7 +11,7 @@ class WinningLineOverlayComponent extends StatelessWidget {
     super.key,
     required this.winningLine,
     required this.boardSize,
-    this.animationProgress = 1.0,
+    required this.animationProgress,
   });
 
   @override

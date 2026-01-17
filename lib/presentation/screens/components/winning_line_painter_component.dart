@@ -5,12 +5,12 @@ import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 class WinningLinePainterComponent extends CustomPainter {
   final WinningLineModel winningLine;
   final double boardSize;
-  final double animationProgress; // 0.0 a 1.0
+  final double animationProgress;
 
   WinningLinePainterComponent({
     required this.winningLine,
     required this.boardSize,
-    this.animationProgress = 1.0,
+    required this.animationProgress,
   });
 
   @override
