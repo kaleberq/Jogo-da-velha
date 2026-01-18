@@ -20,35 +20,39 @@ class CellComponent extends StatelessWidget {
           child: Center(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final double size = constraints.maxWidth;
+                final size = constraints.maxWidth;
+                final padding = size * 0.05;
 
-                return Builder(
-                  builder: (context) {
-                    switch (player) {
-                      case PlayerEnum.x:
-                        return SvgPicture.asset(
-                          player.assetPath,
-                          width: size,
-                          height: size,
-                          colorFilter: ColorFilter.mode(
-                            PlayerEnum.x.color,
-                            BlendMode.srcIn,
-                          ),
-                        );
-                      case PlayerEnum.o:
-                        return SvgPicture.asset(
-                          player.assetPath,
-                          width: size,
-                          height: size,
-                          colorFilter: ColorFilter.mode(
-                            PlayerEnum.o.color,
-                            BlendMode.srcIn,
-                          ),
-                        );
-                      case PlayerEnum.none:
-                        return const SizedBox.shrink();
-                    }
-                  },
+                return Padding(
+                  padding: EdgeInsets.all(padding),
+                  child: Builder(
+                    builder: (context) {
+                      switch (player) {
+                        case PlayerEnum.x:
+                          return SvgPicture.asset(
+                            player.assetPath,
+                            width: size,
+                            height: size,
+                            colorFilter: ColorFilter.mode(
+                              PlayerEnum.x.color,
+                              BlendMode.srcIn,
+                            ),
+                          );
+                        case PlayerEnum.o:
+                          return SvgPicture.asset(
+                            player.assetPath,
+                            width: size,
+                            height: size,
+                            colorFilter: ColorFilter.mode(
+                              PlayerEnum.o.color,
+                              BlendMode.srcIn,
+                            ),
+                          );
+                        case PlayerEnum.none:
+                          return const SizedBox.shrink();
+                      }
+                    },
+                  ),
                 );
               },
             ),

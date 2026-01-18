@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
@@ -21,7 +23,8 @@ class GameBoardComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final double size = constraints.maxWidth;
+        final double maxWidth = constraints.maxWidth;
+        final double size = maxWidth * sqrt(1);
 
         return Stack(
           children: [

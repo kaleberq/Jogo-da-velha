@@ -17,11 +17,12 @@ class WinningLinePainterComponent extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.black
-      ..strokeWidth = boardSize / 50
+      ..strokeWidth = boardSize / 90
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     final cellSize = boardSize / 3;
+
     final padding = cellSize * 0.15;
 
     switch (winningLine.type) {
