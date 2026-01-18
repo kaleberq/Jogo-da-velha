@@ -15,11 +15,6 @@ class LocalGameViewModel extends ChangeNotifier {
 
   TicTacToeGameModel get game => _game;
 
-  void newGame() {
-    _game = TicTacToeGameModel();
-    notifyListeners();
-  }
-
   void setMaxRounds(int maxRounds) {
     _game.maxRounds = maxRounds;
     notifyListeners();
@@ -111,73 +106,6 @@ class LocalGameViewModel extends ChangeNotifier {
         : PlayerEnum.x;
     notifyListeners();
     return true;
-  }
-
-  // Fazer movimento de um jogador específico (usado em multiplayer)
-  bool makeMoveWithPlayer(int row, int col, PlayerEnum player) {
-    if (_game.isGameOver ||
-        _game.board[row][col] != PlayerEnum.none ||
-        player == PlayerEnum.none) {
-      return false;
-    }
-
-    _game.board[row][col] = player;
-    _game.currentPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
-
-    final winningLineResult = _checkWinnerWithPlayer(row, col, player);
-    if (winningLineResult != null) {
-      _game.winner = player;
-      _game.winningLine = winningLineResult;
-      _game.isGameOver = true;
-      notifyListeners();
-      return true;
-    }
-
-    if (_checkDraw()) {
-      _game.isGameOver = true;
-      notifyListeners();
-      return true;
-    }
-    notifyListeners();
-    return true;
-  }
-
-  WinningLineModel? _checkWinnerWithPlayer(
-    int row,
-    int col,
-    PlayerEnum player,
-  ) {
-    // Verifica linha
-    if (_game.board[row][0] == player &&
-        _game.board[row][1] == player &&
-        _game.board[row][2] == player) {
-      return WinningLineModel.horizontal(row);
-    }
-
-    // Verifica coluna
-    if (_game.board[0][col] == player &&
-        _game.board[1][col] == player &&
-        _game.board[2][col] == player) {
-      return WinningLineModel.vertical(col);
-    }
-
-    // Verifica diagonal principal
-    if (row == col &&
-        _game.board[0][0] == player &&
-        _game.board[1][1] == player &&
-        _game.board[2][2] == player) {
-      return WinningLineModel.diagonalMain();
-    }
-
-    // Verifica diagonal secundária
-    if (row + col == 2 &&
-        _game.board[0][2] == player &&
-        _game.board[1][1] == player &&
-        _game.board[2][0] == player) {
-      return WinningLineModel.diagonalSecondary();
-    }
-
-    return null;
   }
 
   WinningLineModel? _checkWinner(int row, int col) {
