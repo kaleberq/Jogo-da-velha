@@ -78,7 +78,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get playAgain => 'Jogar Novamente';
 
   @override
-  String get nextRound => 'Próximo Round';
+  String get nextRound => 'Próxima Rodada';
 
   @override
   String get playerXWonGame => 'Jogador X venceu o jogo!';
@@ -91,7 +91,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String playerWonRound(String player) {
-    return 'Jogador $player venceu este round!';
+    return 'Jogador $player venceu esta rodada!';
   }
 
   @override
@@ -107,10 +107,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get settings => 'Configurações';
 
   @override
-  String get numberOfRounds => 'Número de Rounds';
+  String get numberOfRounds => 'Número de Rodadas';
 
   @override
-  String get chooseRoundsRange => 'Escolha entre 1 e 20 rounds';
+  String get chooseRoundsRange => 'Escolha entre 1 e 20 rodadas';
 
   @override
   String get apply => 'Aplicar';
@@ -148,4 +148,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get backToMenu => 'Voltar ao Menu';
+
+  @override
+  String get roundText => 'Rodada';
 }

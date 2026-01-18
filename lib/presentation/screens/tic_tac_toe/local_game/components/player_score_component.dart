@@ -14,7 +14,12 @@ class PlayerScore extends StatelessWidget {
     return Column(
       spacing: DSSpacing.xs,
       children: [
-        SvgPicture.asset(player.assetPath, width: 20, height: 20),
+        SvgPicture.asset(
+          player.assetPath,
+          colorFilter: ColorFilter.mode(player.color, BlendMode.srcIn),
+          width: 40,
+          height: 40,
+        ),
         Text(score.toString(), style: DSTypographySemiBold.labelXLarge),
       ],
     );

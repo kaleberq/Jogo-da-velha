@@ -27,11 +27,11 @@
   "gameEndTitle": "Fim de Jogo",
   "finalScore": "Placar Final",
   "playAgain": "Jogar Novamente",
-  "nextRound": "Próximo Round",
+  "nextRound": "Próxima Rodada",
   "playerXWonGame": "Jogador X venceu o jogo!",
   "playerOWonGame": "Jogador O venceu o jogo!",
   "tieGame": "Empate! Ninguém venceu.",
-  "playerWonRound": "Jogador {player} venceu este round!",
+  "playerWonRound": "Jogador {player} venceu esta rodada!",
   "@playerWonRound": {
     "placeholders": {
       "player": {
@@ -43,8 +43,8 @@
   "back": "Voltar",
   "playerTurn": "Vez do jogador:",
   "settings": "Configurações",
-  "numberOfRounds": "Número de Rounds",
-  "chooseRoundsRange": "Escolha entre 1 e 20 rounds",
+  "numberOfRounds": "Número de Rodadas",
+  "chooseRoundsRange": "Escolha entre 1 e 20 rodadas",
   "apply": "Aplicar",
   "resetAll": "Reiniciar Tudo",
   "yourTurn": "Sua Vez",
@@ -69,5 +69,6 @@
   },
   "connectionLost": "Conexão Perdida",
   "connectionLostMessage": "A conexão com o outro jogador foi perdida.",
-  "backToMenu": "Voltar ao Menu"
+  "backToMenu": "Voltar ao Menu",
+  "roundText": "Rodada"
 }

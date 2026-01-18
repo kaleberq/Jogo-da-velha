@@ -364,6 +364,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Menu'**
   String get backToMenu;
+
+  /// No description provided for @roundText.
+  ///
+  /// In en, this message translates to:
+  /// **'Round'**
+  String get roundText;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

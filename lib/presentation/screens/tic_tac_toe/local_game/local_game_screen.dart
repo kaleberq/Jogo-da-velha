@@ -4,6 +4,7 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
@@ -176,6 +177,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                RoundIndicatorComponent(
+                  currentRound: viewModel.game.currentRound,
+                  totalRounds: viewModel.game.maxRounds,
+                ),
                 ScoreDisplayComponent(game: viewModel.game),
                 GameBoardComponent(
                   game: viewModel.game,

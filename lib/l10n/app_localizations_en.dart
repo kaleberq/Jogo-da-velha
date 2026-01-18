@@ -148,4 +148,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToMenu => 'Back to Menu';
+
+  @override
+  String get roundText => 'Round';
 }

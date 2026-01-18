@@ -69,5 +69,7 @@
   },
   "connectionLost": "Connection Lost",
   "connectionLostMessage": "The connection with the other player was lost.",
-  "backToMenu": "Back to Menu"
+  "backToMenu": "Back to Menu",
+
+  "roundText": "Round"
 }
