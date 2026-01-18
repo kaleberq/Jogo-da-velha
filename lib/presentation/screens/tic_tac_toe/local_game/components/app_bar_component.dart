@@ -34,7 +34,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Vez do jogador',
+            context.l10n.playerTurn,
             style: DSTypographySemiBold.labelMedium.copyWith(
               color: currentPlayer.color,
             ),
