@@ -123,7 +123,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: DSColors.onBackground(context)),
+                        side: BorderSide(color: DSColors.error(context)),
                       ),
                       onPressed: () {
                         Navigator.of(bottomSheetContext).pop();
@@ -131,14 +131,11 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                           onResetPressed!();
                         }
                       },
-                      icon: Icon(
-                        Icons.refresh,
-                        color: DSColors.onBackground(context),
-                      ),
+                      icon: Icon(Icons.refresh, color: DSColors.error(context)),
                       label: Text(
                         context.l10n.resetAll,
                         style: DSTypographySemiBold.labelMedium.copyWith(
-                          color: DSColors.onBackground(context),
+                          color: DSColors.error(context),
                         ),
                       ),
                     ),
