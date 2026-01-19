@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/app/theme/app_colors.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,7 +22,16 @@ class ScoreDisplayComponent extends StatelessWidget {
               padding: const EdgeInsets.all(DSSpacing.xs),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(color: AppColors.playerX, width: 5),
+                border: Border.all(color: PlayerEnum.x.color, width: 5),
+                boxShadow: game.currentPlayer == PlayerEnum.x
+                    ? [
+                        BoxShadow(
+                          color: PlayerEnum.x.color.withValues(alpha: 0.5),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : null,
               ),
               child: Align(
                 alignment: Alignment.centerLeft,
@@ -34,8 +42,8 @@ class ScoreDisplayComponent extends StatelessWidget {
                       PlayerEnum.x.assetPath,
                       width: 24,
                       height: 24,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.playerX,
+                      colorFilter: ColorFilter.mode(
+                        PlayerEnum.x.color,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -56,10 +64,19 @@ class ScoreDisplayComponent extends StatelessWidget {
             flex: 1,
             child: Container(
               constraints: BoxConstraints(minHeight: 50),
-              padding: const EdgeInsets.all(DSSpacing.xs),
+              padding: EdgeInsets.all(DSSpacing.xs),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(color: AppColors.playerO, width: 5),
+                border: Border.all(color: PlayerEnum.o.color, width: 5),
+                boxShadow: game.currentPlayer == PlayerEnum.o
+                    ? [
+                        BoxShadow(
+                          color: PlayerEnum.o.color.withValues(alpha: 0.5),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : null,
               ),
               child: Align(
                 alignment: Alignment.centerLeft,
@@ -70,8 +87,8 @@ class ScoreDisplayComponent extends StatelessWidget {
                       PlayerEnum.o.assetPath,
                       width: 24,
                       height: 24,
-                      colorFilter: const ColorFilter.mode(
-                        AppColors.playerO,
+                      colorFilter: ColorFilter.mode(
+                        PlayerEnum.o.color,
                         BlendMode.srcIn,
                       ),
                     ),
