@@ -41,7 +41,6 @@
   },
   "drawRound": "Draw",
   "back": "Back",
-  "playerTurn": "Player turn:",
   "settings": "Settings",
   "numberOfRounds": "Number of Rounds",
   "chooseRoundsRange": "Choose between 1 and 20 rounds",

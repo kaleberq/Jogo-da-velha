@@ -165,7 +165,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
             onResetPressed: resetAll,
             currentMaxRounds: viewModel.game.maxRounds,
             onMaxRoundsChanged: onMaxRoundsChanged,
-            currentPlayer: viewModel.game.currentPlayer,
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(

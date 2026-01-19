@@ -101,9 +101,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get back => 'Voltar';
 
   @override
-  String get playerTurn => 'Vez do jogador:';
-
-  @override
   String get settings => 'Configurações';
 
   @override

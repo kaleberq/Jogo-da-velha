@@ -101,9 +101,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get back => 'Back';
 
   @override
-  String get playerTurn => 'Player turn:';
-
-  @override
   String get settings => 'Settings';
 
   @override

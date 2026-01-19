@@ -8,14 +8,12 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
   final int? currentMaxRounds;
   final Function(int)? onMaxRoundsChanged;
-  final PlayerEnum currentPlayer;
 
   const AppBarComponent({
     super.key,
     this.onResetPressed,
     this.currentMaxRounds,
     this.onMaxRoundsChanged,
-    required this.currentPlayer,
   });
 
   @override
@@ -28,23 +26,6 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),
         tooltip: context.l10n.back,
-      ),
-      title: Row(
-        spacing: DSSpacing.xs,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            context.l10n.playerTurn,
-            style: DSTypographySemiBold.labelMedium.copyWith(
-              color: currentPlayer.color,
-            ),
-          ),
-          SvgPicture.asset(
-            currentPlayer.assetPath,
-            colorFilter: ColorFilter.mode(currentPlayer.color, BlendMode.srcIn),
-            width: 20,
-          ),
-        ],
       ),
       actions: [
         IconButton(

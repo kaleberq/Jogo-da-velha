@@ -275,12 +275,6 @@ abstract class AppLocalizations {
   /// **'Back'**
   String get back;
 
-  /// No description provided for @playerTurn.
-  ///
-  /// In en, this message translates to:
-  /// **'Player turn:'**
-  String get playerTurn;
-
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:
