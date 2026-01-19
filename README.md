@@ -1,9 +1,10 @@
 # Jogo da Velha
-<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 26" src="https://github.com/user-attachments/assets/c62b3d66-2e51-4b6b-b072-afaf140aae3e" />
-<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 38" src="https://github.com/user-attachments/assets/0d49a1b4-3d7a-4a51-a5dd-a77c93b13981" />
-<img height="500" alt="Simulator Screenshot - iPhone 16e - 2025-12-28 at 17 43 41" src="https://github.com/user-attachments/assets/b789cb74-fb72-46a5-ac2e-fb920a1126a8" />
-<img height="500" alt="Screenshot 2025-12-30 at 11 15 37" src="https://github.com/user-attachments/assets/3cc5770e-c4ec-476f-a67f-1d37dfe0cf9b" />
-<img height="500" alt="Screenshot 2025-12-30 at 11 16 05" src="https://github.com/user-attachments/assets/66f879c5-3f12-4942-a5e8-dbaed9000bfd" />
+
+<img width="1170" height="2532" alt="Simulator Screenshot - iPhone 16e - 2026-01-19 at 19 15 51" src="https://github.com/user-attachments/assets/c3e73319-f8f0-4740-9d0b-5a841d11ef72" />
+
+<img width="1170" height="2532" alt="Simulator Screenshot - iPhone 16e - 2026-01-19 at 19 16 10" src="https://github.com/user-attachments/assets/724b8b9b-351d-4830-97db-802742d9f253" />
+
+<img width="1170" height="2532" alt="Simulator Screenshot - iPhone 16e - 2026-01-19 at 19 16 17" src="https://github.com/user-attachments/assets/56cb5aa1-7098-42ee-8b3a-d46f68974fc4" />
 
 
 
