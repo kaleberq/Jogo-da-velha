@@ -77,10 +77,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                           ),
                           Text(
                             '$tempMaxRounds',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: DSTypographySemiBold.labelMedium,
                           ),
                           IconButton(
                             icon: const Icon(Icons.add),
@@ -108,11 +105,17 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                       onPressed: () {
                         if (onMaxRoundsChanged != null &&
                             tempMaxRounds != currentMaxRounds) {
+                          if (onResetPressed != null) {
+                            onResetPressed!();
+                          }
                           onMaxRoundsChanged!(tempMaxRounds);
                         }
                         Navigator.of(bottomSheetContext).pop();
                       },
-                      child: Text(context.l10n.apply),
+                      child: Text(
+                        context.l10n.apply,
+                        style: DSTypographySemiBold.labelMedium,
+                      ),
                     ),
                   ),
                   SizedBox(height: DSSpacing.sm),
@@ -120,7 +123,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: DSColors.error(context)),
+                        side: BorderSide(color: DSColors.onBackground(context)),
                       ),
                       onPressed: () {
                         Navigator.of(bottomSheetContext).pop();
@@ -128,11 +131,14 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
                           onResetPressed!();
                         }
                       },
-                      icon: Icon(Icons.refresh, color: DSColors.error(context)),
+                      icon: Icon(
+                        Icons.refresh,
+                        color: DSColors.onBackground(context),
+                      ),
                       label: Text(
                         context.l10n.resetAll,
-                        style: DSTypographySemiBold.labelSmall.copyWith(
-                          color: DSColors.error(context),
+                        style: DSTypographySemiBold.labelMedium.copyWith(
+                          color: DSColors.onBackground(context),
                         ),
                       ),
                     ),

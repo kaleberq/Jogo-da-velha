@@ -26,7 +26,7 @@ class ScoreDisplayComponent extends StatelessWidget {
                 boxShadow: game.currentPlayer == PlayerEnum.x
                     ? [
                         BoxShadow(
-                          color: PlayerEnum.x.color.withValues(alpha: 0.5),
+                          color: PlayerEnum.x.color.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -71,7 +71,7 @@ class ScoreDisplayComponent extends StatelessWidget {
                 boxShadow: game.currentPlayer == PlayerEnum.o
                     ? [
                         BoxShadow(
-                          color: PlayerEnum.o.color.withValues(alpha: 0.5),
+                          color: PlayerEnum.o.color.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
