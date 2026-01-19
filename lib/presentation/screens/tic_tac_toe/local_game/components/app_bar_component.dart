@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onResetPressed;
