@@ -23,35 +23,20 @@ class CellComponent extends StatelessWidget {
                 final size = constraints.maxWidth;
                 final padding = size * 0.05;
 
+                if (player == PlayerEnum.none) {
+                  return const SizedBox.shrink();
+                }
+
                 return Padding(
                   padding: EdgeInsets.all(padding),
-                  child: Builder(
-                    builder: (context) {
-                      switch (player) {
-                        case PlayerEnum.x:
-                          return SvgPicture.asset(
-                            player.assetPath,
-                            width: size,
-                            height: size,
-                            colorFilter: ColorFilter.mode(
-                              PlayerEnum.x.color,
-                              BlendMode.srcIn,
-                            ),
-                          );
-                        case PlayerEnum.o:
-                          return SvgPicture.asset(
-                            player.assetPath,
-                            width: size,
-                            height: size,
-                            colorFilter: ColorFilter.mode(
-                              PlayerEnum.o.color,
-                              BlendMode.srcIn,
-                            ),
-                          );
-                        case PlayerEnum.none:
-                          return const SizedBox.shrink();
-                      }
-                    },
+                  child: SvgPicture.asset(
+                    player.assetPath,
+                    width: size,
+                    height: size,
+                    colorFilter: ColorFilter.mode(
+                      player.color,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 );
               },
