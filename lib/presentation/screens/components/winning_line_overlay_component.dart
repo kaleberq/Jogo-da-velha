@@ -7,12 +7,14 @@ class WinningLineOverlayComponent extends StatelessWidget {
   final WinningLineModel? winningLine;
   final double boardSize;
   final double animationProgress;
+  final Color lineColor;
 
   const WinningLineOverlayComponent({
     super.key,
     required this.winningLine,
     required this.boardSize,
     required this.animationProgress,
+    required this.lineColor,
   });
 
   @override
@@ -27,7 +29,7 @@ class WinningLineOverlayComponent extends StatelessWidget {
           winningLine: winningLine!,
           boardSize: boardSize,
           animationProgress: animationProgress,
-          lineColor: DSColors.onBackground(context),
+          lineColor: lineColor,
         ),
       ),
     );

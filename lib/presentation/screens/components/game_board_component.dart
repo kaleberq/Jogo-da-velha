@@ -14,6 +14,7 @@ class GameBoardComponent extends StatelessWidget {
   final Animation<double>? borderAnimation;
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
   final Color? boardColor;
+  final Color? lineColor;
 
   const GameBoardComponent({
     super.key,
@@ -22,6 +23,7 @@ class GameBoardComponent extends StatelessWidget {
     this.borderAnimation,
     this.onCellTap,
     this.boardColor,
+    this.lineColor,
   });
 
   @override
@@ -86,6 +88,7 @@ class GameBoardComponent extends StatelessWidget {
                     winningLine: game.winningLine,
                     boardSize: size,
                     animationProgress: winningLineAnimation.value,
+                    lineColor: lineColor ?? DSColors.onBackground(context),
                   );
                 },
               ),

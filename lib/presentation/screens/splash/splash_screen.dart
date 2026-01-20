@@ -101,6 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
                         game: _viewModel.game,
                         winningLineAnimation: _lineAnimation,
                         boardColor: DSColors.white,
+                        lineColor: DSColors.black,
                       ),
                     );
                   },
