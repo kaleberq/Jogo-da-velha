@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/presentation/screens/components/animated_border_painter.dart';
 import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
@@ -10,12 +11,14 @@ import 'package:jogo_da_velha/presentation/screens/components/winning_line_overl
 class GameBoardComponent extends StatelessWidget {
   final TicTacToeGameModel game;
   final Animation<double> winningLineAnimation;
+  final Animation<double>? borderAnimation;
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const GameBoardComponent({
     super.key,
     required this.game,
     required this.winningLineAnimation,
+    this.borderAnimation,
     this.onCellTap,
   });
 
@@ -90,6 +93,24 @@ class GameBoardComponent extends StatelessWidget {
                     animationProgress: winningLineAnimation.value,
                   );
                 },
+              ),
+            // Borda animada verde
+            if (borderAnimation != null)
+              IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: borderAnimation!,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      size: Size(size, size),
+                      painter: AnimatedBorderPainter(
+                        progress: borderAnimation!.value,
+                        borderWidth: 4.0,
+                        borderColor: Colors.green,
+                        borderRadius: DSRadius.sm,
+                      ),
+                    );
+                  },
+                ),
               ),
           ],
         );

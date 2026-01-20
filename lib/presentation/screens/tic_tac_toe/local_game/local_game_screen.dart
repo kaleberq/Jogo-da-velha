@@ -24,6 +24,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   PlayerEnum? _roundWinner;
   late AnimationController _winningLineAnimationController;
   late Animation<double> _winningLineAnimation;
+  late AnimationController _borderAnimationController;
+  late Animation<double> _borderAnimation;
   late final LocalGameViewModel viewModel;
 
   @override
@@ -42,6 +44,22 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         curve: Curves.easeOut,
       ),
     );
+
+    // Animação da borda verde - 1 minuto
+    _borderAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(minutes: 1),
+    );
+
+    _borderAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _borderAnimationController,
+        curve: Curves.linear,
+      ),
+    );
+
+    // Inicia a animação da borda automaticamente (repetindo continuamente)
+    _borderAnimationController.repeat();
   }
 
   void onMaxRoundsChanged(int maxRounds) {
@@ -151,6 +169,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
+    _borderAnimationController.dispose();
     viewModel.dispose();
     super.dispose();
   }
@@ -184,6 +203,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
                 GameBoardComponent(
                   game: viewModel.game,
                   winningLineAnimation: _winningLineAnimation,
+                  borderAnimation: _borderAnimation,
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>
                           onCellTap(
