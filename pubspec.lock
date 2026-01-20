@@ -130,11 +130,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "v0.0.33"
-      resolved-ref: "0edf8a6e69b0f864fd60fe1718ed7334c08be347"
+      ref: "v0.0.35"
+      resolved-ref: "3b27a822793b44856a4b29908f7fa522ed639590"
       url: "git@github.com:kaleberq/flutter_design_system.git"
     source: git
-    version: "0.0.33"
+    version: "0.0.35"
   flutter_driver:
     dependency: transitive
     description: flutter

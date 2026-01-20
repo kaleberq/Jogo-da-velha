@@ -51,11 +51,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       duration: const Duration(minutes: 1),
     );
 
-    _borderAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _borderAnimationController,
-        curve: Curves.linear,
-      ),
+    _borderAnimation = Tween<double>(begin: 0.0, end: 10.0).animate(
+      CurvedAnimation(parent: _borderAnimationController, curve: Curves.linear),
     );
 
     // Inicia a animação da borda automaticamente (repetindo continuamente)

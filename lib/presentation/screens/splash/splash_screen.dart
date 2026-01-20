@@ -100,6 +100,7 @@ class _SplashScreenState extends State<SplashScreen>
                       child: GameBoardComponent(
                         game: _viewModel.game,
                         winningLineAnimation: _lineAnimation,
+                        boardColor: DSColors.white,
                       ),
                     );
                   },

@@ -1,19 +1,19 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 
 /// CustomPainter que desenha uma borda animada verde percorrendo o perímetro
 class AnimatedBorderPainter extends CustomPainter {
   final double progress; // 0.0 a 1.0
-  final double borderWidth;
   final Color borderColor;
-  final double borderRadius;
 
   AnimatedBorderPainter({
     required this.progress,
-    this.borderWidth = 4.0,
     this.borderColor = Colors.green,
-    this.borderRadius = 8.0,
   });
+
+  final double borderWidth = 3.0;
+  final double borderRadius = DSRadius.sm;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -56,7 +56,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Lado superior (da esquerda para direita)
     final topSideLength = rect.width - 2 * borderRadius;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, topSideLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        topSideLength,
+      );
       if (segmentLength > 0) {
         path.moveTo(rect.left + borderRadius, rect.top);
         path.lineTo(rect.left + borderRadius + segmentLength, rect.top);
@@ -67,7 +70,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Canto superior direito (arco de 90 graus)
     final topRightArcLength = math.pi * borderRadius / 2;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, topRightArcLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        topRightArcLength,
+      );
       if (segmentLength > 0) {
         final startAngle = -math.pi / 2;
         final sweepAngle = segmentLength / borderRadius;
@@ -88,7 +94,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Lado direito (de cima para baixo)
     final rightSideLength = rect.height - 2 * borderRadius;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, rightSideLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        rightSideLength,
+      );
       if (segmentLength > 0) {
         path.moveTo(rect.right, rect.top + borderRadius);
         path.lineTo(rect.right, rect.top + borderRadius + segmentLength);
@@ -99,7 +108,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Canto inferior direito (arco de 90 graus)
     final bottomRightArcLength = math.pi * borderRadius / 2;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, bottomRightArcLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        bottomRightArcLength,
+      );
       if (segmentLength > 0) {
         final startAngle = 0.0;
         final sweepAngle = segmentLength / borderRadius;
@@ -120,7 +132,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Lado inferior (da direita para esquerda)
     final bottomSideLength = rect.width - 2 * borderRadius;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, bottomSideLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        bottomSideLength,
+      );
       if (segmentLength > 0) {
         path.moveTo(rect.right - borderRadius, rect.bottom);
         path.lineTo(rect.right - borderRadius - segmentLength, rect.bottom);
@@ -131,7 +146,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Canto inferior esquerdo (arco de 90 graus)
     final bottomLeftArcLength = math.pi * borderRadius / 2;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, bottomLeftArcLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        bottomLeftArcLength,
+      );
       if (segmentLength > 0) {
         final startAngle = math.pi / 2;
         final sweepAngle = segmentLength / borderRadius;
@@ -152,7 +170,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Lado esquerdo (de baixo para cima)
     final leftSideLength = rect.height - 2 * borderRadius;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, leftSideLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        leftSideLength,
+      );
       if (segmentLength > 0) {
         path.moveTo(rect.left, rect.bottom - borderRadius);
         path.lineTo(rect.left, rect.bottom - borderRadius - segmentLength);
@@ -163,7 +184,10 @@ class AnimatedBorderPainter extends CustomPainter {
     // Canto superior esquerdo (arco de 90 graus) - completa o círculo
     final topLeftArcLength = math.pi * borderRadius / 2;
     if (distance > currentDistance) {
-      final segmentLength = (distance - currentDistance).clamp(0.0, topLeftArcLength);
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        topLeftArcLength,
+      );
       if (segmentLength > 0) {
         final startAngle = math.pi;
         final sweepAngle = segmentLength / borderRadius;
