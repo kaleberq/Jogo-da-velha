@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_painter_component.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
@@ -26,6 +27,7 @@ class WinningLineOverlayComponent extends StatelessWidget {
           winningLine: winningLine!,
           boardSize: boardSize,
           animationProgress: animationProgress,
+          lineColor: DSColors.onBackground(context),
         ),
       ),
     );

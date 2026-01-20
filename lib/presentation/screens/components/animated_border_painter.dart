@@ -14,6 +14,7 @@ class AnimatedBorderPainter extends CustomPainter {
 
   final double borderWidth = 3.0;
   final double borderRadius = DSRadius.sm;
+  final double containerBorderWidth = 3.0; // Largura da borda do Container
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -26,8 +27,17 @@ class AnimatedBorderPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
+    // Ajusta o retângulo para desenhar exatamente sobre a borda do Container
+    // A borda do Container é desenhada na borda externa, então precisamos
+    // desenhar no centro da borda, que fica deslocado pela metade da largura
+    final halfBorder = containerBorderWidth / 2;
     final rect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
+      Rect.fromLTWH(
+        halfBorder,
+        halfBorder,
+        size.width - containerBorderWidth,
+        size.height - containerBorderWidth,
+      ),
       Radius.circular(borderRadius),
     );
 
@@ -52,20 +62,22 @@ class AnimatedBorderPainter extends CustomPainter {
   ) {
     final path = Path();
     double currentDistance = 0.0;
-
-    // Lado superior (da esquerda para direita)
     final topSideLength = rect.width - 2 * borderRadius;
+    final topSideHalf = topSideLength / 2;
+
+    // Começa no meio do lado superior - primeira metade (meio para direita)
     if (distance > currentDistance) {
       final segmentLength = (distance - currentDistance).clamp(
         0.0,
-        topSideLength,
+        topSideHalf,
       );
       if (segmentLength > 0) {
-        path.moveTo(rect.left + borderRadius, rect.top);
-        path.lineTo(rect.left + borderRadius + segmentLength, rect.top);
+        final centerX = rect.left + rect.width / 2;
+        path.moveTo(centerX, rect.top);
+        path.lineTo(centerX + segmentLength, rect.top);
       }
     }
-    currentDistance += topSideLength;
+    currentDistance += topSideHalf;
 
     // Canto superior direito (arco de 90 graus)
     final topRightArcLength = math.pi * borderRadius / 2;
@@ -181,7 +193,7 @@ class AnimatedBorderPainter extends CustomPainter {
     }
     currentDistance += leftSideLength;
 
-    // Canto superior esquerdo (arco de 90 graus) - completa o círculo
+    // Canto superior esquerdo (arco de 90 graus)
     final topLeftArcLength = math.pi * borderRadius / 2;
     if (distance > currentDistance) {
       final segmentLength = (distance - currentDistance).clamp(
@@ -201,6 +213,19 @@ class AnimatedBorderPainter extends CustomPainter {
           startAngle,
           sweepAngle,
         );
+      }
+    }
+    currentDistance += topLeftArcLength;
+
+    // Segunda metade do lado superior (esquerda para meio) - completa o círculo
+    if (distance > currentDistance) {
+      final segmentLength = (distance - currentDistance).clamp(
+        0.0,
+        topSideHalf,
+      );
+      if (segmentLength > 0) {
+        path.moveTo(rect.left + borderRadius, rect.top);
+        path.lineTo(rect.left + borderRadius + segmentLength, rect.top);
       }
     }
 

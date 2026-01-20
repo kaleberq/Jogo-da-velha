@@ -1,3 +1,4 @@
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
@@ -6,17 +7,19 @@ class WinningLinePainterComponent extends CustomPainter {
   final WinningLineModel winningLine;
   final double boardSize;
   final double animationProgress;
+  final Color lineColor;
 
   WinningLinePainterComponent({
     required this.winningLine,
     required this.boardSize,
     required this.animationProgress,
+    required this.lineColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.black
+      ..color = lineColor
       ..strokeWidth = boardSize / 90
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
