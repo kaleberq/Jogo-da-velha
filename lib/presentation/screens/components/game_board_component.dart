@@ -13,8 +13,6 @@ class GameBoardComponent extends StatelessWidget {
   final Animation<double> winningLineAnimation;
   final Animation<double>? borderAnimation;
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
-  final Color? boardColor;
-  final Color? lineColor;
 
   const GameBoardComponent({
     super.key,
@@ -22,8 +20,6 @@ class GameBoardComponent extends StatelessWidget {
     required this.winningLineAnimation,
     this.borderAnimation,
     this.onCellTap,
-    this.boardColor,
-    this.lineColor,
   });
 
   @override
@@ -39,7 +35,7 @@ class GameBoardComponent extends StatelessWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: boardColor ?? DSColors.onBackgroundInverse(context),
+                color: DSColors.onBackgroundInverse(context),
                 border: Border.all(color: Colors.grey.shade800, width: 3),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
@@ -88,7 +84,7 @@ class GameBoardComponent extends StatelessWidget {
                     winningLine: game.winningLine,
                     boardSize: size,
                     animationProgress: winningLineAnimation.value,
-                    lineColor: lineColor ?? DSColors.onBackground(context),
+                    lineColor: DSColors.onBackground(context),
                   );
                 },
               ),
@@ -102,7 +98,6 @@ class GameBoardComponent extends StatelessWidget {
                       size: Size(size, size),
                       painter: AnimatedBorderPainter(
                         progress: borderAnimation!.value,
-
                         borderColor: Colors.green,
                       ),
                     );

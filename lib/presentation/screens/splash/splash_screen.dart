@@ -94,14 +94,22 @@ class _SplashScreenState extends State<SplashScreen>
                   builder: (context, constraints) {
                     final double size = constraints.maxWidth / 2;
 
-                    return SizedBox(
+                    return Container(
                       width: size,
                       height: size,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: DSColors.white.withAlpha(200),
+                            offset: const Offset(3, 3),
+                            blurRadius: 12,
+                            spreadRadius: 4,
+                          ),
+                        ],
+                      ),
                       child: GameBoardComponent(
                         game: _viewModel.game,
                         winningLineAnimation: _lineAnimation,
-                        boardColor: DSColors.white,
-                        lineColor: DSColors.black,
                       ),
                     );
                   },
