@@ -45,7 +45,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       ),
     );
 
-    // Animação da borda verde - 1 minuto
     _borderAnimationController = AnimationController(
       vsync: this,
       duration: Duration(seconds: viewModel.game.timeLimitSeconds),
@@ -55,10 +54,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       CurvedAnimation(parent: _borderAnimationController, curve: Curves.linear),
     );
 
-    // Inicia a animação da borda automaticamente
     _borderAnimationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        // Quando o tempo acabar, termina o jogo em empate
         if (!viewModel.game.isGameOver) {
           viewModel.endGameByTimeLimit();
           checkGameOver();
@@ -95,9 +92,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         _winningLineAnimationController.reset();
         _winningLineAnimationController.forward();
       }
-      Future.delayed(const Duration(milliseconds: 300), () {
-        handleRoundEnd();
-      });
+
+      handleRoundEnd();
     }
   }
 
@@ -156,14 +152,12 @@ class _LocalGameScreenState extends State<LocalGameScreen>
         roundWinner: _roundWinner,
         onNextRound: () {
           _winningLineAnimationController.reset();
-          viewModel.nextRound();
-
-          // Reinicia a animação da borda para o novo round
           _borderAnimationController.reset();
+
+          viewModel.nextRound();
           _borderAnimationController.forward();
 
           Navigator.of(context).pop();
-          setState(() {});
         },
       ),
     );
