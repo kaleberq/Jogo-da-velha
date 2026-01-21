@@ -13,6 +13,7 @@ class TicTacToeGameModel {
   int scoreO;
   int currentRound;
   int maxRounds;
+  int timeLimitSeconds;
 
   TicTacToeGameModel({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
@@ -23,5 +24,6 @@ class TicTacToeGameModel {
       scoreX = 0,
       scoreO = 0,
       currentRound = 1,
-      maxRounds = maxRounds ?? 5;
+      maxRounds = maxRounds ?? 5,
+      timeLimitSeconds = 10;
 }

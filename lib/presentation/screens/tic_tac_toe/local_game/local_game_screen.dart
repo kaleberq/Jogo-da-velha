@@ -48,15 +48,24 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     // Animação da borda verde - 1 minuto
     _borderAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(minutes: 1),
+      duration: Duration(seconds: viewModel.game.timeLimitSeconds),
     );
 
     _borderAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _borderAnimationController, curve: Curves.linear),
     );
 
-    // Inicia a animação da borda automaticamente (repetindo continuamente)
-    _borderAnimationController.repeat();
+    // Inicia a animação da borda automaticamente
+    _borderAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Quando o tempo acabar, termina o jogo em empate
+        if (!viewModel.game.isGameOver) {
+          viewModel.endGameByTimeLimit();
+          checkGameOver();
+        }
+      }
+    });
+    _borderAnimationController.forward();
   }
 
   void onMaxRoundsChanged(int maxRounds) {
@@ -66,6 +75,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void resetAll() {
     _winningLineAnimationController.reset();
+    _borderAnimationController.reset();
+    _borderAnimationController.forward();
     viewModel.resetAll();
   }
 
@@ -77,6 +88,9 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void checkGameOver() {
     if (viewModel.game.isGameOver) {
+      // Para a animação da borda quando o round termina
+      _borderAnimationController.stop();
+
       if (viewModel.game.winningLine != null) {
         _winningLineAnimationController.reset();
         _winningLineAnimationController.forward();
@@ -144,6 +158,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
           _winningLineAnimationController.reset();
           viewModel.nextRound();
 
+          // Reinicia a animação da borda para o novo round
+          _borderAnimationController.reset();
+          _borderAnimationController.forward();
+
           Navigator.of(context).pop();
           setState(() {});
         },
@@ -155,12 +173,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     setState(() {
       _roundWinner = null;
     });
-  }
-
-  void nextRound() {
-    hideRoundEndMessage();
-    _winningLineAnimationController.reset();
-    viewModel.nextRound();
   }
 
   @override

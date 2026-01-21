@@ -142,6 +142,16 @@ class LocalGameViewModel extends ChangeNotifier {
     return null;
   }
 
+  void endGameByTimeLimit() {
+    // Termina o jogo em empate quando o tempo acaba
+    if (!_game.isGameOver) {
+      _game.isGameOver = true;
+      _game.winner = null; // Empate
+      _game.winningLine = null;
+      notifyListeners();
+    }
+  }
+
   bool _checkDraw() {
     // Primeiro verifica se há um vencedor - se houver, não é empate
     if (_game.winner != null) {
