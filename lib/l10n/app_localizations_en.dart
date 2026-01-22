@@ -18,16 +18,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseGameMode => 'Choose a game mode.';
 
   @override
-  String get localModeTitle => 'Local Mode';
+  String get localModeTitle => 'Local game';
 
   @override
-  String get localModeDescription => 'Play on the same device';
+  String get localModeDescription => 'Play on the same device with another player.';
 
   @override
   String get onlineModeTitle => 'Online Play';
 
   @override
-  String get onlineModeDescription => 'Play with another player online';
+  String get onlineModeDescription => 'Play with another player online, each on their own device.';
 
   @override
   String get onlineOptionsTitle => 'Online Play';
@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createRoomTitle => 'Create a Room';
 
   @override
-  String get createRoomDescription => 'Create a room for others to join';
+  String get createRoomDescription => 'Create a room so that another player can connect.';
 
   @override
   String get waitingPlayer => 'Waiting for a player to connect...';
@@ -110,12 +110,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseRoundsRange => 'Choose between 1 and 20 rounds';
 
   @override
-  String get timeLimitSeconds => 'Time Limit (seconds)';
-
-  @override
-  String get chooseTimeLimitRange => 'Choose between 5 and 60 seconds';
-
-  @override
   String get apply => 'Apply';
 
   @override
@@ -154,4 +148,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roundText => 'Round';
+
+  @override
+  String get timeLimit => 'Time Limit';
+
+  @override
+  String get timeLimitSeconds => 'Time Limit (seconds)';
+
+  @override
+  String get chooseTimeLimitRange => 'Choose between 5 and 60 seconds';
 }

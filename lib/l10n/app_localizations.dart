@@ -116,13 +116,13 @@ abstract class AppLocalizations {
   /// No description provided for @localModeTitle.
   ///
   /// In en, this message translates to:
-  /// **'Local Mode'**
+  /// **'Local game'**
   String get localModeTitle;
 
   /// No description provided for @localModeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Play on the same device'**
+  /// **'Play on the same device with another player.'**
   String get localModeDescription;
 
   /// No description provided for @onlineModeTitle.
@@ -134,7 +134,7 @@ abstract class AppLocalizations {
   /// No description provided for @onlineModeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Play with another player online'**
+  /// **'Play with another player online, each on their own device.'**
   String get onlineModeDescription;
 
   /// No description provided for @onlineOptionsTitle.
@@ -158,7 +158,7 @@ abstract class AppLocalizations {
   /// No description provided for @createRoomDescription.
   ///
   /// In en, this message translates to:
-  /// **'Create a room for others to join'**
+  /// **'Create a room so that another player can connect.'**
   String get createRoomDescription;
 
   /// No description provided for @waitingPlayer.
@@ -293,18 +293,6 @@ abstract class AppLocalizations {
   /// **'Choose between 1 and 20 rounds'**
   String get chooseRoundsRange;
 
-  /// No description provided for @timeLimitSeconds.
-  ///
-  /// In en, this message translates to:
-  /// **'Time Limit (seconds)'**
-  String get timeLimitSeconds;
-
-  /// No description provided for @chooseTimeLimitRange.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose between 5 and 60 seconds'**
-  String get chooseTimeLimitRange;
-
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:
@@ -376,6 +364,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Round'**
   String get roundText;
+
+  /// No description provided for @timeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit'**
+  String get timeLimit;
+
+  /// No description provided for @timeLimitSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit (seconds)'**
+  String get timeLimitSeconds;
+
+  /// No description provided for @chooseTimeLimitRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose between 5 and 60 seconds'**
+  String get chooseTimeLimitRange;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
