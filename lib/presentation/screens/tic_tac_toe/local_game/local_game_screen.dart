@@ -196,7 +196,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
                       Expanded(
                         child: Text(
                           context.l10n.numberOfRounds,
-                          style: const TextStyle(fontSize: 16),
+                          style: DSTypographyMedium.labelMedium,
                         ),
                       ),
                       Row(
