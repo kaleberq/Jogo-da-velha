@@ -110,6 +110,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chooseRoundsRange => 'Escolha entre 1 e 20 rodadas';
 
   @override
+  String get timeLimitSeconds => 'Tempo Limite (segundos)';
+
+  @override
+  String get chooseTimeLimitRange => 'Escolha entre 5 e 60 segundos';
+
+  @override
   String get apply => 'Aplicar';
 
   @override

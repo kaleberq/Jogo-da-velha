@@ -110,6 +110,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chooseRoundsRange => 'Choose between 1 and 20 rounds';
 
   @override
+  String get timeLimitSeconds => 'Time Limit (seconds)';
+
+  @override
+  String get chooseTimeLimitRange => 'Choose between 5 and 60 seconds';
+
+  @override
   String get apply => 'Apply';
 
   @override

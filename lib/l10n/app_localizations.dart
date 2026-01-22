@@ -293,6 +293,18 @@ abstract class AppLocalizations {
   /// **'Choose between 1 and 20 rounds'**
   String get chooseRoundsRange;
 
+  /// No description provided for @timeLimitSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit (seconds)'**
+  String get timeLimitSeconds;
+
+  /// No description provided for @chooseTimeLimitRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose between 5 and 60 seconds'**
+  String get chooseTimeLimitRange;
+
   /// No description provided for @apply.
   ///
   /// In en, this message translates to:

@@ -69,5 +69,8 @@
   "connectionLost": "Conexão Perdida",
   "connectionLostMessage": "A conexão com o outro jogador foi perdida.",
   "backToMenu": "Voltar ao Menu",
-  "roundText": "Rodada"
+  "roundText": "Rodada",
+  "timeLimit": "Tempo Limite",
+  "timeLimitSeconds": "Tempo Limite (segundos)",
+  "chooseTimeLimitRange": "Escolha entre 5 e 60 segundos"
 }

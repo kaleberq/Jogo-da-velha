@@ -20,6 +20,11 @@ class LocalGameViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setTimeLimitSeconds(int timeLimitSeconds) {
+    _game.timeLimitSeconds = timeLimitSeconds;
+    notifyListeners();
+  }
+
   void reset() {
     _game.board = List.generate(
       3,

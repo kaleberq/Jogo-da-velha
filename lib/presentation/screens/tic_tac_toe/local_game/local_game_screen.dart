@@ -77,6 +77,25 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     viewModel.resetAll();
   }
 
+  void _updateBorderAnimationController() {
+    _borderAnimationController.dispose();
+    _borderAnimationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: viewModel.game.timeLimitSeconds),
+    );
+    _borderAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _borderAnimationController, curve: Curves.linear),
+    );
+    _borderAnimationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        if (!viewModel.game.isGameOver) {
+          viewModel.endGameByTimeLimit();
+          checkGameOver();
+        }
+      }
+    });
+  }
+
   void onCellTap({required int rowIndex, required int columnIndex}) {
     if (viewModel.makeMove(rowIndex, columnIndex)) {
       checkGameOver();
@@ -171,6 +190,7 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void _showSettingsBottomSheet() {
     int tempMaxRounds = viewModel.game.maxRounds;
+    int tempTimeLimitSeconds = viewModel.game.timeLimitSeconds;
 
     _borderAnimationController.stop();
 
@@ -235,15 +255,66 @@ class _LocalGameScreenState extends State<LocalGameScreen>
                     style: DSTypographyMedium.labelSmall,
                   ),
                   const SizedBox(height: DSSpacing.lg),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          context.l10n.timeLimitSeconds,
+                          style: DSTypographyMedium.labelMedium,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: tempTimeLimitSeconds > 5
+                                ? () {
+                                    setState(() {
+                                      tempTimeLimitSeconds--;
+                                    });
+                                  }
+                                : null,
+                          ),
+                          Text(
+                            '$tempTimeLimitSeconds',
+                            style: DSTypographySemiBold.labelMedium,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: tempTimeLimitSeconds < 60
+                                ? () {
+                                    setState(() {
+                                      tempTimeLimitSeconds++;
+                                    });
+                                  }
+                                : null,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: DSSpacing.sm),
+                  Text(
+                    context.l10n.chooseTimeLimitRange,
+                    style: DSTypographyMedium.labelSmall,
+                  ),
+                  const SizedBox(height: DSSpacing.lg),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (tempMaxRounds != viewModel.game.maxRounds) {
-                          resetAll();
+                        if (tempTimeLimitSeconds !=
+                            viewModel.game.timeLimitSeconds) {
+                          viewModel.setTimeLimitSeconds(tempTimeLimitSeconds);
+                          _updateBorderAnimationController();
+                        }
 
+                        if (tempMaxRounds != viewModel.game.maxRounds) {
                           onMaxRoundsChanged(tempMaxRounds);
                         }
+
+                        resetAll();
                         Navigator.of(bottomSheetContext).pop();
                       },
                       child: Text(
