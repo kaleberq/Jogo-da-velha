@@ -169,6 +169,118 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     });
   }
 
+  void _showSettingsBottomSheet() {
+    int tempMaxRounds = viewModel.game.maxRounds;
+
+    _borderAnimationController.stop();
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bottomSheetContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              padding: EdgeInsets.all(DSSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.l10n.settings,
+                    style: DSTypographySemiBold.labelLarge,
+                  ),
+                  SizedBox(height: DSSpacing.lg),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          context.l10n.numberOfRounds,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove),
+                            onPressed: tempMaxRounds > 1
+                                ? () {
+                                    setState(() {
+                                      tempMaxRounds--;
+                                    });
+                                  }
+                                : null,
+                          ),
+                          Text(
+                            '$tempMaxRounds',
+                            style: DSTypographySemiBold.labelMedium,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: tempMaxRounds < 20
+                                ? () {
+                                    setState(() {
+                                      tempMaxRounds++;
+                                    });
+                                  }
+                                : null,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: DSSpacing.sm),
+                  Text(
+                    context.l10n.chooseRoundsRange,
+                    style: DSTypographyMedium.labelSmall,
+                  ),
+                  const SizedBox(height: DSSpacing.lg),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (tempMaxRounds != viewModel.game.maxRounds) {
+                          resetAll();
+
+                          onMaxRoundsChanged(tempMaxRounds);
+                        }
+                        Navigator.of(bottomSheetContext).pop();
+                      },
+                      child: Text(
+                        context.l10n.apply,
+                        style: DSTypographySemiBold.labelMedium,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: DSSpacing.sm),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: DSColors.error(context)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(bottomSheetContext).pop();
+                        resetAll();
+                      },
+                      icon: Icon(Icons.refresh, color: DSColors.error(context)),
+                      label: Text(
+                        context.l10n.resetAll,
+                        style: DSTypographySemiBold.labelMedium.copyWith(
+                          color: DSColors.error(context),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    ).then((_) => _borderAnimationController.forward());
+  }
+
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
@@ -184,9 +296,8 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       builder: (context, _) {
         return Scaffold(
           appBar: AppBarComponent(
-            onResetPressed: resetAll,
-            currentMaxRounds: viewModel.game.maxRounds,
             onMaxRoundsChanged: onMaxRoundsChanged,
+            showSettingsBottomSheet: () => _showSettingsBottomSheet(),
           ),
           body: Padding(
             padding: const EdgeInsets.symmetric(
