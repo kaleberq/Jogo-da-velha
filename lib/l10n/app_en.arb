@@ -11,7 +11,6 @@
   "onlineModeDescription": "Play with another player online, each on their own device.",
 
   "onlineOptionsTitle": "Online Play",
-  "onlineOptionsChoose": "Choose an option",
   "createRoomTitle": "Create a Room",
   "createRoomDescription": "Create a room so that another player can connect.",
   "waitingPlayer": "Waiting for a player to connect...",

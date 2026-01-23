@@ -33,9 +33,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onlineOptionsTitle => 'Online Play';
 
   @override
-  String get onlineOptionsChoose => 'Choose an option';
-
-  @override
   String get createRoomTitle => 'Create a Room';
 
   @override

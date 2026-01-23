@@ -143,12 +143,6 @@ abstract class AppLocalizations {
   /// **'Online Play'**
   String get onlineOptionsTitle;
 
-  /// No description provided for @onlineOptionsChoose.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose an option'**
-  String get onlineOptionsChoose;
-
   /// No description provided for @createRoomTitle.
   ///
   /// In en, this message translates to:
