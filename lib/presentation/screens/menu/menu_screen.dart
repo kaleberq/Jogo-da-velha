@@ -42,6 +42,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
                 Card(
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -80,6 +81,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
                 Card(
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap: () {
                       showDSModalBottomSheet(
                         context: context,

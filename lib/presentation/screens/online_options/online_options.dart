@@ -109,12 +109,14 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                   alignment: Alignment.centerRight,
                   width: double.infinity,
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap: () => Navigator.of(context).pop(),
                     child: Icon(Icons.close, size: 40),
                   ),
                 ),
                 Card(
                   child: InkWell(
+                    borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap:
                         widget.viewModel.onlineOptions.isCreatingServer ||
                             widget.viewModel.onlineOptions.serverIP != null
