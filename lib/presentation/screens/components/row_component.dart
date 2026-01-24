@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/cell_component.dart';
-import 'package:jogo_da_velha/presentation/screens/components/vertical_divider_component.dart';
 
 class RowComponent extends StatelessWidget {
   final int rowIndex;
@@ -24,12 +24,12 @@ class RowComponent extends StatelessWidget {
             player: row[0],
             onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 0),
           ),
-          const VerticalDividerComponent(),
+          DsDivider(dividerType: DsDividerType.vertical),
           CellComponent(
             player: row[1],
             onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 1),
           ),
-          const VerticalDividerComponent(),
+          DsDivider(dividerType: DsDividerType.vertical),
           CellComponent(
             player: row[2],
             onTap: () => onCellTap?.call(rowIndex: rowIndex, columnIndex: 2),

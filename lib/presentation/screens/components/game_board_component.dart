@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/animated_border_painter.dart';
-import 'package:jogo_da_velha/presentation/screens/components/horizontal_divider_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
 
@@ -35,8 +34,11 @@ class GameBoardComponent extends StatelessWidget {
               width: size,
               height: size,
               decoration: BoxDecoration(
-                color: DSColors.onBackgroundInverse(context),
-                border: Border.all(color: Colors.grey.shade800, width: 3),
+                color: DSColors.resolveBackgroundInverseColor(context),
+                border: Border.all(
+                  color: DSColors.resolveGreyColor(context),
+                  width: 3,
+                ),
                 borderRadius: BorderRadius.circular(DSRadius.sm),
               ),
               child: Column(
@@ -51,7 +53,7 @@ class GameBoardComponent extends StatelessWidget {
                               columnIndex: columnIndex,
                             ),
                   ),
-                  const HorizontalDividerComponent(),
+                  DsDivider(),
                   RowComponent(
                     rowIndex: 1,
                     row: game.board[1],
@@ -62,7 +64,7 @@ class GameBoardComponent extends StatelessWidget {
                               columnIndex: columnIndex,
                             ),
                   ),
-                  const HorizontalDividerComponent(),
+                  DsDivider(),
                   RowComponent(
                     rowIndex: 2,
                     row: game.board[2],
@@ -84,7 +86,7 @@ class GameBoardComponent extends StatelessWidget {
                     winningLine: game.winningLine,
                     boardSize: size,
                     animationProgress: winningLineAnimation.value,
-                    lineColor: DSColors.onBackground(context),
+                    lineColor: DSColors.resolveBackgroundColor(context),
                   );
                 },
               ),

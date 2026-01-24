@@ -183,9 +183,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(),
-          // AppBarComponent(
-          //   showSettingsBottomSheet: () => _showSettingsBottomSheet(),
-          // ),
           body: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.lg,

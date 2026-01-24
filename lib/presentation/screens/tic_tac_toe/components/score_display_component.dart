@@ -56,7 +56,7 @@ class ScoreDisplayComponent extends StatelessWidget {
             PlayerEnum.x.assetPath,
             width: 20,
             colorFilter: ColorFilter.mode(
-              DSColors.onBackground(context),
+              DSColors.resolveBackgroundColor(context),
               BlendMode.srcIn,
             ),
           ),
