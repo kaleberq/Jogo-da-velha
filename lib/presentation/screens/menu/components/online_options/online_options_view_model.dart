@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/models/online_options_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/models/online_options_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 
 /// ViewModel para tela de opções online

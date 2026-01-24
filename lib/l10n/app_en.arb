@@ -39,7 +39,6 @@
     }
   },
   "drawRound": "Draw",
-  "back": "Back",
   "settings": "Settings",
   "numberOfRounds": "Number of Rounds",
   "chooseRoundsRange": "Choose between 1 and 20 rounds",

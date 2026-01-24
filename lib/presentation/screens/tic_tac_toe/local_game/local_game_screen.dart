@@ -5,7 +5,6 @@ import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_score_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_indicator_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/app_bar_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -75,25 +74,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     _borderAnimationController.reset();
     _borderAnimationController.forward();
     viewModel.resetAll();
-  }
-
-  void _updateBorderAnimationController() {
-    _borderAnimationController.dispose();
-    _borderAnimationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: viewModel.game.timeLimitSeconds),
-    );
-    _borderAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _borderAnimationController, curve: Curves.linear),
-    );
-    _borderAnimationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        if (!viewModel.game.isGameOver) {
-          viewModel.endGameByTimeLimit();
-          checkGameOver();
-        }
-      }
-    });
   }
 
   void onCellTap({required int rowIndex, required int columnIndex}) {
@@ -188,170 +168,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     });
   }
 
-  void _showSettingsBottomSheet() {
-    int tempMaxRounds = viewModel.game.maxRounds;
-    int tempTimeLimitSeconds = viewModel.game.timeLimitSeconds;
-
-    _borderAnimationController.stop();
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bottomSheetContext) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              padding: EdgeInsets.all(DSSpacing.lg),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.settings,
-                    style: DSTypographySemiBold.labelLarge,
-                  ),
-                  SizedBox(height: DSSpacing.lg),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          context.l10n.numberOfRounds,
-                          style: DSTypographyMedium.labelMedium,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            onPressed: tempMaxRounds > 1
-                                ? () {
-                                    setState(() {
-                                      tempMaxRounds--;
-                                    });
-                                  }
-                                : null,
-                          ),
-                          Text(
-                            '$tempMaxRounds',
-                            style: DSTypographySemiBold.labelMedium,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: tempMaxRounds < 20
-                                ? () {
-                                    setState(() {
-                                      tempMaxRounds++;
-                                    });
-                                  }
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: DSSpacing.sm),
-                  Text(
-                    context.l10n.chooseRoundsRange,
-                    style: DSTypographyMedium.labelSmall,
-                  ),
-                  const SizedBox(height: DSSpacing.lg),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          context.l10n.timeLimitSeconds,
-                          style: DSTypographyMedium.labelMedium,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove),
-                            onPressed: tempTimeLimitSeconds > 5
-                                ? () {
-                                    setState(() {
-                                      tempTimeLimitSeconds--;
-                                    });
-                                  }
-                                : null,
-                          ),
-                          Text(
-                            '$tempTimeLimitSeconds',
-                            style: DSTypographySemiBold.labelMedium,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: tempTimeLimitSeconds < 60
-                                ? () {
-                                    setState(() {
-                                      tempTimeLimitSeconds++;
-                                    });
-                                  }
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: DSSpacing.sm),
-                  Text(
-                    context.l10n.chooseTimeLimitRange,
-                    style: DSTypographyMedium.labelSmall,
-                  ),
-                  const SizedBox(height: DSSpacing.lg),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (tempTimeLimitSeconds !=
-                            viewModel.game.timeLimitSeconds) {
-                          viewModel.setTimeLimitSeconds(tempTimeLimitSeconds);
-                          _updateBorderAnimationController();
-                        }
-
-                        if (tempMaxRounds != viewModel.game.maxRounds) {
-                          onMaxRoundsChanged(tempMaxRounds);
-                        }
-
-                        resetAll();
-                        Navigator.of(bottomSheetContext).pop();
-                      },
-                      child: Text(
-                        context.l10n.apply,
-                        style: DSTypographySemiBold.labelMedium,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: DSSpacing.sm),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: DSColors.error(context)),
-                      ),
-                      onPressed: () {
-                        Navigator.of(bottomSheetContext).pop();
-                        resetAll();
-                      },
-                      icon: Icon(Icons.refresh, color: DSColors.error(context)),
-                      label: Text(
-                        context.l10n.resetAll,
-                        style: DSTypographySemiBold.labelMedium.copyWith(
-                          color: DSColors.error(context),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    ).then((_) => _borderAnimationController.forward());
-  }
-
   @override
   void dispose() {
     _winningLineAnimationController.dispose();
@@ -366,10 +182,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
       listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
-          appBar: AppBarComponent(
-            onMaxRoundsChanged: onMaxRoundsChanged,
-            showSettingsBottomSheet: () => _showSettingsBottomSheet(),
-          ),
+          appBar: AppBar(),
+          // AppBarComponent(
+          //   showSettingsBottomSheet: () => _showSettingsBottomSheet(),
+          // ),
           body: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.lg,

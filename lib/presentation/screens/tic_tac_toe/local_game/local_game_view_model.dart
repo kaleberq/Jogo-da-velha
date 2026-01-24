@@ -9,8 +9,11 @@ class LocalGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   static final Random _random = Random();
 
-  LocalGameViewModel() {
-    _game = TicTacToeGameModel();
+  LocalGameViewModel({required int maxRounds, required int timeLimitSeconds}) {
+    _game = TicTacToeGameModel(
+      maxRounds: maxRounds,
+      timeLimitSeconds: timeLimitSeconds,
+    );
   }
 
   TicTacToeGameModel get game => _game;

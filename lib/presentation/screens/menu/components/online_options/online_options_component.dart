@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 
-class OnlineOptions extends StatefulWidget {
+class OnlineOptionsComponent extends StatefulWidget {
   final OnlineOptionsViewModel viewModel;
 
-  const OnlineOptions({super.key, required this.viewModel});
+  const OnlineOptionsComponent({super.key, required this.viewModel});
 
   @override
-  State<OnlineOptions> createState() => _OnlineOptionsState();
+  State<OnlineOptionsComponent> createState() => _OnlineOptionsComponentState();
 }
 
-class _OnlineOptionsState extends State<OnlineOptions> {
+class _OnlineOptionsComponentState extends State<OnlineOptionsComponent> {
   final TextEditingController _ipController = TextEditingController();
   bool _hasNavigated = false;
 

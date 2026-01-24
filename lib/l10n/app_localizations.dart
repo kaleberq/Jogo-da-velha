@@ -263,12 +263,6 @@ abstract class AppLocalizations {
   /// **'Draw'**
   String get drawRound;
 
-  /// No description provided for @back.
-  ///
-  /// In en, this message translates to:
-  /// **'Back'**
-  String get back;
-
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

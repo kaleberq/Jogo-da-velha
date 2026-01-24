@@ -95,9 +95,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get drawRound => 'Deu Velha';
 
   @override
-  String get back => 'Voltar';
-
-  @override
   String get settings => 'Configurações';
 
   @override

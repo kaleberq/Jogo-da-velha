@@ -15,7 +15,7 @@ class TicTacToeGameModel {
   int maxRounds;
   int timeLimitSeconds;
 
-  TicTacToeGameModel({int? maxRounds})
+  TicTacToeGameModel({int? maxRounds, int? timeLimitSeconds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer = _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
       winner = null,
@@ -25,5 +25,5 @@ class TicTacToeGameModel {
       scoreO = 0,
       currentRound = 1,
       maxRounds = maxRounds ?? 5,
-      timeLimitSeconds = 10;
+      timeLimitSeconds = timeLimitSeconds ?? 10;
 }

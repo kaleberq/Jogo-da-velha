@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/local_options/local_options_component.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_component.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -43,14 +42,10 @@ class _MenuScreenState extends State<MenuScreen> {
                 Card(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(DSRadius.md),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              LocalGameScreen(viewModel: LocalGameViewModel()),
-                        ),
-                      );
-                    },
+                    onTap: () => showDSModalBottomSheet(
+                      context: context,
+                      widget: LocalOptionsComponent(),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(DSSpacing.lg),
                       child: Row(
@@ -82,17 +77,15 @@ class _MenuScreenState extends State<MenuScreen> {
                 Card(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(DSRadius.md),
-                    onTap: () {
-                      showDSModalBottomSheet(
-                        context: context,
-                        widget: OnlineOptions(
-                          viewModel: OnlineOptionsViewModel(
-                            gameRepository:
-                                DependencyContainer.getGameRepository(),
-                          ),
+                    onTap: () => showDSModalBottomSheet(
+                      context: context,
+                      widget: OnlineOptionsComponent(
+                        viewModel: OnlineOptionsViewModel(
+                          gameRepository:
+                              DependencyContainer.getGameRepository(),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(DSSpacing.lg),
                       child: Row(

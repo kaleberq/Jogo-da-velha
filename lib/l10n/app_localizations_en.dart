@@ -95,9 +95,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawRound => 'Draw';
 
   @override
-  String get back => 'Back';
-
-  @override
   String get settings => 'Settings';
 
   @override
