@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/local_options/local_options_component.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_component.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/local_options/local_options.dart';
+import 'package:jogo_da_velha/presentation/screens/online_options/online_options.dart';
+import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -44,7 +44,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap: () => showDSModalBottomSheet(
                       context: context,
-                      widget: LocalOptionsComponent(),
+                      widget: LocalOptions(),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(DSSpacing.lg),
@@ -79,7 +79,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap: () => showDSModalBottomSheet(
                       context: context,
-                      widget: OnlineOptionsComponent(
+                      widget: OnlineOptions(
                         viewModel: OnlineOptionsViewModel(
                           gameRepository:
                               DependencyContainer.getGameRepository(),

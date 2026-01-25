@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
 
-class LocalOptionsComponent extends StatefulWidget {
-  const LocalOptionsComponent({super.key});
+class LocalOptions extends StatefulWidget {
+  const LocalOptions({super.key});
 
   @override
-  State<LocalOptionsComponent> createState() => _LocalOptionsComponentState();
+  State<LocalOptions> createState() => _LocalOptionsState();
 }
 
-const int maxRounds = 5;
-const int timeLimitSeconds = 10;
+const int _maxRounds = 5;
+const int _timeLimitSeconds = 10;
 
-int tempMaxRounds = maxRounds;
-int tempTimeLimitSeconds = timeLimitSeconds;
+int _tempMaxRounds = _maxRounds;
+int _tempTimeLimitSeconds = _timeLimitSeconds;
 
-class _LocalOptionsComponentState extends State<LocalOptionsComponent> {
+class _LocalOptionsState extends State<LocalOptions> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -54,24 +53,24 @@ class _LocalOptionsComponentState extends State<LocalOptionsComponent> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      onPressed: tempMaxRounds > 1
+                      onPressed: _tempMaxRounds > 1
                           ? () {
                               setState(() {
-                                tempMaxRounds--;
+                                _tempMaxRounds--;
                               });
                             }
                           : null,
                     ),
                     Text(
-                      '$tempMaxRounds',
+                      '$_tempMaxRounds',
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      onPressed: tempMaxRounds < 20
+                      onPressed: _tempMaxRounds < 20
                           ? () {
                               setState(() {
-                                tempMaxRounds++;
+                                _tempMaxRounds++;
                               });
                             }
                           : null,
@@ -99,24 +98,24 @@ class _LocalOptionsComponentState extends State<LocalOptionsComponent> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      onPressed: tempTimeLimitSeconds > 5
+                      onPressed: _tempTimeLimitSeconds > 5
                           ? () {
                               setState(() {
-                                tempTimeLimitSeconds--;
+                                _tempTimeLimitSeconds--;
                               });
                             }
                           : null,
                     ),
                     Text(
-                      '$tempTimeLimitSeconds',
+                      '$_tempTimeLimitSeconds',
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      onPressed: tempTimeLimitSeconds < 60
+                      onPressed: _tempTimeLimitSeconds < 60
                           ? () {
                               setState(() {
-                                tempTimeLimitSeconds++;
+                                _tempTimeLimitSeconds++;
                               });
                             }
                           : null,
@@ -136,14 +135,11 @@ class _LocalOptionsComponentState extends State<LocalOptionsComponent> {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => LocalGameScreen(
-                        viewModel: LocalGameViewModel(
-                          maxRounds: tempMaxRounds,
-                          timeLimitSeconds: tempTimeLimitSeconds,
-                        ),
-                      ),
+                  Navigator.of(context).pushNamed(
+                    RoutesEnum.localGame.path,
+                    arguments: (
+                      maxRounds: _tempMaxRounds,
+                      timeLimitSeconds: _tempTimeLimitSeconds,
                     ),
                   );
                 },

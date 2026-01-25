@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/core/dependency_container.dart';
+import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
 
-class OnlineOptionsComponent extends StatefulWidget {
+class OnlineOptions extends StatefulWidget {
   final OnlineOptionsViewModel viewModel;
 
-  const OnlineOptionsComponent({super.key, required this.viewModel});
+  const OnlineOptions({super.key, required this.viewModel});
 
   @override
-  State<OnlineOptionsComponent> createState() => _OnlineOptionsComponentState();
+  State<OnlineOptions> createState() => _OnlineOptionsState();
 }
 
-class _OnlineOptionsComponentState extends State<OnlineOptionsComponent> {
+class _OnlineOptionsState extends State<OnlineOptions> {
   final TextEditingController _ipController = TextEditingController();
   bool _hasNavigated = false;
 
@@ -41,16 +39,9 @@ class _OnlineOptionsComponentState extends State<OnlineOptionsComponent> {
       final isHost = widget.viewModel.onlineOptions.serverIP != null;
       Future.microtask(() {
         if (mounted) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => OnlineGameScreen(
-                viewModel: OnlineGameViewModel(
-                  isHost: isHost,
-                  gameRepository: DependencyContainer.getGameRepository(),
-                ),
-              ),
-            ),
-          );
+          Navigator.of(
+            context,
+          ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));
         }
       });
     }
