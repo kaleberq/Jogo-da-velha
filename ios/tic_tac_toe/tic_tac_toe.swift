@@ -62,17 +62,17 @@ struct tic_tac_toe: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(iOS 17.0, *) {
-                tic_tac_toeEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                tic_tac_toeEntryView(entry: entry)
-                    .padding()
-                    .background()
+            Group {
+                if #available(iOS 17.0, *) {
+                    tic_tac_toeEntryView(entry: entry).containerBackground(.fill.tertiary, for: .widget)
+                } else {
+                    tic_tac_toeEntryView(entry: entry).padding().background()
+                }
             }
+            .widgetURL(URL(string: "jogodavelha://local-options")!)
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Jogo da Velha")
+        .description("Toque para abrir opções do jogo local.")
     }
 }
 
