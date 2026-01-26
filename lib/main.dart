@@ -16,9 +16,10 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/onlin
 
 const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
 
-Future<String?> _getPendingRoute() async {
+Future<Map<String, dynamic>?> _getPendingRoute() async {
   try {
-    return await _channel.invokeMethod<String>('getPendingRoute');
+    final result = await _channel.invokeMethod<Map>('getPendingRoute');
+    return result?.cast<String, dynamic>();
   } on PlatformException {
     return null;
   }
@@ -27,14 +28,20 @@ Future<String?> _getPendingRoute() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  final route = await _getPendingRoute();
-  runApp(MyApp(initialRoute: route ?? RoutesEnum.splash.path));
+  final pending = await _getPendingRoute();
+  final route = pending?['route'] as String?;
+  final isLocalGame = route == RoutesEnum.localGame.path;
+  runApp(MyApp(
+    initialRoute: isLocalGame ? RoutesEnum.splash.path : (route ?? RoutesEnum.splash.path),
+    pendingArgs: isLocalGame ? pending : null,
+  ));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.initialRoute});
+  const MyApp({super.key, required this.initialRoute, this.pendingArgs});
 
   final String initialRoute;
+  final Map<String, dynamic>? pendingArgs;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -47,6 +54,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    if (widget.pendingArgs != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final route = widget.pendingArgs!['route'] as String?;
+        if (route != null && route == RoutesEnum.localGame.path) {
+          final maxRounds = widget.pendingArgs!['maxRounds'] as int? ?? 5;
+          final timeLimit = widget.pendingArgs!['timeLimit'] as int? ?? 10;
+          _navKey.currentState?.pushReplacementNamed(
+            RoutesEnum.localGame.path,
+            arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimit),
+          );
+        }
+      });
+    }
   }
 
   @override
@@ -58,12 +78,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
-    _getPendingRoute().then((r) {
-      if (r != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _navKey.currentState?.pushNamed(r);
-        });
-      }
+    _getPendingRoute().then((pending) {
+      if (pending == null) return;
+      final route = pending['route'] as String?;
+      if (route == null) return;
+      
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (route == RoutesEnum.localGame.path) {
+          final maxRounds = pending['maxRounds'] as int? ?? 5;
+          final timeLimit = pending['timeLimit'] as int? ?? 10;
+          _navKey.currentState?.pushNamed(
+            route,
+            arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimit),
+          );
+        } else {
+          _navKey.currentState?.pushNamed(route);
+        }
+      });
     });
   }
 

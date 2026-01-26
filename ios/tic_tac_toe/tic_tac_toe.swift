@@ -10,50 +10,127 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+        SimpleEntry(date: Date(), maxRounds: GameSettings.maxRounds, timeLimit: GameSettings.timeLimit)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
+        let entry = SimpleEntry(date: Date(), maxRounds: GameSettings.maxRounds, timeLimit: GameSettings.timeLimit)
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+        let entry = SimpleEntry(date: Date(), maxRounds: GameSettings.maxRounds, timeLimit: GameSettings.timeLimit)
+        let timeline = Timeline(entries: [entry], policy: .after(Calendar.current.date(byAdding: .minute, value: 1, to: Date())!))
         completion(timeline)
     }
-
-//    func relevances() async -> WidgetRelevances<Void> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let emoji: String
+    let maxRounds: Int
+    let timeLimit: Int
 }
 
 struct tic_tac_toeEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
-
-            Text("Emoji:")
-            Text(entry.emoji)
+        VStack(spacing: 12) {
+            Text("Jogo da Velha")
+                .font(.headline)
+                .fontWeight(.bold)
+            
+            // Rodadas
+            HStack {
+                Text("Rodadas:")
+                    .font(.subheadline)
+                Spacer()
+                if #available(iOS 17.0, *) {
+                    Button(intent: DecreaseRoundsIntent()) {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundColor(entry.maxRounds > 1 ? .blue : .gray)
+                    }
+                    .disabled(entry.maxRounds <= 1)
+                    
+                    Text("\(entry.maxRounds)")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .frame(minWidth: 30)
+                    
+                    Button(intent: IncreaseRoundsIntent()) {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(entry.maxRounds < 20 ? .blue : .gray)
+                    }
+                    .disabled(entry.maxRounds >= 20)
+                } else {
+                    Text("\(entry.maxRounds)")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                }
+            }
+            
+            // Tempo
+            HStack {
+                Text("Tempo (s):")
+                    .font(.subheadline)
+                Spacer()
+                if #available(iOS 17.0, *) {
+                    Button(intent: DecreaseTimeIntent()) {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundColor(entry.timeLimit > 5 ? .blue : .gray)
+                    }
+                    .disabled(entry.timeLimit <= 5)
+                    
+                    Text("\(entry.timeLimit)")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .frame(minWidth: 30)
+                    
+                    Button(intent: IncreaseTimeIntent()) {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(entry.timeLimit < 60 ? .blue : .gray)
+                    }
+                    .disabled(entry.timeLimit >= 60)
+                } else {
+                    Text("\(entry.timeLimit)")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                }
+            }
+            
+            // Botão Iniciar
+            if #available(iOS 17.0, *) {
+                Button(intent: StartGameIntent()) {
+                    HStack {
+                        Image(systemName: "play.fill")
+                        Text("Iniciar Jogo")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+            } else {
+                Link(destination: URL(string: "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimit=\(entry.timeLimit)")!) {
+                    HStack {
+                        Image(systemName: "play.fill")
+                        Text("Iniciar Jogo")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                }
+            }
         }
+        .padding()
     }
 }
 
@@ -62,23 +139,23 @@ struct tic_tac_toe: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            Group {
-                if #available(iOS 17.0, *) {
-                    tic_tac_toeEntryView(entry: entry).containerBackground(.fill.tertiary, for: .widget)
-                } else {
-                    tic_tac_toeEntryView(entry: entry).padding().background()
-                }
+            if #available(iOS 17.0, *) {
+                tic_tac_toeEntryView(entry: entry).containerBackground(.fill.tertiary, for: .widget)
+            } else {
+                tic_tac_toeEntryView(entry: entry).padding().background()
             }
-            .widgetURL(URL(string: "jogodavelha://local-options")!)
         }
         .configurationDisplayName("Jogo da Velha")
-        .description("Toque para abrir opções do jogo local.")
+        .description("Configure e inicie o jogo diretamente do widget.")
     }
 }
 
+#if DEBUG
+@available(iOS 17.0, *)
 #Preview(as: .systemSmall) {
     tic_tac_toe()
 } timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
+    SimpleEntry(date: Date(), maxRounds: 5, timeLimit: 10)
+    SimpleEntry(date: Date(), maxRounds: 10, timeLimit: 20)
 }
+#endif
