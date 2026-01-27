@@ -7,6 +7,8 @@
 
 import WidgetKit
 import SwiftUI
+import AppIntents
+
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -45,7 +47,7 @@ struct tic_tac_toeEntryView : View {
                 Text("Rodadas:")
                     .font(.subheadline)
                 Spacer()
-                if #available(iOS 17.0, *) {
+               
                     Button(intent: DecreaseRoundsIntent()) {
                         Image(systemName: "minus.circle.fill")
                             .foregroundColor(entry.maxRounds > 1 ? .blue : .gray)
@@ -62,11 +64,7 @@ struct tic_tac_toeEntryView : View {
                             .foregroundColor(entry.maxRounds < 20 ? .blue : .gray)
                     }
                     .disabled(entry.maxRounds >= 20)
-                } else {
-                    Text("\(entry.maxRounds)")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                }
+                
             }
             
             // Tempo
@@ -74,7 +72,7 @@ struct tic_tac_toeEntryView : View {
                 Text("Tempo (s):")
                     .font(.subheadline)
                 Spacer()
-                if #available(iOS 17.0, *) {
+               
                     Button(intent: DecreaseTimeIntent()) {
                         Image(systemName: "minus.circle.fill")
                             .foregroundColor(entry.timeLimit > 5 ? .blue : .gray)
@@ -91,30 +89,11 @@ struct tic_tac_toeEntryView : View {
                             .foregroundColor(entry.timeLimit < 60 ? .blue : .gray)
                     }
                     .disabled(entry.timeLimit >= 60)
-                } else {
-                    Text("\(entry.timeLimit)")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                }
+                
             }
             
             // Botão Iniciar
-            if #available(iOS 17.0, *) {
-                Button(intent: StartGameIntent()) {
-                    HStack {
-                        Image(systemName: "play.fill")
-                        Text("Iniciar Jogo")
-                    }
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
-                    .background(Color.blue)
-                    .cornerRadius(8)
-                }
-                .buttonStyle(.plain)
-            } else {
+           
                 Link(destination: URL(string: "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimit=\(entry.timeLimit)")!) {
                     HStack {
                         Image(systemName: "play.fill")
@@ -127,7 +106,7 @@ struct tic_tac_toeEntryView : View {
                     .padding(.vertical, 8)
                     .background(Color.blue)
                     .cornerRadius(8)
-                }
+                
             }
         }
         .padding()

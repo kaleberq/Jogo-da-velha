@@ -91,17 +91,3 @@ struct DecreaseTimeIntent: AppIntent {
     }
 }
 
-struct StartGameIntent: AppIntent {
-    static var title: LocalizedStringResource = "Iniciar Jogo"
-    
-    func perform() async throws -> some IntentResult {
-        let maxRounds = GameSettings.maxRounds
-        let timeLimit = GameSettings.timeLimit
-        
-        // Abre o app com deep link contendo os parâmetros
-        let url = URL(string: "jogodavelha://local-game?maxRounds=\(maxRounds)&timeLimit=\(timeLimit)")!
-        try await url.open()
-        
-        return .result()
-    }
-}
