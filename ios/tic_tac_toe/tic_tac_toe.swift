@@ -37,12 +37,11 @@ struct tic_tac_toeEntryView : View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             Text("Jogo da Velha")
                 .font(.headline)
                 .fontWeight(.bold)
-            
-            // Rodadas
+                .frame(maxWidth: .infinity, alignment: .leading)
             HStack {
                 Text("Rodadas:")
                     .font(.subheadline)
@@ -66,13 +65,10 @@ struct tic_tac_toeEntryView : View {
                     .disabled(entry.maxRounds >= 20)
                 
             }
-            
-            // Tempo
             HStack {
-                Text("Tempo (s):")
+                Text("Tempo:")
                     .font(.subheadline)
                 Spacer()
-               
                     Button(intent: DecreaseTimeIntent()) {
                         Image(systemName: "minus.circle.fill")
                             .foregroundColor(entry.timeLimit > 5 ? .blue : .gray)
@@ -91,14 +87,9 @@ struct tic_tac_toeEntryView : View {
                     .disabled(entry.timeLimit >= 60)
                 
             }
-            
-            // Botão Iniciar
-           
                 Link(destination: URL(string: "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimit=\(entry.timeLimit)")!) {
-                    HStack {
-                        Image(systemName: "play.fill")
-                        Text("Iniciar Jogo")
-                    }
+                    
+                    Text("Iniciar Jogo")
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -125,16 +116,15 @@ struct tic_tac_toe: Widget {
             }
         }
         .configurationDisplayName("Jogo da Velha")
-        .description("Configure e inicie o jogo diretamente do widget.")
+        .description("Configure e inicie o jogo diretamente do widget.").supportedFamilies([.systemMedium])
     }
 }
 
 #if DEBUG
 @available(iOS 17.0, *)
-#Preview(as: .systemSmall) {
+#Preview(as: .systemMedium) {
     tic_tac_toe()
 } timeline: {
     SimpleEntry(date: Date(), maxRounds: 5, timeLimit: 10)
-    SimpleEntry(date: Date(), maxRounds: 10, timeLimit: 20)
 }
 #endif

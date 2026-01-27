@@ -31,10 +31,15 @@ void main() async {
   final pending = await _getPendingRoute();
   final route = pending?['route'] as String?;
   final isLocalGame = route == RoutesEnum.localGame.path;
-  runApp(MyApp(
-    initialRoute: isLocalGame ? RoutesEnum.splash.path : (route ?? RoutesEnum.splash.path),
-    pendingArgs: isLocalGame ? pending : null,
-  ));
+
+  runApp(
+    MyApp(
+      initialRoute: isLocalGame
+          ? RoutesEnum.splash.path
+          : (route ?? RoutesEnum.splash.path),
+      pendingArgs: isLocalGame ? pending : null,
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -82,7 +87,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       if (pending == null) return;
       final route = pending['route'] as String?;
       if (route == null) return;
-      
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (route == RoutesEnum.localGame.path) {
           final maxRounds = pending['maxRounds'] as int? ?? 5;
