@@ -87,7 +87,7 @@ struct tic_tac_toeEntryView : View {
                     .disabled(entry.timeLimit >= 60)
                 
             }
-                Link(destination: URL(string: "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimit=\(entry.timeLimit)")!) {
+                Link(destination: URL(string: "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimitSeconds=\(entry.timeLimit)")!) {
                     
                     Text("Iniciar Jogo")
                     .font(.subheadline)

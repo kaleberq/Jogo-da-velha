@@ -16,11 +16,13 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/onlin
 
 const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
 
-Future<Map<String, dynamic>?> _getPendingRoute() async {
+// Busca a rota pendente na inicialização (app fechado).
+Future<Map<String, dynamic>?> _getInitialDeepLink() async {
   try {
     final result = await _channel.invokeMethod<Map>('getPendingRoute');
     return result?.cast<String, dynamic>();
   } on PlatformException {
+    // Se der erro (ex: o método não existe no nativo ainda), retorna nulo.
     return null;
   }
 }
@@ -28,79 +30,75 @@ Future<Map<String, dynamic>?> _getPendingRoute() async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  final pending = await _getPendingRoute();
-  final route = pending?['route'] as String?;
-  final isLocalGame = route == RoutesEnum.localGame.path;
 
-  runApp(
-    MyApp(
-      initialRoute: isLocalGame
-          ? RoutesEnum.splash.path
-          : (route ?? RoutesEnum.splash.path),
-      pendingArgs: isLocalGame ? pending : null,
-    ),
-  );
+  // Busca a rota inicial uma única vez antes do app rodar.
+  final initialDeepLink = await _getInitialDeepLink();
+
+  runApp(MyApp(initialDeepLink: initialDeepLink));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.initialRoute, this.pendingArgs});
+  final Map<String, dynamic>? initialDeepLink;
 
-  final String initialRoute;
-  final Map<String, dynamic>? pendingArgs;
+  const MyApp({super.key, this.initialDeepLink});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> {
   final _navKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    if (widget.pendingArgs != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final route = widget.pendingArgs!['route'] as String?;
-        if (route != null && route == RoutesEnum.localGame.path) {
-          final maxRounds = widget.pendingArgs!['maxRounds'] as int? ?? 5;
-          final timeLimit = widget.pendingArgs!['timeLimit'] as int? ?? 10;
-          _navKey.currentState?.pushReplacementNamed(
-            RoutesEnum.localGame.path,
-            arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimit),
-          );
-        }
-      });
-    }
+    // Registra o handler para receber chamadas do nativo quando o app já está aberto.
+    //_channel.setMethodCallHandler(_handleDeepLink);
+
+    // Se o app foi aberto por um deep link (inicialização a frio),
+    // agenda a navegação para depois do primeiro frame ser construído.
+    // if (widget.initialDeepLink != null) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _navigateTo(widget.initialDeepLink!);
+    //   });
+    // }
   }
+
+  // // Lida com deep links recebidos enquanto o app está em execução (em background).
+  // Future<void> _handleDeepLink(MethodCall call) async {
+  //   if (call.method == 'handleDeepLink') {
+  //     final args = call.arguments as Map<dynamic, dynamic>?;
+  //     if (args != null) {
+  //       _navigateTo(args.cast<String, dynamic>());
+  //     }
+  //   }
+  // }
+
+  // Lógica de navegação centralizada para ser usada por ambos os fluxos.
+  // void _navigateTo(Map<String, dynamic> pending) {
+  //   final route = pending['route'] as String?;
+  //   if (route == null) return;
+  //
+  //   // Garante que o navigator está pronto antes de tentar navegar.
+  //   if (_navKey.currentState == null) return;
+  //
+  //   if (route == RoutesEnum.localGame.path) {
+  //     final maxRounds = pending['maxRounds'] as int? ?? 5;
+  //     final timeLimit = pending['timeLimit'] as int? ?? 10;
+  //     _navKey.currentState?.pushNamed(
+  //       route,
+  //       arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimit),
+  //     );
+  //   } else {
+  //     _navKey.currentState?.pushNamed(route);
+  //   }
+  // }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    // Limpa o handler para evitar vazamentos de memória.
+    _channel.setMethodCallHandler(null);
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed) return;
-    _getPendingRoute().then((pending) {
-      if (pending == null) return;
-      final route = pending['route'] as String?;
-      if (route == null) return;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (route == RoutesEnum.localGame.path) {
-          final maxRounds = pending['maxRounds'] as int? ?? 5;
-          final timeLimit = pending['timeLimit'] as int? ?? 10;
-          _navKey.currentState?.pushNamed(
-            route,
-            arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimit),
-          );
-        } else {
-          _navKey.currentState?.pushNamed(route);
-        }
-      });
-    });
   }
 
   @override
@@ -112,7 +110,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       themeMode: ThemeMode.system,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      initialRoute: widget.initialRoute,
+      initialRoute: widget.initialDeepLink != null
+          ? RoutesEnum.localGame.path
+          : RoutesEnum.splash.path,
       routes: {
         RoutesEnum.splash.path: (context) => const SplashScreen(),
         RoutesEnum.menu.path: (context) => const MenuScreen(),
@@ -125,14 +125,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {
-          final args =
-              settings.arguments as ({int maxRounds, int timeLimitSeconds});
+          // final args =
+          //     settings.arguments as ({int maxRounds, int timeLimitSeconds});
 
+          //por navegação interna consegue pegar  o parametro mas quando vai entrar por deeplink não
           return MaterialPageRoute(
             builder: (_) => LocalGameScreen(
               viewModel: LocalGameViewModel(
-                maxRounds: args.maxRounds,
-                timeLimitSeconds: args.timeLimitSeconds,
+                maxRounds: 10, //args.maxRounds,
+                timeLimitSeconds: 10, //args.timeLimitSeconds,
               ),
             ),
           );
