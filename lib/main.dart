@@ -125,15 +125,28 @@ class _MyAppState extends State<MyApp> {
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {
-          // final args =
-          //     settings.arguments as ({int maxRounds, int timeLimitSeconds});
+          // Se arguments é null mas temos um deep link inicial, usa os dados do deep link
+          int maxRounds;
+          int timeLimitSeconds;
 
-          //por navegação interna consegue pegar  o parametro mas quando vai entrar por deeplink não
+          if (settings.arguments == null && widget.initialDeepLink != null) {
+            // Deep link inicial - extrai do initialDeepLink
+            maxRounds = widget.initialDeepLink!['maxRounds'] as int;
+            timeLimitSeconds =
+                widget.initialDeepLink!['timeLimitSeconds'] as int;
+          } else {
+            // Navegação interna - usa os arguments passados
+            final args =
+                settings.arguments as ({int maxRounds, int timeLimitSeconds});
+            maxRounds = args.maxRounds;
+            timeLimitSeconds = args.timeLimitSeconds;
+          }
+
           return MaterialPageRoute(
             builder: (_) => LocalGameScreen(
               viewModel: LocalGameViewModel(
-                maxRounds: 10, //args.maxRounds,
-                timeLimitSeconds: 10, //args.timeLimitSeconds,
+                maxRounds: maxRounds,
+                timeLimitSeconds: timeLimitSeconds,
               ),
             ),
           );

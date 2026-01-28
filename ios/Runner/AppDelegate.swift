@@ -23,7 +23,7 @@ private let kPendingTimeLimit = "pending_deeplink_timeLimit"
           UserDefaults.standard.removeObject(forKey: kPendingMaxRounds)
           UserDefaults.standard.removeObject(forKey: kPendingTimeLimit)
           if let route = r {
-            result(["route": route, "maxRounds": maxRounds > 0 ? maxRounds : 5, "timeLimit": timeLimit > 0 ? timeLimit : 10])
+            result(["route": route, "maxRounds": maxRounds > 0 ? maxRounds : 5, "timeLimitSeconds": timeLimit > 0 ? timeLimit : 10])
           } else {
             result(nil)
           }
@@ -46,7 +46,7 @@ private let kPendingTimeLimit = "pending_deeplink_timeLimit"
     } else if url.host == "local-game" {
       let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
       let maxRounds = Int(components?.queryItems?.first(where: { $0.name == "maxRounds" })?.value ?? "5") ?? 5
-      let timeLimit = Int(components?.queryItems?.first(where: { $0.name == "timeLimit" })?.value ?? "10") ?? 10
+      let timeLimit = Int(components?.queryItems?.first(where: { $0.name == "timeLimitSeconds" })?.value ?? "10") ?? 10
       UserDefaults.standard.set("local-game", forKey: kPending)
       UserDefaults.standard.set(maxRounds, forKey: kPendingMaxRounds)
       UserDefaults.standard.set(timeLimit, forKey: kPendingTimeLimit)
