@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
+
+const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
+
+// Busca a rota pendente na inicialização (app fechado).
+Future<Map<String, dynamic>?> _getInitialDeepLink() async {
+  try {
+    final result = await _channel.invokeMethod<Map>('getPendingRoute');
+    return result?.cast<String, dynamic>();
+  } on PlatformException {
+    return null;
+  }
+}
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -41,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.addStatusListener(_startBoardAnimation);
 
     // Espera a animação do traço terminar para navegar
-    _lineAnimationController.addStatusListener(_navigateToMenu);
+    _lineAnimationController.addStatusListener(_navigate);
 
     // Configura callbacks do ViewModel
     _viewModel.onLineAnimationReady = () {
@@ -61,10 +74,32 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void _navigateToMenu(AnimationStatus status) {
-    if (status == AnimationStatus.completed && mounted) {
-      Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
+  void _navigate(AnimationStatus status) async {
+    if (status != AnimationStatus.completed || !mounted) return;
+
+    final deepLink = await _getInitialDeepLink();
+    if (!mounted) return;
+
+    final rawRoute = deepLink?['route'] as String?;
+    final normalizedRoute = rawRoute?.split('/').last.replaceAll('/', '');
+
+    final route = RoutesEnum.values.firstWhere(
+      (e) => e.path.replaceAll('/', '') == normalizedRoute,
+      orElse: () => RoutesEnum.menu,
+    );
+
+    if (route == RoutesEnum.localGame && deepLink != null) {
+      final int maxRounds = deepLink['maxRounds'] as int;
+      final int timeLimitSeconds = deepLink['timeLimitSeconds'] as int;
+
+      Navigator.of(context).pushReplacementNamed(
+        route.path,
+        arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
+      );
+      return;
     }
+
+    Navigator.of(context).pushReplacementNamed(route.path);
   }
 
   @override
@@ -73,6 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.dispose();
     _lineAnimationController.dispose();
     _viewModel.dispose();
+    _channel.setMethodCallHandler(null);
     super.dispose();
   }
 

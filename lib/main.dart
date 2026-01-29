@@ -14,31 +14,15 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 
-const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
-
-// Busca a rota pendente na inicialização (app fechado).
-Future<Map<String, dynamic>?> _getInitialDeepLink() async {
-  try {
-    final result = await _channel.invokeMethod<Map>('getPendingRoute');
-    return result?.cast<String, dynamic>();
-  } on PlatformException {
-    return null;
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  final initialDeepLink = await _getInitialDeepLink();
-
-  runApp(MyApp(initialDeepLink: initialDeepLink));
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  final Map<String, dynamic>? initialDeepLink;
-
-  const MyApp({super.key, this.initialDeepLink});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -53,23 +37,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
-  void dispose() {
-    _channel.setMethodCallHandler(null);
-    super.dispose();
-  }
-
-  String getInitialRoute() {
-    final route = widget.initialDeepLink?['route'] as String?;
-
-    final RoutesEnum initialRoute = RoutesEnum.values.firstWhere(
-      (e) => e.path.replaceAll('/', '') == route,
-      orElse: () => RoutesEnum.splash,
-    );
-
-    return initialRoute.path;
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navKey,
@@ -78,7 +45,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: ThemeMode.system,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      initialRoute: getInitialRoute(),
+      initialRoute: RoutesEnum.splash.path,
       routes: {
         RoutesEnum.splash.path: (context) => const SplashScreen(),
         RoutesEnum.menu.path: (context) => const MenuScreen(),
@@ -91,25 +58,14 @@ class _MyAppState extends State<MyApp> {
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {
-          int maxRounds;
-          int timeLimitSeconds;
-
-          if (settings.arguments == null && widget.initialDeepLink != null) {
-            maxRounds = widget.initialDeepLink!['maxRounds'] as int;
-            timeLimitSeconds =
-                widget.initialDeepLink!['timeLimitSeconds'] as int;
-          } else {
-            final args =
-                settings.arguments as ({int maxRounds, int timeLimitSeconds});
-            maxRounds = args.maxRounds;
-            timeLimitSeconds = args.timeLimitSeconds;
-          }
+          final args =
+              settings.arguments as ({int maxRounds, int timeLimitSeconds});
 
           return MaterialPageRoute(
             builder: (_) => LocalGameScreen(
               viewModel: LocalGameViewModel(
-                maxRounds: maxRounds,
-                timeLimitSeconds: timeLimitSeconds,
+                maxRounds: args.maxRounds,
+                timeLimitSeconds: args.timeLimitSeconds,
               ),
             ),
           );
