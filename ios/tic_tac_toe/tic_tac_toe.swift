@@ -38,10 +38,6 @@ struct tic_tac_toeEntryView : View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text("Jogo da Velha")
-                .font(.headline)
-                .fontWeight(.bold)
-                .frame(maxWidth: .infinity, alignment: .leading)
             HStack {
                 Text("Rodadas:")
                     .font(.subheadline)
