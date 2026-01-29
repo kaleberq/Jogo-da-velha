@@ -84,29 +84,41 @@ class _SplashScreenState extends State<SplashScreen>
         return Scaffold(
           backgroundColor: DSColors.primary,
           body: Center(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final double size = constraints.maxWidth / 2;
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: DSSpacing.xxl,
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double size = constraints.maxWidth / 2;
 
-                return Container(
-                  width: size,
-                  height: size,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: DSColors.white.withAlpha(200),
-                        offset: const Offset(2, 2),
-                        blurRadius: 12,
-                        spreadRadius: 4,
+                    return Container(
+                      width: size,
+                      height: size,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: DSColors.white.withAlpha(200),
+                            offset: const Offset(2, 2),
+                            blurRadius: 12,
+                            spreadRadius: 4,
+                          ),
+                        ],
                       ),
-                    ],
+                      child: GameBoardComponent(
+                        game: _viewModel.game,
+                        winningLineAnimation: _lineAnimation,
+                      ),
+                    );
+                  },
+                ),
+                Text(
+                  context.l10n.appTitle,
+                  style: DSTypographySemiBold.labelXLarge.copyWith(
+                    color: DSColors.onPrimary,
                   ),
-                  child: GameBoardComponent(
-                    game: _viewModel.game,
-                    winningLineAnimation: _lineAnimation,
-                  ),
-                );
-              },
+                ),
+              ],
             ),
           ),
         );

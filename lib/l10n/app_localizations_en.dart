@@ -9,6 +9,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get appTitle => 'Tic Tac Toe';
+
+  @override
   String get menuTitle => 'Menu';
 
   @override

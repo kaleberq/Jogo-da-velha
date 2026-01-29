@@ -1,6 +1,8 @@
 {
   "@@locale": "en",
 
+  "appTitle": "Tic Tac Toe",
+
   "menuTitle": "Menu",
   "chooseGameMode": "Choose a game mode.",
   "localModeTitle": "Local game",
