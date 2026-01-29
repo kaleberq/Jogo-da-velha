@@ -95,12 +95,6 @@ abstract class AppLocalizations {
     Locale('pt')
   ];
 
-  /// No description provided for @appTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Tic Tac Toe'**
-  String get appTitle;
-
   /// No description provided for @menuTitle.
   ///
   /// In en, this message translates to:

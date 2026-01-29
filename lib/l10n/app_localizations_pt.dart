@@ -9,9 +9,6 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get appTitle => 'Jogo da Velha';
-
-  @override
   String get menuTitle => 'Menu';
 
   @override

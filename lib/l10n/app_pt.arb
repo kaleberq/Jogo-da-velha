@@ -1,8 +1,6 @@
 {
   "@@locale": "pt",
 
-  "appTitle": "Jogo da Velha",
-
   "menuTitle": "Menu",
   "chooseGameMode": "Escolha um modo de jogo",
   "localModeTitle": "Jogo Local",
