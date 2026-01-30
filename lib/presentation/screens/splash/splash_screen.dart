@@ -8,16 +8,6 @@ import 'package:jogo_da_velha/presentation/screens/components/game_board_compone
 
 const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
 
-// Busca a rota pendente na inicialização (app fechado).
-Future<Map<String, dynamic>?> _getInitialDeepLink() async {
-  try {
-    final result = await _channel.invokeMethod<Map>('getPendingRoute');
-    return result?.cast<String, dynamic>();
-  } on PlatformException {
-    return null;
-  }
-}
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -67,44 +57,65 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startBoardAnimation(AnimationStatus status) {
-    if (status == AnimationStatus.completed &&
-        !_viewModel.state.hasStartedBoardAnimation &&
-        mounted) {
-      _viewModel.startBoardAnimation();
+    if (status != AnimationStatus.completed) return;
+    if (!mounted) return;
+    if (_viewModel.state.hasStartedBoardAnimation) return;
+
+    _viewModel.startBoardAnimation();
+  }
+
+  Future<void> _navigate(AnimationStatus status) async {
+    if (status != AnimationStatus.completed || !mounted) return;
+
+    try {
+      final result = await _channel.invokeMethod<Map>('getPendingRoute');
+
+      if (!mounted) return;
+
+      final deepLink = result?.cast<String, dynamic>();
+      final route = _resolveRoute(deepLink);
+
+      if (route == RoutesEnum.localGame && deepLink != null) {
+        _navigateToLocalGame(deepLink);
+      } else {
+        _goToMenu();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      _goToMenu();
     }
   }
 
-  void _navigate(AnimationStatus status) async {
-    if (status != AnimationStatus.completed || !mounted) return;
-
-    final deepLink = await _getInitialDeepLink();
-    if (!mounted) return;
-
+  RoutesEnum _resolveRoute(Map<String, dynamic>? deepLink) {
     final rawRoute = deepLink?['route'] as String?;
-    final normalizedRoute = rawRoute?.split('/').last.replaceAll('/', '');
+    if (rawRoute == null) return RoutesEnum.menu;
 
-    final route = RoutesEnum.values.firstWhere(
+    final normalizedRoute = rawRoute.split('/').last;
+
+    return RoutesEnum.values.firstWhere(
       (e) => e.path.replaceAll('/', '') == normalizedRoute,
       orElse: () => RoutesEnum.menu,
     );
+  }
 
-    if (route == RoutesEnum.localGame && deepLink != null) {
-      final int maxRounds = deepLink['maxRounds'] as int;
-      final int timeLimitSeconds = deepLink['timeLimitSeconds'] as int;
+  void _navigateToLocalGame(Map<String, dynamic> deepLink) {
+    final maxRounds = deepLink['maxRounds'] as int;
+    final timeLimitSeconds = deepLink['timeLimitSeconds'] as int;
 
-      // Empilha menu e depois local-game para o voltar não sair do app
-      Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        Navigator.of(context).pushNamed(
-          route.path,
-          arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
-        );
-      });
-      return;
-    }
+    Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
 
-    Navigator.of(context).pushReplacementNamed(route.path);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      Navigator.of(context).pushNamed(
+        RoutesEnum.localGame.path,
+        arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
+      );
+    });
+  }
+
+  void _goToMenu() {
+    Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
   }
 
   @override
