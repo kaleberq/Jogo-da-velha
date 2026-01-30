@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
+import 'package:jogo_da_velha/deeplink/deeplink_service.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
-
-const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -67,55 +64,11 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigate(AnimationStatus status) async {
     if (status != AnimationStatus.completed || !mounted) return;
 
-    try {
-      final result = await _channel.invokeMethod<Map>('getPendingRoute');
+    final deepLink = await DeepLinkService.getPendingRoute();
+    if (!mounted) return;
 
-      if (!mounted) return;
-
-      final deepLink = result?.cast<String, dynamic>();
-      final route = _resolveRoute(deepLink);
-
-      if (route == RoutesEnum.localGame && deepLink != null) {
-        _navigateToLocalGame(deepLink);
-      } else {
-        _goToMenu();
-      }
-    } catch (e) {
-      if (!mounted) return;
-      _goToMenu();
-    }
-  }
-
-  RoutesEnum _resolveRoute(Map<String, dynamic>? deepLink) {
-    final rawRoute = deepLink?['route'] as String?;
-    if (rawRoute == null) return RoutesEnum.menu;
-
-    final normalizedRoute = rawRoute.split('/').last;
-
-    return RoutesEnum.values.firstWhere(
-      (e) => e.path.replaceAll('/', '') == normalizedRoute,
-      orElse: () => RoutesEnum.menu,
-    );
-  }
-
-  void _navigateToLocalGame(Map<String, dynamic> deepLink) {
-    final maxRounds = deepLink['maxRounds'] as int;
-    final timeLimitSeconds = deepLink['timeLimitSeconds'] as int;
-
-    Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-
-      Navigator.of(context).pushNamed(
-        RoutesEnum.localGame.path,
-        arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
-      );
-    });
-  }
-
-  void _goToMenu() {
-    Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
+    final navigator = Navigator.of(context);
+    DeepLinkService.navigate(navigator, deepLink);
   }
 
   @override
@@ -124,7 +77,6 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.dispose();
     _lineAnimationController.dispose();
     _viewModel.dispose();
-    _channel.setMethodCallHandler(null);
     super.dispose();
   }
 
