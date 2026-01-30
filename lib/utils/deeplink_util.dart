@@ -6,8 +6,8 @@ const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
 
 /// Centraliza a regra de deep link: obter rota pendente, resolver e navegar.
 /// Usado na splash (cold start) e pode ser usado quando o app já está aberto.
-class DeepLinkService {
-  DeepLinkService._();
+class DeepLinkUtil {
+  DeepLinkUtil._();
 
   /// Busca a rota pendente no nativo (consumindo o valor).
   static Future<Map<String, dynamic>?> getPendingRoute() async {

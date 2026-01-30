@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/deeplink/deeplink_service.dart';
+import 'package:jogo_da_velha/utils/deeplink_util.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -64,11 +64,11 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigate(AnimationStatus status) async {
     if (status != AnimationStatus.completed || !mounted) return;
 
-    final deepLink = await DeepLinkService.getPendingRoute();
+    final deepLink = await DeepLinkUtil.getPendingRoute();
     if (!mounted) return;
 
     final navigator = Navigator.of(context);
-    DeepLinkService.navigate(navigator, deepLink);
+    DeepLinkUtil.navigate(navigator, deepLink);
   }
 
   @override
