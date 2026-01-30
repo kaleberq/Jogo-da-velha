@@ -92,10 +92,15 @@ class _SplashScreenState extends State<SplashScreen>
       final int maxRounds = deepLink['maxRounds'] as int;
       final int timeLimitSeconds = deepLink['timeLimitSeconds'] as int;
 
-      Navigator.of(context).pushReplacementNamed(
-        route.path,
-        arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
-      );
+      // Empilha menu e depois local-game para o voltar não sair do app
+      Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        Navigator.of(context).pushNamed(
+          route.path,
+          arguments: (maxRounds: maxRounds, timeLimitSeconds: timeLimitSeconds),
+        );
+      });
       return;
     }
 
