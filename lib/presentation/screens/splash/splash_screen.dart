@@ -64,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigate(AnimationStatus status) async {
     if (status != AnimationStatus.completed || !mounted) return;
 
-    final deepLink = await DeepLinkUtil.getPendingRoute();
+    final deepLink = await _viewModel.getPendingRoute();
     if (!mounted) return;
 
     final navigator = Navigator.of(context);
