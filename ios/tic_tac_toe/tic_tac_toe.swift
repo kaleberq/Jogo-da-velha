@@ -92,7 +92,7 @@ struct tic_tac_toeEntryView: View {
 
             }
             HStack {
-                Text("Tempo em segundos:")
+                Text("Tempo:")
                     .font(.subheadline)
                 Spacer()
                 Button(intent: DecreaseTimeIntent()) {
@@ -127,10 +127,10 @@ struct tic_tac_toeEntryView: View {
                         "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimitSeconds=\(entry.timeLimit)"
                 )!
             ) {
-
                 Text("Iniciar Jogo")
                     .font(.subheadline)
                     .fontWeight(.semibold)
+                    .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .background(Color.primaryColor)
@@ -139,6 +139,12 @@ struct tic_tac_toeEntryView: View {
             }
         }
         .padding()
+        .widgetURL(
+            URL(
+                string:
+                    "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimitSeconds=\(entry.timeLimit)"
+            )
+        )
     }
 }
 
