@@ -9,7 +9,7 @@ import WidgetKit
 import SwiftUI
 
 @main
-struct tic_tac_toeBundle: WidgetBundle {
+struct tic_tac_toeComponent: WidgetBundle {
     var body: some Widget {
         tic_tac_toe()
         
