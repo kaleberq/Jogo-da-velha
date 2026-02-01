@@ -9,6 +9,14 @@ import AppIntents
 import SwiftUI
 import WidgetKit
 
+@main
+struct tic_tac_toeComponent: WidgetBundle {
+    var body: some Widget {
+        tic_tac_toe()
+        
+    }
+}
+
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
         SimpleEntry(
@@ -92,7 +100,7 @@ struct tic_tac_toeEntryView: View {
 
             }
             HStack {
-                Text("Tempo:")
+                Text("Tempo em segundos:")
                     .font(.subheadline)
                 Spacer()
                 Button(intent: DecreaseTimeIntent()) {
@@ -163,7 +171,7 @@ struct tic_tac_toe: Widget {
             }
         }
         .configurationDisplayName("Jogo da Velha")
-        .description("Configure e inicie o jogo diretamente do widget.")
+        .description("Configure e inicie o jogo local.")
         .supportedFamilies([.systemMedium])
     }
 }
