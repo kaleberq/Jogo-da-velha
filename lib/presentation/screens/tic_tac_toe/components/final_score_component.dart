@@ -59,7 +59,6 @@ class FinalScoreComponent extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: DSSpacing.xl),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -68,6 +67,16 @@ class FinalScoreComponent extends StatelessWidget {
                 resetAll();
               },
               child: Text(context.l10n.playAgain),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: Text(context.l10n.backToMenu),
             ),
           ),
         ],
