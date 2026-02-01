@@ -52,7 +52,7 @@ class _LocalOptionsState extends State<LocalOptions> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove),
+                      icon: const Icon(Icons.remove_circle_outline),
                       onPressed: _tempMaxRounds > 1
                           ? () {
                               setState(() {
@@ -66,7 +66,7 @@ class _LocalOptionsState extends State<LocalOptions> {
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(Icons.add_circle_outline),
                       onPressed: _tempMaxRounds < 20
                           ? () {
                               setState(() {
@@ -97,7 +97,7 @@ class _LocalOptionsState extends State<LocalOptions> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove),
+                      icon: const Icon(Icons.remove_circle_outline),
                       onPressed: _tempTimeLimitSeconds > 5
                           ? () {
                               setState(() {
@@ -111,7 +111,7 @@ class _LocalOptionsState extends State<LocalOptions> {
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(Icons.add_circle_outline),
                       onPressed: _tempTimeLimitSeconds < 60
                           ? () {
                               setState(() {
