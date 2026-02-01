@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 
 class OnlineOptions extends StatefulWidget {
   final OnlineOptionsViewModel viewModel;

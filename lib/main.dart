@@ -4,10 +4,7 @@ import 'package:flutter_design_system/themes/ds_theme.dart';
 import 'package:jogo_da_velha/core/dependency_container.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/l10n/app_localizations.dart';
-import 'package:jogo_da_velha/presentation/screens/local_options/local_options.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options.dart';
-import 'package:jogo_da_velha/presentation/screens/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
@@ -49,12 +46,6 @@ class _MyAppState extends State<MyApp> {
       routes: {
         RoutesEnum.splash.path: (context) => const SplashScreen(),
         RoutesEnum.menu.path: (context) => const MenuScreen(),
-        RoutesEnum.localOptions.path: (context) => const LocalOptions(),
-        RoutesEnum.onlineOptions.path: (context) => OnlineOptions(
-          viewModel: OnlineOptionsViewModel(
-            gameRepository: DependencyContainer.getGameRepository(),
-          ),
-        ),
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {
