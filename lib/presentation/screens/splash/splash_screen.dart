@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
@@ -41,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.addStatusListener(_startBoardAnimation);
 
     // Espera a animação do traço terminar para navegar
-    _lineAnimationController.addStatusListener(_navigateToMenu);
+    _lineAnimationController.addStatusListener(_navigate);
 
     // Configura callbacks do ViewModel
     _viewModel.onLineAnimationReady = () {
@@ -54,17 +53,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _startBoardAnimation(AnimationStatus status) {
-    if (status == AnimationStatus.completed &&
-        !_viewModel.state.hasStartedBoardAnimation &&
-        mounted) {
-      _viewModel.startBoardAnimation();
-    }
+    if (status != AnimationStatus.completed) return;
+    if (!mounted) return;
+    if (_viewModel.state.hasStartedBoardAnimation) return;
+
+    _viewModel.startBoardAnimation();
   }
 
-  void _navigateToMenu(AnimationStatus status) {
-    if (status == AnimationStatus.completed && mounted) {
-      Navigator.of(context).pushReplacementNamed(RoutesEnum.menu.path);
-    }
+  Future<void> _navigate(AnimationStatus status) async {
+    if (status != AnimationStatus.completed) return;
+
+    _viewModel.navigate(context);
   }
 
   @override

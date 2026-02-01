@@ -5,55 +5,154 @@
 //  Created by Kalebe Misael on 22/01/26.
 //
 
-import WidgetKit
+import AppIntents
 import SwiftUI
+import WidgetKit
+
+@main
+struct tic_tac_toeComponent: WidgetBundle {
+    var body: some Widget {
+        tic_tac_toe()
+        
+    }
+}
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), emoji: "😀")
+        SimpleEntry(
+            date: Date(),
+            maxRounds: GameSettings.maxRounds,
+            timeLimit: GameSettings.timeLimit
+        )
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), emoji: "😀")
+    func getSnapshot(
+        in context: Context,
+        completion: @escaping (SimpleEntry) -> Void
+    ) {
+        let entry = SimpleEntry(
+            date: Date(),
+            maxRounds: GameSettings.maxRounds,
+            timeLimit: GameSettings.timeLimit
+        )
         completion(entry)
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, emoji: "😀")
-            entries.append(entry)
-        }
-
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+    func getTimeline(
+        in context: Context,
+        completion: @escaping (Timeline<Entry>) -> Void
+    ) {
+        let entry = SimpleEntry(
+            date: Date(),
+            maxRounds: GameSettings.maxRounds,
+            timeLimit: GameSettings.timeLimit
+        )
+        let timeline = Timeline(
+            entries: [entry],
+            policy: .after(
+                Calendar.current.date(byAdding: .minute, value: 1, to: Date())!
+            )
+        )
         completion(timeline)
     }
-
-//    func relevances() async -> WidgetRelevances<Void> {
-//        // Generate a list containing the contexts this widget is relevant in.
-//    }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
-    let emoji: String
+    let maxRounds: Int
+    let timeLimit: Int
 }
 
-struct tic_tac_toeEntryView : View {
+struct tic_tac_toeEntryView: View {
     var entry: Provider.Entry
 
     var body: some View {
-        VStack {
-            Text("Time:")
-            Text(entry.date, style: .time)
+        VStack(spacing: 8) {
+            HStack {
+                Text("Rodadas:")
+                    .font(.subheadline)
+                Spacer()
 
-            Text("Emoji:")
-            Text(entry.emoji)
+                Button(intent: DecreaseRoundsIntent()) {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.system(size: 25))
+                        .foregroundColor(
+                            entry.maxRounds > 1 ? .primaryColor : .gray
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(entry.maxRounds <= 1)
+
+                Text("\(entry.maxRounds)")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .frame(minWidth: 30)
+
+                Button(intent: IncreaseRoundsIntent()) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 25))
+                        .foregroundColor(
+                            entry.maxRounds < 20 ? .primaryColor : .gray
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(entry.maxRounds >= 20)
+
+            }
+            HStack {
+                Text("Tempo em segundos:")
+                    .font(.subheadline)
+                Spacer()
+                Button(intent: DecreaseTimeIntent()) {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.system(size: 25))
+                        .foregroundColor(
+                            entry.timeLimit > 5 ? .primaryColor : .gray
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(entry.timeLimit <= 5)
+
+                Text("\(entry.timeLimit)")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .frame(minWidth: 30)
+
+                Button(intent: IncreaseTimeIntent()) {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 25))
+                        .foregroundColor(
+                            entry.timeLimit < 60 ? .primaryColor : .gray
+                        )
+                }
+                .buttonStyle(.plain)
+                .disabled(entry.timeLimit >= 60)
+
+            }
+            Link(
+                destination: URL(
+                    string:
+                        "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimitSeconds=\(entry.timeLimit)"
+                )!
+            ) {
+                Text("Iniciar Jogo")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(Color.primaryColor)
+                    .cornerRadius(8)
+
+            }
         }
+        .padding()
+        .widgetURL(
+            URL(
+                string:
+                    "jogodavelha://local-game?maxRounds=\(entry.maxRounds)&timeLimitSeconds=\(entry.timeLimit)"
+            )
+        )
     }
 }
 
@@ -63,22 +162,25 @@ struct tic_tac_toe: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
-                tic_tac_toeEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                tic_tac_toeEntryView(entry: entry).containerBackground(
+                    .fill.tertiary,
+                    for: .widget
+                )
             } else {
-                tic_tac_toeEntryView(entry: entry)
-                    .padding()
-                    .background()
+                tic_tac_toeEntryView(entry: entry).padding().background()
             }
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Jogo da Velha")
+        .description("Configure e inicie o jogo local.")
+        .supportedFamilies([.systemMedium])
     }
 }
 
-#Preview(as: .systemSmall) {
-    tic_tac_toe()
-} timeline: {
-    SimpleEntry(date: .now, emoji: "😀")
-    SimpleEntry(date: .now, emoji: "🤩")
-}
+#if DEBUG
+    @available(iOS 17.0, *)
+    #Preview(as: .systemMedium) {
+        tic_tac_toe()
+    } timeline: {
+        SimpleEntry(date: Date(), maxRounds: 5, timeLimit: 10)
+    }
+#endif
