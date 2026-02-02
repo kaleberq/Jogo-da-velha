@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Rodadas -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rodadas:"
+            android:textSize="14sp"
+            android:textColor="@color/widget_text" />
+
+        <ImageButton
+            android:id="@+id/widget_decrease_rounds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_remove_circle"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Diminuir rodadas"
+            android:padding="4dp" />
+
+        <TextView
+            android:id="@+id/widget_max_rounds_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="5"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_text"
+            android:minWidth="30dp"
+            android:gravity="center"
+            android:paddingHorizontal="8dp" />
+
+        <ImageButton
+            android:id="@+id/widget_increase_rounds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_add_circle"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Aumentar rodadas"
+            android:padding="4dp" />
+    </LinearLayout>
+
+    <!-- Tempo em segundos -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tempo em segundos:"
+            android:textSize="14sp"
+            android:textColor="@color/widget_text" />
+
+        <ImageButton
+            android:id="@+id/widget_decrease_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_remove_circle"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Diminuir tempo"
+            android:padding="4dp" />
+
+        <TextView
+            android:id="@+id/widget_time_limit_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="10"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_text"
+            android:minWidth="30dp"
+            android:gravity="center"
+            android:paddingHorizontal="8dp" />
+
+        <ImageButton
+            android:id="@+id/widget_increase_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_add_circle"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Aumentar tempo"
+            android:padding="4dp" />
+    </LinearLayout>
+
+    <!-- Botão Iniciar Jogo -->
+    <TextView
+        android:id="@+id/widget_start_game"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Jogo"
+        android:textSize="14sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@drawable/button_start_game" />
+
+</LinearLayout>
