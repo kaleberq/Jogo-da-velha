@@ -4,7 +4,7 @@ import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
-import 'package:jogo_da_velha/presentation/screens/splash/models/splash_model.dart';
+import 'package:jogo_da_velha/data/models/splash_model.dart';
 import 'package:jogo_da_velha/utils/deeplink_util.dart';
 
 class SplashViewModel extends ChangeNotifier {

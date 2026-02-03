@@ -150,5 +150,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timeLimitSeconds => 'Time Limit (seconds)';
 
   @override
-  String get chooseTimeLimitRange => 'Choose between 5 and 60 seconds';
+  String get chooseTimeLimitRange => 'Choose between 10 and 60 seconds';
 }

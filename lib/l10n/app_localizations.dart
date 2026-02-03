@@ -368,7 +368,7 @@ abstract class AppLocalizations {
   /// No description provided for @chooseTimeLimitRange.
   ///
   /// In en, this message translates to:
-  /// **'Choose between 5 and 60 seconds'**
+  /// **'Choose between 10 and 60 seconds'**
   String get chooseTimeLimitRange;
 }
 

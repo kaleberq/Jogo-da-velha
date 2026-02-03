@@ -70,5 +70,5 @@
   "roundText": "Rodada",
   "timeLimit": "Tempo Limite",
   "timeLimitSeconds": "Tempo Limite (segundos)",
-  "chooseTimeLimitRange": "Escolha entre 5 e 60 segundos"
+  "chooseTimeLimitRange": "Escolha entre 10 e 60 segundos"
 }

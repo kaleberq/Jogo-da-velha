@@ -70,5 +70,5 @@
   "roundText": "Round",
   "timeLimit": "Time Limit",
   "timeLimitSeconds": "Time Limit (seconds)",
-  "chooseTimeLimitRange": "Choose between 5 and 60 seconds"
+  "chooseTimeLimitRange": "Choose between 10 and 60 seconds"
 }

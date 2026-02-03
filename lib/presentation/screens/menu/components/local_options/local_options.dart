@@ -10,11 +10,13 @@ class LocalOptions extends StatefulWidget {
   State<LocalOptions> createState() => _LocalOptionsState();
 }
 
-const int _maxRounds = 5;
-const int _timeLimitSeconds = 10;
+const int _maxRounds = 20;
+const int _minRounds = 1;
+const int _timeLimitMinSeconds = 10;
+const int _timeLimitMaxSeconds = 60;
 
-int _tempMaxRounds = _maxRounds;
-int _tempTimeLimitSeconds = _timeLimitSeconds;
+int _tempRounds = 5;
+int _tempTimeSeconds = _timeLimitMinSeconds;
 
 class _LocalOptionsState extends State<LocalOptions> {
   @override
@@ -53,24 +55,24 @@ class _LocalOptionsState extends State<LocalOptions> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: _tempMaxRounds > 1
+                      onPressed: _tempRounds > _minRounds
                           ? () {
                               setState(() {
-                                _tempMaxRounds--;
+                                _tempRounds--;
                               });
                             }
                           : null,
                     ),
                     Text(
-                      '$_tempMaxRounds',
+                      '$_tempRounds',
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
-                      onPressed: _tempMaxRounds < 20
+                      onPressed: _tempRounds < _maxRounds
                           ? () {
                               setState(() {
-                                _tempMaxRounds++;
+                                _tempRounds++;
                               });
                             }
                           : null,
@@ -98,24 +100,24 @@ class _LocalOptionsState extends State<LocalOptions> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: _tempTimeLimitSeconds > 5
+                      onPressed: _tempTimeSeconds > _timeLimitMinSeconds
                           ? () {
                               setState(() {
-                                _tempTimeLimitSeconds--;
+                                _tempTimeSeconds--;
                               });
                             }
                           : null,
                     ),
                     Text(
-                      '$_tempTimeLimitSeconds',
+                      '$_tempTimeSeconds',
                       style: DSTypographySemiBold.labelMedium,
                     ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
-                      onPressed: _tempTimeLimitSeconds < 60
+                      onPressed: _tempTimeSeconds < _timeLimitMaxSeconds
                           ? () {
                               setState(() {
-                                _tempTimeLimitSeconds++;
+                                _tempTimeSeconds++;
                               });
                             }
                           : null,
@@ -138,8 +140,8 @@ class _LocalOptionsState extends State<LocalOptions> {
                   Navigator.of(context).pushNamed(
                     RoutesEnum.localGame.path,
                     arguments: (
-                      maxRounds: _tempMaxRounds,
-                      timeLimitSeconds: _tempTimeLimitSeconds,
+                      maxRounds: _tempRounds,
+                      timeLimitSeconds: _tempTimeSeconds,
                     ),
                   );
                 },

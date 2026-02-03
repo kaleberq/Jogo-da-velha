@@ -36,13 +36,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animationController.forward();
 
-    // Espera a animação de fade terminar antes de começar a animação dos X's
     _animationController.addStatusListener(_startBoardAnimation);
 
-    // Espera a animação do traço terminar para navegar
     _lineAnimationController.addStatusListener(_navigate);
 
-    // Configura callbacks do ViewModel
     _viewModel.onLineAnimationReady = () {
       if (mounted) {
         _lineAnimationController.forward();
