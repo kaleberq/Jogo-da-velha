@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
@@ -63,13 +62,11 @@ class LocalGameViewModel extends ChangeNotifier {
   }
 
   void nextRound() {
-    // Salva o vencedor do round anterior
     final PlayerEnum? previousWinner = _game.winner;
 
     _game.currentRound++;
     reset();
 
-    // Se houve um vencedor, ele começa o próximo round
     if (previousWinner != null) {
       _game.currentPlayer = previousWinner;
     }
@@ -117,21 +114,18 @@ class LocalGameViewModel extends ChangeNotifier {
   }
 
   WinningLineModel? _checkWinner(int row, int col) {
-    // Verifica linha
     if (_game.board[row][0] == _game.currentPlayer &&
         _game.board[row][1] == _game.currentPlayer &&
         _game.board[row][2] == _game.currentPlayer) {
       return WinningLineModel.horizontal(row);
     }
 
-    // Verifica coluna
     if (_game.board[0][col] == _game.currentPlayer &&
         _game.board[1][col] == _game.currentPlayer &&
         _game.board[2][col] == _game.currentPlayer) {
       return WinningLineModel.vertical(col);
     }
 
-    // Verifica diagonal principal
     if (row == col &&
         _game.board[0][0] == _game.currentPlayer &&
         _game.board[1][1] == _game.currentPlayer &&
@@ -139,7 +133,6 @@ class LocalGameViewModel extends ChangeNotifier {
       return WinningLineModel.diagonalMain();
     }
 
-    // Verifica diagonal secundária
     if (row + col == 2 &&
         _game.board[0][2] == _game.currentPlayer &&
         _game.board[1][1] == _game.currentPlayer &&
@@ -151,7 +144,6 @@ class LocalGameViewModel extends ChangeNotifier {
   }
 
   void endGameByTimeLimit() {
-    // Termina o jogo em empate quando o tempo acaba
     if (!_game.isGameOver) {
       _game.isGameOver = true;
       _game.winner = null; // Empate
@@ -161,12 +153,10 @@ class LocalGameViewModel extends ChangeNotifier {
   }
 
   bool _checkDraw() {
-    // Primeiro verifica se há um vencedor - se houver, não é empate
     if (_game.winner != null) {
       return false;
     }
 
-    // Verifica se todas as células estão preenchidas
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         if (_game.board[i][j] == PlayerEnum.none) {

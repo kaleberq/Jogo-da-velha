@@ -84,7 +84,6 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void checkGameOver() {
     if (viewModel.game.isGameOver) {
-      // Para a animação da borda quando o round termina
       _borderAnimationController.stop();
 
       if (viewModel.game.winningLine != null) {
