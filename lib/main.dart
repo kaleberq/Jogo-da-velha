@@ -26,8 +26,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _navKey = GlobalKey<NavigatorState>();
-
   @override
   void initState() {
     super.initState();
@@ -36,13 +34,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: _navKey,
       theme: DSTheme.light(),
       darkTheme: DSTheme.dark(),
       themeMode: ThemeMode.system,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      initialRoute: RoutesEnum.splash.path,
       routes: {
         RoutesEnum.splash.path: (context) => const SplashScreen(),
         RoutesEnum.menu.path: (context) => const MenuScreen(),

@@ -72,11 +72,6 @@ class MainActivity : FlutterActivity() {
         val host = uri.host
 
         when (host) {
-            "local-options" -> {
-                prefs.edit()
-                    .putString(prefsKeyRoute, "/local-options")
-                    .apply()
-            }
             "local-game" -> {
                 val maxRounds = uri.getQueryParameter("maxRounds")?.toIntOrNull() ?: 5
                 val timeLimit = uri.getQueryParameter("timeLimitSeconds")?.toIntOrNull() ?: 10
