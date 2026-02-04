@@ -1,5 +1,5 @@
 enum RoutesEnum {
-  splash(path: '/splash'),
+  splash(path: '/'),
   menu(path: '/menu'),
   localGame(path: '/local-game'),
   onlineGame(path: '/online-game');
