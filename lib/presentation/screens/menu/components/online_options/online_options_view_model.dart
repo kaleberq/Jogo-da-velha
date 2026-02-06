@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:jogo_da_velha/channels/qr_code_generate.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/models/online_options_model.dart';
 
@@ -39,6 +40,12 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   Function(String)? onError;
 
   Future<String?> createServer() async {
+    final Uint8List qrBytes = await NativeQrGenerator.generate(
+      '123.234.563.10',
+    );
+
+    print('aaa-> ${qrBytes.length}');
+
     _onlineOptions.isCreatingServer = true;
     notifyListeners();
 

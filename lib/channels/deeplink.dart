@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 
-const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/deeplink');
-
-/// Centraliza a regra de deep link: obter rota pendente, resolver e navegar.
-/// Usado na splash (cold start) e pode ser usado quando o app já está aberto.
-class DeepLinkUtil {
-  DeepLinkUtil._();
+class DeepLink {
+  static const _channel = MethodChannel(
+    'br.com.kalebemisael.jogodavelha/deeplink',
+  );
 
   /// Busca a rota pendente no nativo (consumindo o valor).
   static Future<Map<String, dynamic>?> getPendingRoute() async {

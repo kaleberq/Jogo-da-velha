@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/channels/deeplink.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/data/models/splash_model.dart';
-import 'package:jogo_da_velha/utils/deeplink_util.dart';
 
 class SplashViewModel extends ChangeNotifier {
   final TicTacToeGameModel _ticTacToeGameState = TicTacToeGameModel();
@@ -50,11 +50,11 @@ class SplashViewModel extends ChangeNotifier {
   }
 
   navigate(BuildContext context) async {
-    Map<String, dynamic>? route = await DeepLinkUtil.getPendingRoute();
+    Map<String, dynamic>? route = await DeepLink.getPendingRoute();
 
     if (!context.mounted) return;
 
     final navigator = Navigator.of(context);
-    DeepLinkUtil.navigate(navigator, route);
+    DeepLink.navigate(navigator, route);
   }
 }
