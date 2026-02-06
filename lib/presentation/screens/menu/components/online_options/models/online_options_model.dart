@@ -1,19 +1,21 @@
+import 'dart:typed_data';
+
 class OnlineOptionsModel {
   bool isCreatingServer;
   bool isConnecting;
-  String? serverIP;
   bool navigatingToGame;
+  Uint8List? qrCodeBytes;
 
   OnlineOptionsModel({
     this.isCreatingServer = false,
     this.isConnecting = false,
-    this.serverIP,
     this.navigatingToGame = false,
+    this.qrCodeBytes,
   });
 
   void resetServerState() {
     isCreatingServer = false;
-    serverIP = null;
+    qrCodeBytes = null;
   }
 
   void resetConnectionState() {
@@ -23,7 +25,7 @@ class OnlineOptionsModel {
   void reset() {
     isCreatingServer = false;
     isConnecting = false;
-    serverIP = null;
     navigatingToGame = false;
+    qrCodeBytes = null;
   }
 }

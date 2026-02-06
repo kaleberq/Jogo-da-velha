@@ -19,9 +19,9 @@ class OnlineOptionsViewModel extends ChangeNotifier {
 
   void _setupNetworkCallbacks() {
     _gameRepository.onMessageReceived = (message) {
-      // Quando recebe CONNECTED e é servidor (tem IP), navega para o jogo
+      // Quando recebe CONNECTED e é servidor (tem QR code), navega para o jogo
       if (message == 'CONNECTED' &&
-          _onlineOptions.serverIP != null &&
+          _onlineOptions.qrCodeBytes != null &&
           !_onlineOptions.navigatingToGame) {
         _onlineOptions.navigatingToGame = true;
         notifyListeners();
@@ -40,18 +40,20 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   Function(String)? onError;
 
   Future<String?> createServer() async {
-    final Uint8List qrBytes = await NativeQrGenerator.generate(
-      '123.234.563.10',
-    );
-
-    print('aaa-> ${qrBytes.length}');
-
     _onlineOptions.isCreatingServer = true;
     notifyListeners();
 
     final ip = await _gameRepository.startServer();
     if (ip != null) {
-      _onlineOptions.serverIP = ip;
+      // Gera QR code com o IP real do servidor
+      try {
+        final qrBytes = await NativeQrGenerator.generate(ip);
+        _onlineOptions.qrCodeBytes = qrBytes;
+      } catch (e) {
+        // Se falhar ao gerar QR code, continua sem ele
+        _onlineOptions.qrCodeBytes = null;
+      }
+      
       _onlineOptions.isCreatingServer = false;
       notifyListeners();
       return ip;

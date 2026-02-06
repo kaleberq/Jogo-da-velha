@@ -3,6 +3,7 @@ import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/qr_scanner_screen.dart';
 
 class OnlineOptions extends StatefulWidget {
   final OnlineOptionsViewModel viewModel;
@@ -14,7 +15,6 @@ class OnlineOptions extends StatefulWidget {
 }
 
 class _OnlineOptionsState extends State<OnlineOptions> {
-  final TextEditingController _ipController = TextEditingController();
   bool _hasNavigated = false;
 
   @override
@@ -36,7 +36,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     // Navega para o jogo quando conectado
     if (widget.viewModel.onlineOptions.navigatingToGame) {
       _hasNavigated = true;
-      final isHost = widget.viewModel.onlineOptions.serverIP != null;
+      final isHost = widget.viewModel.onlineOptions.qrCodeBytes != null;
       Future.microtask(() {
         if (mounted) {
           Navigator.of(
@@ -51,7 +51,6 @@ class _OnlineOptionsState extends State<OnlineOptions> {
   void dispose() {
     widget.viewModel.removeListener(_onViewModelChanged);
     widget.viewModel.dispose();
-    _ipController.dispose();
     super.dispose();
   }
 
@@ -64,21 +63,28 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     }
   }
 
-  Future<void> _connectToServer() async {
-    if (_ipController.text.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.errorEmptyIp)));
-      return;
-    }
-
-    final connected = await widget.viewModel.connectToServer(
-      _ipController.text,
+  Future<void> _openQrScanner() async {
+    if (!mounted) return;
+    
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (scannerContext) => QrScannerScreen(
+          onQrCodeScanned: (ip) {
+            Navigator.of(scannerContext).pop(ip);
+          },
+        ),
+      ),
     );
-    if (!connected && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.errorConnectServer)));
+    
+    if (result != null && mounted) {
+      final connected = await widget.viewModel.connectToServer(result);
+      if (!connected && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(
+          SnackBar(content: Text(context.l10n.errorConnectServer)),
+        );
+      }
     }
   }
 
@@ -110,50 +116,84 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                     borderRadius: BorderRadius.circular(DSRadius.md),
                     onTap:
                         widget.viewModel.onlineOptions.isCreatingServer ||
-                            widget.viewModel.onlineOptions.serverIP != null
+                            widget.viewModel.onlineOptions.qrCodeBytes != null
                         ? null
                         : _createServer,
                     child: Padding(
                       padding: const EdgeInsets.all(DSSpacing.lg),
-                      child: Row(
-                        spacing: DSSpacing.md,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.wifi, size: 48),
-                          Expanded(
-                            child: Column(
-                              spacing: 4,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  context.l10n.createRoomTitle,
-                                  style: DSTypographyMedium.labelLarge,
-                                ),
-                                if (widget.viewModel.onlineOptions.serverIP !=
-                                    null)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${context.l10n.serverIpLabel} ${widget.viewModel.onlineOptions.serverIP}',
-                                        style: DSTypographyRegular.labelSmall,
-                                      ),
+                          Row(
+                            spacing: DSSpacing.md,
+                            children: [
+                              Icon(Icons.wifi, size: 48),
+                              Expanded(
+                                child: Column(
+                                  spacing: 4,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      context.l10n.createRoomTitle,
+                                      style: DSTypographyMedium.labelLarge,
+                                    ),
+                                    if (widget.viewModel.onlineOptions.qrCodeBytes != null)
                                       Text(
                                         context.l10n.waitingPlayer,
                                         style: DSTypographyRegular.labelSmall,
+                                      )
+                                    else
+                                      Text(
+                                        context.l10n.createRoomDescription,
+                                        style: DSTypographyRegular.labelSmall,
                                       ),
-                                    ],
-                                  )
-                                else
-                                  Text(
-                                    context.l10n.createRoomDescription,
-                                    style: DSTypographyRegular.labelSmall,
-                                  ),
-                              ],
-                            ),
+                                  ],
+                                ),
+                              ),
+                              if (widget.viewModel.onlineOptions.qrCodeBytes == null)
+                                const Icon(Icons.arrow_forward_ios),
+                            ],
                           ),
-                          if (widget.viewModel.onlineOptions.serverIP == null)
-                            const Icon(Icons.arrow_forward_ios),
+                          if (widget.viewModel.onlineOptions.qrCodeBytes != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: DSSpacing.lg),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Escaneie o QR Code para conectar',
+                                      style: DSTypographyMedium.labelMedium,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: DSSpacing.md),
+                                    Container(
+                                      padding: const EdgeInsets.all(DSSpacing.md),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(DSRadius.md),
+                                        border: Border.all(
+                                          color: DSColors.resolveGreyColor(context),
+                                          width: 2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.1),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Image.memory(
+                                        widget.viewModel.onlineOptions.qrCodeBytes!,
+                                        width: 250,
+                                        height: 250,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -178,25 +218,13 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                             ),
                           ],
                         ),
-                        TextField(
-                          controller: _ipController,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.serverIpInputLabel,
-                            hintText: context.l10n.serverIpInputHint,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(DSRadius.sm),
-                            ),
-                            prefixIcon: const Icon(Icons.computer),
-                          ),
-                          keyboardType: TextInputType.number,
-                        ),
                         SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton(
+                          child: ElevatedButton.icon(
                             onPressed:
                                 widget.viewModel.onlineOptions.isConnecting
                                 ? null
-                                : _connectToServer,
+                                : _openQrScanner,
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 vertical: DSSpacing.md,
@@ -207,10 +235,22 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                 ),
                               ),
                             ),
-                            child: widget.viewModel.onlineOptions.isConnecting
-                                ? const CircularProgressIndicator()
+                            icon: widget.viewModel.onlineOptions.isConnecting
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.qr_code_scanner),
+                            label: widget.viewModel.onlineOptions.isConnecting
+                                ? Text(
+                                    'Conectando...',
+                                    style: DSTypographyRegular.labelMedium,
+                                  )
                                 : Text(
-                                    context.l10n.connectButton,
+                                    'Escanear QR Code',
                                     style: DSTypographyRegular.labelMedium,
                                   ),
                           ),
