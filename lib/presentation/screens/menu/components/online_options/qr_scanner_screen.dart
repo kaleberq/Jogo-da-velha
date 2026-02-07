@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/channels/qr_code_scanner.dart';
+import 'package:jogo_da_velha/data/channels/qr_code_scanner_channel.dart';
 
 class QrScannerScreen extends StatefulWidget {
   final Function(String) onQrCodeScanned;
 
-  const QrScannerScreen({
-    super.key,
-    required this.onQrCodeScanned,
-  });
+  const QrScannerScreen({super.key, required this.onQrCodeScanned});
 
   @override
   State<QrScannerScreen> createState() => _QrScannerScreenState();
@@ -24,31 +21,31 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
   Future<void> _startScan() async {
     if (_isScanning) return;
-    
+
     setState(() {
       _isScanning = true;
     });
 
     try {
-      final result = await NativeQrScanner.scan();
-      
+      final result = await NativeQrScannerChannel.scan();
+
       if (!mounted) return;
-      
+
       if (result != null) {
         widget.onQrCodeScanned(result);
       }
-      
+
       // Fecha a tela se o usuário cancelou ou escaneou
       if (mounted) {
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (!mounted) return;
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao escanear: $e')),
-      );
-      
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao escanear: $e')));
+
       Navigator.of(context).pop();
     } finally {
       if (mounted) {

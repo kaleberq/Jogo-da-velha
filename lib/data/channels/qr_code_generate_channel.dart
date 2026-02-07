@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-class NativeQrGenerator {
+class NativeQrGeneratorChannel {
   static const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/qr');
 
   static Future<Uint8List> generate(String data) async {

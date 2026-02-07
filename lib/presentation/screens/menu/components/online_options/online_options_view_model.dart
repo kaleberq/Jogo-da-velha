@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:jogo_da_velha/channels/qr_code_generate.dart';
+import 'package:jogo_da_velha/data/channels/qr_code_generate_channel.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/models/online_options_model.dart';
 
@@ -47,13 +47,13 @@ class OnlineOptionsViewModel extends ChangeNotifier {
     if (ip != null) {
       // Gera QR code com o IP real do servidor
       try {
-        final qrBytes = await NativeQrGenerator.generate(ip);
+        final qrBytes = await NativeQrGeneratorChannel.generate(ip);
         _onlineOptions.qrCodeBytes = qrBytes;
       } catch (e) {
         // Se falhar ao gerar QR code, continua sem ele
         _onlineOptions.qrCodeBytes = null;
       }
-      
+
       _onlineOptions.isCreatingServer = false;
       notifyListeners();
       return ip;

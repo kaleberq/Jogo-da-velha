@@ -1,7 +1,9 @@
 import 'package:flutter/services.dart';
 
-class NativeQrScanner {
-  static const _channel = MethodChannel('br.com.kalebemisael.jogodavelha/qr_scanner');
+class NativeQrScannerChannel {
+  static const _channel = MethodChannel(
+    'br.com.kalebemisael.jogodavelha/qr_scanner',
+  );
 
   /// Abre o scanner nativo de QR code e retorna o valor escaneado
   static Future<String?> scan() async {

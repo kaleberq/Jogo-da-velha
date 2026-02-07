@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_design_system/themes/ds_theme.dart';
-import 'package:jogo_da_velha/core/dependency_container.dart';
+import 'package:jogo_da_velha/data/channels/deep_link_data_source_channel.dart';
+import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/data/repositories/game_repository.dart';
+import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/l10n/app_localizations.dart';
+import 'package:jogo_da_velha/presentation/navigation/deeplink_navigator.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/local_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_screen.dart';
@@ -40,8 +46,18 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routes: {
-        RoutesEnum.splash.path: (context) => const SplashScreen(),
-        RoutesEnum.menu.path: (context) => const MenuScreen(),
+        RoutesEnum.splash.path: (context) => SplashScreen(
+          viewModel: SplashViewModel(
+            deeplinkDataSourceChannel: DeepLinkDataSourceChannel(),
+            navigator: DeepLinkNavigator(),
+            ticTacToeGame: TicTacToeGameModel(),
+          ),
+        ),
+        RoutesEnum.menu.path: (context) => MenuScreen(
+          onlineOptionsViewModel: OnlineOptionsViewModel(
+            gameRepository: GameRepository(networkService: NetworkService()),
+          ),
+        ),
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {
@@ -63,7 +79,9 @@ class _MyAppState extends State<MyApp> {
             builder: (_) => OnlineGameScreen(
               viewModel: OnlineGameViewModel(
                 isHost: args.isHost,
-                gameRepository: DependencyContainer.getGameRepository(),
+                gameRepository: GameRepository(
+                  networkService: NetworkService(),
+                ),
               ),
             ),
           );

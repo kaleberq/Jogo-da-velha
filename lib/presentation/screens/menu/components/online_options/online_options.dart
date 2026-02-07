@@ -65,7 +65,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
 
   Future<void> _openQrScanner() async {
     if (!mounted) return;
-    
+
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(
         builder: (scannerContext) => QrScannerScreen(
@@ -75,13 +75,11 @@ class _OnlineOptionsState extends State<OnlineOptions> {
         ),
       ),
     );
-    
+
     if (result != null && mounted) {
       final connected = await widget.viewModel.connectToServer(result);
       if (!connected && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.errorConnectServer)),
         );
       }
@@ -137,7 +135,11 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                       context.l10n.createRoomTitle,
                                       style: DSTypographyMedium.labelLarge,
                                     ),
-                                    if (widget.viewModel.onlineOptions.qrCodeBytes != null)
+                                    if (widget
+                                            .viewModel
+                                            .onlineOptions
+                                            .qrCodeBytes !=
+                                        null)
                                       Text(
                                         context.l10n.waitingPlayer,
                                         style: DSTypographyRegular.labelSmall,
@@ -150,11 +152,13 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                   ],
                                 ),
                               ),
-                              if (widget.viewModel.onlineOptions.qrCodeBytes == null)
+                              if (widget.viewModel.onlineOptions.qrCodeBytes ==
+                                  null)
                                 const Icon(Icons.arrow_forward_ios),
                             ],
                           ),
-                          if (widget.viewModel.onlineOptions.qrCodeBytes != null)
+                          if (widget.viewModel.onlineOptions.qrCodeBytes !=
+                              null)
                             Padding(
                               padding: const EdgeInsets.only(top: DSSpacing.lg),
                               child: Center(
@@ -167,24 +171,32 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                     ),
                                     const SizedBox(height: DSSpacing.md),
                                     Container(
-                                      padding: const EdgeInsets.all(DSSpacing.md),
+                                      padding: const EdgeInsets.all(
+                                        DSSpacing.md,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(DSRadius.md),
+                                        borderRadius: BorderRadius.circular(
+                                          DSRadius.md,
+                                        ),
                                         border: Border.all(
-                                          color: DSColors.resolveGreyColor(context),
+                                          color: DSColors.resolveGreyColor(
+                                            context,
+                                          ),
                                           width: 2,
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.1),
                                             blurRadius: 8,
                                             offset: const Offset(0, 2),
                                           ),
                                         ],
                                       ),
                                       child: Image.memory(
-                                        widget.viewModel.onlineOptions.qrCodeBytes!,
+                                        widget
+                                            .viewModel
+                                            .onlineOptions
+                                            .qrCodeBytes!,
                                         width: 250,
                                         height: 250,
                                         fit: BoxFit.contain,
