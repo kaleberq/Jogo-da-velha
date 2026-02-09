@@ -8,7 +8,6 @@ import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/l10n/app_localizations.dart';
 import 'package:jogo_da_velha/presentation/navigation/deeplink_navigator.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/menu_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_screen.dart';
 import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart';
