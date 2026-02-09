@@ -53,11 +53,7 @@ class _MyAppState extends State<MyApp> {
             ticTacToeGame: TicTacToeGameModel(),
           ),
         ),
-        RoutesEnum.menu.path: (context) => MenuScreen(
-          onlineOptionsViewModel: OnlineOptionsViewModel(
-            gameRepository: GameRepository(networkService: NetworkService()),
-          ),
-        ),
+        RoutesEnum.menu.path: (context) => MenuScreen(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == RoutesEnum.localGame.path) {

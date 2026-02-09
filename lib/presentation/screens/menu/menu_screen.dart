@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/data/repositories/game_repository.dart';
+import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/local_options/local_options.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
 
 class MenuScreen extends StatefulWidget {
-  final OnlineOptionsViewModel onlineOptionsViewModel;
-
-  const MenuScreen({required this.onlineOptionsViewModel, super.key});
+  const MenuScreen({super.key});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -81,7 +81,11 @@ class _MenuScreenState extends State<MenuScreen> {
                     onTap: () => showDSModalBottomSheet(
                       context: context,
                       widget: OnlineOptions(
-                        viewModel: widget.onlineOptionsViewModel,
+                        viewModel: OnlineOptionsViewModel(
+                          gameRepository: GameRepository(
+                            networkService: NetworkService(),
+                          ),
+                        ),
                       ),
                     ),
                     child: Padding(

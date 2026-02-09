@@ -3,7 +3,7 @@ import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_view_model.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/qr_scanner_screen.dart';
+import 'package:jogo_da_velha/presentation/screens/qr_scanner/qr_scanner_screen.dart';
 
 class OnlineOptions extends StatefulWidget {
   final OnlineOptionsViewModel viewModel;
@@ -211,66 +211,84 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                     ),
                   ),
                 ),
-                SizedBox(height: DSSpacing.md),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(DSSpacing.lg),
-                    child: Column(
-                      spacing: DSSpacing.md,
-                      children: [
-                        Row(
-                          spacing: DSSpacing.md,
-                          children: [
-                            Icon(Icons.wifi_find, size: 48),
-                            Expanded(
-                              child: Text(
-                                context.l10n.connectRoomTitle,
-                                style: DSTypographyMedium.labelLarge,
+                if (widget.viewModel.onlineOptions.qrCodeBytes == null)
+                  Column(
+                    children: [
+                      SizedBox(height: DSSpacing.md),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(DSSpacing.lg),
+                          child: Column(
+                            spacing: DSSpacing.md,
+                            children: [
+                              Row(
+                                spacing: DSSpacing.md,
+                                children: [
+                                  Icon(Icons.wifi_find, size: 48),
+                                  Expanded(
+                                    child: Text(
+                                      context.l10n.connectRoomTitle,
+                                      style: DSTypographyMedium.labelLarge,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed:
-                                widget.viewModel.onlineOptions.isConnecting
-                                ? null
-                                : _openQrScanner,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: DSSpacing.md,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  DSRadius.sm,
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed:
+                                      widget
+                                          .viewModel
+                                          .onlineOptions
+                                          .isConnecting
+                                      ? null
+                                      : _openQrScanner,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: DSSpacing.md,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        DSRadius.sm,
+                                      ),
+                                    ),
+                                  ),
+                                  icon:
+                                      widget
+                                          .viewModel
+                                          .onlineOptions
+                                          .isConnecting
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(Icons.qr_code_scanner),
+                                  label:
+                                      widget
+                                          .viewModel
+                                          .onlineOptions
+                                          .isConnecting
+                                      ? Text(
+                                          'Conectando...',
+                                          style:
+                                              DSTypographyRegular.labelMedium,
+                                        )
+                                      : Text(
+                                          'Escanear QR Code',
+                                          style:
+                                              DSTypographyRegular.labelMedium,
+                                        ),
                                 ),
                               ),
-                            ),
-                            icon: widget.viewModel.onlineOptions.isConnecting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.qr_code_scanner),
-                            label: widget.viewModel.onlineOptions.isConnecting
-                                ? Text(
-                                    'Conectando...',
-                                    style: DSTypographyRegular.labelMedium,
-                                  )
-                                : Text(
-                                    'Escanear QR Code',
-                                    style: DSTypographyRegular.labelMedium,
-                                  ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
               ],
             ),
           ),
