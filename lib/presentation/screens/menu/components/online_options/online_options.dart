@@ -110,8 +110,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                   ),
                 ),
                 Card(
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(DSRadius.md),
+                  child: GestureDetector(
                     onTap:
                         widget.viewModel.onlineOptions.isCreatingServer ||
                             widget.viewModel.onlineOptions.qrCodeBytes != null
@@ -121,6 +120,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                       padding: const EdgeInsets.all(DSSpacing.lg),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: DSSpacing.md,
                         children: [
                           Row(
                             spacing: DSSpacing.md,
@@ -159,51 +159,46 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                           ),
                           if (widget.viewModel.onlineOptions.qrCodeBytes !=
                               null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: DSSpacing.lg),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Escaneie o QR Code para conectar',
-                                      style: DSTypographyMedium.labelMedium,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: DSSpacing.md),
-                                    Container(
-                                      padding: const EdgeInsets.all(
-                                        DSSpacing.md,
+                            Center(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    context.l10n.scanQrCodeToConnect,
+                                    style: DSTypographyMedium.labelMedium,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: DSSpacing.md),
+                                  Container(
+                                    padding: const EdgeInsets.all(DSSpacing.md),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(
+                                        DSRadius.md,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(
-                                          DSRadius.md,
+                                      border: Border.all(
+                                        color: DSColors.resolveGreyColor(
+                                          context,
                                         ),
-                                        border: Border.all(
-                                          color: DSColors.resolveGreyColor(
-                                            context,
-                                          ),
-                                          width: 2,
+                                        width: 2,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Image.memory(
-                                        widget
-                                            .viewModel
-                                            .onlineOptions
-                                            .qrCodeBytes!,
-                                        width: 250,
-                                        height: 250,
-                                        fit: BoxFit.contain,
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                    child: Image.memory(
+                                      widget
+                                          .viewModel
+                                          .onlineOptions
+                                          .qrCodeBytes!,
+                                      width: 250,
+                                      height: 250,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                         ],
@@ -272,12 +267,12 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                           .onlineOptions
                                           .isConnecting
                                       ? Text(
-                                          'Conectando...',
+                                          context.l10n.connecting,
                                           style:
                                               DSTypographyRegular.labelMedium,
                                         )
                                       : Text(
-                                          'Escanear QR Code',
+                                          context.l10n.scanQrCode,
                                           style:
                                               DSTypographyRegular.labelMedium,
                                         ),

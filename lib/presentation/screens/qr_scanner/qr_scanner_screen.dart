@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/data/channels/qr_code_scanner_channel.dart';
+import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class QrScannerScreen extends StatefulWidget {
   final Function(String) onQrCodeScanned;
@@ -60,17 +61,17 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Escanear QR Code'),
+        title: Text(context.l10n.scanQrCode),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text('Abrindo scanner...'),
+            Text(context.l10n.openingScanner),
           ],
         ),
       ),

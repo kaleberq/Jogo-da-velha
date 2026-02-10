@@ -370,6 +370,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose between 10 and 60 seconds'**
   String get chooseTimeLimitRange;
+
+  /// No description provided for @scanQrCodeToConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR Code to connect'**
+  String get scanQrCodeToConnect;
+
+  /// No description provided for @connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting...'**
+  String get connecting;
+
+  /// No description provided for @scanQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get scanQrCode;
+
+  /// No description provided for @openingScanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening scanner...'**
+  String get openingScanner;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
