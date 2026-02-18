@@ -70,5 +70,9 @@
   "roundText": "Round",
   "timeLimit": "Time Limit",
   "timeLimitSeconds": "Time Limit (seconds)",
-  "chooseTimeLimitRange": "Choose between 10 and 60 seconds"
+  "chooseTimeLimitRange": "Choose between 10 and 60 seconds",
+  "scanQrCodeToConnect": "Scan the QR Code to connect",
+  "connecting": "Connecting...",
+  "scanQrCode": "Scan QR Code",
+  "openingScanner": "Opening scanner..."
 }

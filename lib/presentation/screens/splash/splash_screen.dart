@@ -5,7 +5,9 @@ import 'package:jogo_da_velha/presentation/screens/splash/splash_view_model.dart
 import 'package:jogo_da_velha/presentation/screens/components/game_board_component.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final SplashViewModel viewModel;
+
+  const SplashScreen({required this.viewModel, super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -16,7 +18,6 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _animationController;
   late AnimationController _lineAnimationController;
   late Animation<double> _lineAnimation;
-  final SplashViewModel _viewModel = SplashViewModel();
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _lineAnimationController.addStatusListener(_navigate);
 
-    _viewModel.onLineAnimationReady = () {
+    widget.viewModel.onLineAnimationReady = () {
       if (mounted) {
         _lineAnimationController.forward();
       }
@@ -52,15 +53,15 @@ class _SplashScreenState extends State<SplashScreen>
   void _startBoardAnimation(AnimationStatus status) {
     if (status != AnimationStatus.completed) return;
     if (!mounted) return;
-    if (_viewModel.state.hasStartedBoardAnimation) return;
+    if (widget.viewModel.state.hasStartedBoardAnimation) return;
 
-    _viewModel.startBoardAnimation();
+    widget.viewModel.startBoardAnimation();
   }
 
   Future<void> _navigate(AnimationStatus status) async {
     if (status != AnimationStatus.completed) return;
 
-    _viewModel.navigate(context);
+    widget.viewModel.navigate(context);
   }
 
   @override
@@ -68,14 +69,14 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.removeStatusListener(_startBoardAnimation);
     _animationController.dispose();
     _lineAnimationController.dispose();
-    _viewModel.dispose();
+    widget.viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _viewModel,
+      listenable: widget.viewModel,
       builder: (context, _) {
         return Scaffold(
           backgroundColor: DSColors.primary,
@@ -102,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ),
                       child: GameBoardComponent(
-                        game: _viewModel.game,
+                        game: widget.viewModel.game,
                         winningLineAnimation: _lineAnimation,
                       ),
                     );

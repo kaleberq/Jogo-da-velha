@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/core/dependency_container.dart';
+import 'package:jogo_da_velha/data/repositories/game_repository.dart';
+import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/local_options/local_options.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options.dart';
@@ -81,8 +82,9 @@ class _MenuScreenState extends State<MenuScreen> {
                       context: context,
                       widget: OnlineOptions(
                         viewModel: OnlineOptionsViewModel(
-                          gameRepository:
-                              DependencyContainer.getGameRepository(),
+                          gameRepository: GameRepository(
+                            networkService: NetworkService(),
+                          ),
                         ),
                       ),
                     ),

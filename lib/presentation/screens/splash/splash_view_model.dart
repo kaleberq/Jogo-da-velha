@@ -5,10 +5,10 @@ import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/data/models/splash_model.dart';
-import 'package:jogo_da_velha/utils/deeplink_util.dart';
+import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_data_source_channel_interface.dart';
+import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_navigator_interface.dart';
 
 class SplashViewModel extends ChangeNotifier {
-  final TicTacToeGameModel _ticTacToeGameState = TicTacToeGameModel();
   final SplashModel _splashState = SplashModel();
   final List<Map<DirectionEnum, int>> _diagonalPositions = [
     {DirectionEnum.row: 0, DirectionEnum.col: 0},
@@ -19,9 +19,24 @@ class SplashViewModel extends ChangeNotifier {
   SplashModel get state => _splashState;
   VoidCallback? onLineAnimationReady;
 
+  late final IDeepLinkNavigator _deepLinkNavigator;
+  late final IDeepLinkDataSourceChannel _deepLinkChannel;
+  late final TicTacToeGameModel _ticTacToeGameState;
+
+  SplashViewModel({
+    required IDeepLinkDataSourceChannel deeplinkDataSourceChannel,
+    required IDeepLinkNavigator navigator,
+    required TicTacToeGameModel ticTacToeGame,
+  }) {
+    _deepLinkChannel = deeplinkDataSourceChannel;
+    _deepLinkNavigator = navigator;
+    _ticTacToeGameState = ticTacToeGame;
+  }
+
   @override
   void dispose() {
-    _splashState.cancelTimer();
+    _splashState.boardAnimationTimer?.cancel();
+    _splashState.boardAnimationTimer = null;
     super.dispose();
   }
 
@@ -34,14 +49,13 @@ class SplashViewModel extends ChangeNotifier {
       (timer) {
         if (_splashState.currentIndex < _diagonalPositions.length) {
           final pos = _diagonalPositions[_splashState.currentIndex];
-          _ticTacToeGameState.board[pos[DirectionEnum.row]!][pos[DirectionEnum
-                  .col]!] =
+          game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
               PlayerEnum.x;
-          _splashState.incrementIndex();
+          _splashState.currentIndex++;
           notifyListeners();
         } else {
           timer.cancel();
-          _ticTacToeGameState.winningLine = WinningLineModel.diagonalMain();
+          game.winningLine = WinningLineModel.diagonalMain();
           notifyListeners();
           onLineAnimationReady?.call();
         }
@@ -50,11 +64,11 @@ class SplashViewModel extends ChangeNotifier {
   }
 
   navigate(BuildContext context) async {
-    Map<String, dynamic>? route = await DeepLinkUtil.getPendingRoute();
+    Map<String, dynamic>? route = await _deepLinkChannel.getPendingRoute();
 
     if (!context.mounted) return;
 
     final navigator = Navigator.of(context);
-    DeepLinkUtil.navigate(navigator, route);
+    _deepLinkNavigator.navigate(navigator, route);
   }
 }

@@ -151,4 +151,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chooseTimeLimitRange => 'Escolha entre 10 e 60 segundos';
+
+  @override
+  String get scanQrCodeToConnect => 'Escaneie o QR Code para conectar';
+
+  @override
+  String get connecting => 'Conectando...';
+
+  @override
+  String get scanQrCode => 'Escanear QR Code';
+
+  @override
+  String get openingScanner => 'Abrindo scanner...';
 }

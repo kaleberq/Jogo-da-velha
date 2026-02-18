@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:jogo_da_velha/data/channels/qr_code_generate_channel.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/models/online_options_model.dart';
 
@@ -18,9 +19,9 @@ class OnlineOptionsViewModel extends ChangeNotifier {
 
   void _setupNetworkCallbacks() {
     _gameRepository.onMessageReceived = (message) {
-      // Quando recebe CONNECTED e é servidor (tem IP), navega para o jogo
+      // Quando recebe CONNECTED e é servidor (tem QR code), navega para o jogo
       if (message == 'CONNECTED' &&
-          _onlineOptions.serverIP != null &&
+          _onlineOptions.qrCodeBytes != null &&
           !_onlineOptions.navigatingToGame) {
         _onlineOptions.navigatingToGame = true;
         notifyListeners();
@@ -44,7 +45,15 @@ class OnlineOptionsViewModel extends ChangeNotifier {
 
     final ip = await _gameRepository.startServer();
     if (ip != null) {
-      _onlineOptions.serverIP = ip;
+      // Gera QR code com o IP real do servidor
+      try {
+        final qrBytes = await NativeQrGeneratorChannel.generate(ip);
+        _onlineOptions.qrCodeBytes = qrBytes;
+      } catch (e) {
+        // Se falhar ao gerar QR code, continua sem ele
+        _onlineOptions.qrCodeBytes = null;
+      }
+
       _onlineOptions.isCreatingServer = false;
       notifyListeners();
       return ip;
