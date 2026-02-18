@@ -39,6 +39,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
       final isHost = widget.viewModel.onlineOptions.qrCodeBytes != null;
       Future.microtask(() {
         if (mounted) {
+          Navigator.pop(context);
           Navigator.of(
             context,
           ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));

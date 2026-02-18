@@ -7,11 +7,13 @@ class RoundEnd extends StatelessWidget {
   final String roundEndMessage;
   final PlayerEnum? roundWinner;
   final VoidCallback onNextRound;
+  final bool isHost;
 
   const RoundEnd({
     required this.roundEndMessage,
     required this.roundWinner,
     required this.onNextRound,
+    this.isHost = true,
     super.key,
   });
 
@@ -28,10 +30,11 @@ class RoundEnd extends StatelessWidget {
           Expanded(
             child: Text(roundEndMessage, style: DSTypographyMedium.labelLarge),
           ),
-          ElevatedButton(
-            onPressed: onNextRound,
-            child: Text(context.l10n.nextRound),
-          ),
+          if (isHost)
+            ElevatedButton(
+              onPressed: onNextRound,
+              child: Text(context.l10n.nextRound),
+            ),
         ],
       ),
     );

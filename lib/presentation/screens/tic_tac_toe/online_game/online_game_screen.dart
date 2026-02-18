@@ -175,6 +175,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       widget: RoundEnd(
         roundEndMessage: message,
         roundWinner: _roundWinner,
+        isHost: viewModel.isHost,
         onNextRound: () {
           _hideRoundEndMessage();
           _winningLineAnimationController.reset();
