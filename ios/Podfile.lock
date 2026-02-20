@@ -7,12 +7,15 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - qr_native_bridge (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - qr_native_bridge (from `.symlinks/plugins/qr_native_bridge/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
@@ -23,12 +26,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/network_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  qr_native_bridge:
+    :path: ".symlinks/plugins/qr_native_bridge/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   network_info_plus: cf61925ab5205dce05a4f0895989afdb6aade5fc
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
+  qr_native_bridge: bee3de5adc0d320fef2a11739ac94ea0ef1c0e40
 
 PODFILE CHECKSUM: 251cb053df7158f337c0712f2ab29f4e0fa474ce
 
