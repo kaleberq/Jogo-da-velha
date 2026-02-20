@@ -28,6 +28,10 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  qr_native_bridge:
+    git:
+      url: git@github.com:kaleberq/qr-native-bridge
+      ref: main
   flutter_svg: ^2.2.3
   flutter:
     sdk: flutter
