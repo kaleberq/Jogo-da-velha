@@ -57,6 +57,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
 
   Future<void> _createServer() async {
     final ip = await widget.viewModel.createServer();
+    //arrumar pois o showSnackBar não mostra por cima do bottomsheet
     if (ip == null && mounted) {
       ScaffoldMessenger.of(
         context,
