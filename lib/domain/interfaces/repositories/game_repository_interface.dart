@@ -1,4 +1,5 @@
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
 /// Interface/abstração do Repository
 /// Define o contrato para operações de rede do jogo
@@ -9,6 +10,7 @@ abstract class IGameRepository {
   set onError(Function(String)? callback);
 
   Future<String?> startServer({int port = 8080});
+  Future<HostRoomModel> createHostRoom({int port = 8080});
   Future<bool> connectToServer(String ip, {int port = 8080});
   void disconnect();
   void sendMove(int row, int col, PlayerEnum player);

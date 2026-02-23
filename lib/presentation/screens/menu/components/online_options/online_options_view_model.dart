@@ -1,95 +1,169 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
+
+import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
+import 'package:jogo_da_velha/domain/enums/online_options_flow_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
-import 'package:qr_native_bridge/qr_native_bridge.dart';
-import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/models/online_options_model.dart';
+import 'package:jogo_da_velha/domain/models/host_room_model.dart';
+import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_state.dart';
+
+/// Callback de erro da UI. Recebe mensagem e opcionalmente stackTrace.
+typedef OnlineOptionsErrorCallback =
+    void Function(String message, [Object? error, StackTrace? stackTrace]);
 
 class OnlineOptionsViewModel extends ChangeNotifier {
   final IGameRepository _gameRepository;
-  final OnlineOptionsModel _onlineOptions = OnlineOptionsModel();
+
+  OnlineOptionsState _viewState = const OnlineOptionsState(
+    flowState: OnlineOptionsFlowEnum.idle,
+  );
+  bool _disposed = false;
 
   OnlineOptionsViewModel({required IGameRepository gameRepository})
-    : _gameRepository = gameRepository {
+      : _gameRepository = gameRepository {
     _setupNetworkCallbacks();
   }
 
-  OnlineOptionsModel get onlineOptions => _onlineOptions;
+  /// Estado imutável para a UI. Nunca exponha o modelo mutável.
+  OnlineOptionsState get viewState => _viewState;
+
+  /// Callback de erro definido pela UI. Só é invocado se o ViewModel não foi disposed.
+  OnlineOptionsErrorCallback? onError;
 
   void _setupNetworkCallbacks() {
-    _gameRepository.onMessageReceived = (message) {
-      if (message == 'CONNECTED' &&
-          _onlineOptions.qrCodeBytes != null &&
-          !_onlineOptions.navigatingToGame) {
-        _onlineOptions.navigatingToGame = true;
-        notifyListeners();
-      }
-    };
-
-    _gameRepository.onError = (error) {
-      _onlineOptions.isCreatingServer = false;
-      _onlineOptions.isConnecting = false;
-      notifyListeners();
-      onError?.call(error);
-    };
+    _gameRepository.onMessageReceived = _onMessageReceived;
+    _gameRepository.onError = _onError;
   }
 
-  // Callback para erros - será definido pela UI
-  Function(String)? onError;
+  void _clearNetworkCallbacks() {
+    _gameRepository.onMessageReceived = null;
+    _gameRepository.onError = null;
+  }
+
+  void _onMessageReceived(String message) {
+    if (_disposed) return;
+    if (message != NetworkMessageConstants.peerConnected) return;
+    if (_viewState.flowState != OnlineOptionsFlowEnum.serverReady) {
+      developer.log(
+        'CONNECTED recebido em estado ${_viewState.flowState}; ignorado até serverReady.',
+        name: 'OnlineOptionsViewModel',
+      );
+      return;
+    }
+    _updateState(
+      _viewState.copyWith(flowState: OnlineOptionsFlowEnum.connectedNavigating),
+    );
+  }
+
+  void _onError(String error) {
+    if (_disposed) return;
+    _updateState(
+      _viewState.copyWith(
+        flowState: OnlineOptionsFlowEnum.idle,
+        clearQrAndServer: true,
+      ),
+    );
+    onError?.call(error);
+  }
+
+  void _updateState(OnlineOptionsState next) {
+    if (_disposed) return;
+    _viewState = next;
+    notifyListeners();
+  }
 
   Future<String?> createServer() async {
-    _onlineOptions.isCreatingServer = true;
-    notifyListeners();
+    if (_viewState.flowState != OnlineOptionsFlowEnum.idle) return null;
 
-    final ip = await _gameRepository.startServer();
-    if (ip != null) {
-      // Gera QR code com o IP real do servidor
-      try {
-        final qrBytes = await QrNativeBridge().generateQr(ip);
-        _onlineOptions.qrCodeBytes = qrBytes;
-      } catch (e) {
-        // Se falhar ao gerar QR code, continua sem ele
-        _onlineOptions.qrCodeBytes = null;
+    _updateState(
+      _viewState.copyWith(flowState: OnlineOptionsFlowEnum.creatingServer),
+    );
+
+    HostRoomModel result;
+    try {
+      result = await _gameRepository.createHostRoom();
+    } catch (e, stackTrace) {
+      developer.log(
+        'Erro ao criar servidor',
+        name: 'OnlineOptionsViewModel',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      if (!_disposed) {
+        _updateState(
+          _viewState.copyWith(
+            flowState: OnlineOptionsFlowEnum.idle,
+            clearQrAndServer: true,
+          ),
+        );
+        onError?.call('Erro ao criar servidor: $e', e, stackTrace);
       }
-
-      _onlineOptions.isCreatingServer = false;
-      notifyListeners();
-      return ip;
-    } else {
-      _onlineOptions.isCreatingServer = false;
-      notifyListeners();
       return null;
     }
+
+    if (_disposed) return null;
+    if (result.ip == null) {
+      _updateState(_viewState.copyWith(flowState: OnlineOptionsFlowEnum.idle));
+      return null;
+    }
+
+    _updateState(
+      _viewState.copyWith(
+        flowState: OnlineOptionsFlowEnum.serverReady,
+        qrCodeBytes: result.qrCodeBytes,
+        serverIp: result.ip,
+        isHost: true,
+      ),
+    );
+    return result.ip;
   }
 
   Future<bool> connectToServer(String ip) async {
-    _onlineOptions.isConnecting = true;
-    notifyListeners();
+    if (_viewState.flowState != OnlineOptionsFlowEnum.idle) return false;
+
+    _updateState(
+      _viewState.copyWith(flowState: OnlineOptionsFlowEnum.connecting),
+    );
 
     final connected = await _gameRepository.connectToServer(ip);
+    if (_disposed) return false;
+
     if (connected) {
-      _onlineOptions.navigatingToGame = true;
-      _onlineOptions.isConnecting = false;
-      notifyListeners();
+      _updateState(
+        _viewState.copyWith(
+          flowState: OnlineOptionsFlowEnum.connectedNavigating,
+          isHost: false,
+        ),
+      );
       return true;
-    } else {
-      _onlineOptions.isConnecting = false;
-      notifyListeners();
-      return false;
     }
+
+    _updateState(_viewState.copyWith(flowState: OnlineOptionsFlowEnum.idle));
+    return false;
   }
 
   void resetServerState() {
-    _onlineOptions.resetServerState();
-    notifyListeners();
+    _updateState(
+      _viewState.copyWith(
+        flowState: OnlineOptionsFlowEnum.idle,
+        clearQrAndServer: true,
+      ),
+    );
   }
 
   void resetConnectionState() {
-    _onlineOptions.resetConnectionState();
-    notifyListeners();
+    if (_viewState.flowState == OnlineOptionsFlowEnum.connecting) {
+      _updateState(_viewState.copyWith(flowState: OnlineOptionsFlowEnum.idle));
+    }
   }
 
   @override
   void dispose() {
-    if (!_onlineOptions.navigatingToGame) {
+    if (_disposed) return;
+    _disposed = true;
+    _clearNetworkCallbacks();
+    if (!_viewState.shouldNavigateToGame) {
       _gameRepository.disconnect();
     }
     super.dispose();

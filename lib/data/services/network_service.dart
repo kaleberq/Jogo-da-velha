@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
@@ -216,7 +217,7 @@ class NetworkConnectionManager {
         onError('Erro ao confirmar conexão: $e');
       }
     });
-    onMessageReceived('CONNECTED');
+    onMessageReceived(NetworkMessageConstants.peerConnected);
   }
 
   void _listenToClient(Socket socket) {
