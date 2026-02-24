@@ -162,8 +162,12 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
-    _clearNetworkCallbacks();
+    // Não limpar callbacks ao navegar para o jogo: a tela do jogo usa o mesmo
+    // NetworkService (singleton) e vai sobrescrever os callbacks. Limpar aqui
+    // zeraria os handlers antes da nova tela registrar os dela e as jogadas
+    // deixariam de ser recebidas.
     if (!_viewState.shouldNavigateToGame) {
+      _clearNetworkCallbacks();
       _gameRepository.disconnect();
     }
     super.dispose();
