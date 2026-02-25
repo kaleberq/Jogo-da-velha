@@ -21,7 +21,7 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   bool _disposed = false;
 
   OnlineOptionsViewModel({required IGameRepository gameRepository})
-      : _gameRepository = gameRepository {
+    : _gameRepository = gameRepository {
     _setupNetworkCallbacks();
   }
 
@@ -126,7 +126,7 @@ class OnlineOptionsViewModel extends ChangeNotifier {
       _viewState.copyWith(flowState: OnlineOptionsFlowEnum.connecting),
     );
 
-    final connected = await _gameRepository.connectToServer(ip);
+    final connected = await _gameRepository.connectToServer(ip: ip);
     if (_disposed) return false;
 
     if (connected) {
@@ -162,10 +162,6 @@ class OnlineOptionsViewModel extends ChangeNotifier {
   void dispose() {
     if (_disposed) return;
     _disposed = true;
-    // Não limpar callbacks ao navegar para o jogo: a tela do jogo usa o mesmo
-    // NetworkService (singleton) e vai sobrescrever os callbacks. Limpar aqui
-    // zeraria os handlers antes da nova tela registrar os dela e as jogadas
-    // deixariam de ser recebidas.
     if (!_viewState.shouldNavigateToGame) {
       _clearNetworkCallbacks();
       _gameRepository.disconnect();

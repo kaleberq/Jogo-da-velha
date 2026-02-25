@@ -104,7 +104,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
     final playerWhoMoved = viewModel.game.currentPlayer;
     if (viewModel.makeMove(rowIndex, columnIndex)) {
-      viewModel.sendMove(rowIndex, columnIndex, playerWhoMoved);
+      viewModel.sendMove(
+        row: rowIndex,
+        col: columnIndex,
+        player: playerWhoMoved,
+      );
       _isMyTurn = false;
       _checkGameOver();
     }

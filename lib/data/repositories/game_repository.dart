@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'dart:typed_data';
 
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
@@ -8,16 +7,16 @@ import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_servi
 import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
 /// Implementação concreta do IGameRepository
-/// Usa INetworkService e IQrCodeGeneratorService para operações de rede
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;
   final IQrCodeGeneratorService _qrCodeGeneratorService;
+  final int _port = 8080;
 
   GameRepository({
     required INetworkService networkService,
     required IQrCodeGeneratorService qrCodeGeneratorService,
-  })  : _networkService = networkService,
-        _qrCodeGeneratorService = qrCodeGeneratorService;
+  }) : _networkService = networkService,
+       _qrCodeGeneratorService = qrCodeGeneratorService;
 
   @override
   set onMessageReceived(Function(String)? callback) {
@@ -35,32 +34,27 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  Future<String?> startServer({int port = 8080}) async {
-    return await _networkService.startServer(port: port);
+  Future<String?> startServer() async {
+    return await _networkService.startServer(port: _port);
   }
 
   @override
-  Future<HostRoomModel> createHostRoom({int port = 8080}) async {
-    final ip = await _networkService.startServer(port: port);
+  Future<HostRoomModel> createHostRoom() async {
+    final ip = await _networkService.startServer(port: _port);
     if (ip == null) return const HostRoomModel();
 
     Uint8List? qrBytes;
     try {
       qrBytes = await _qrCodeGeneratorService.generateQr(ip);
-    } catch (e, stackTrace) {
-      developer.log(
-        'Falha ao gerar QR (servidor já criado)',
-        name: 'GameRepository',
-        error: e,
-        stackTrace: stackTrace,
-      );
+    } catch (e, _) {
+      return throw Exception(e);
     }
     return HostRoomModel(ip: ip, qrCodeBytes: qrBytes);
   }
 
   @override
-  Future<bool> connectToServer(String ip, {int port = 8080}) async {
-    return await _networkService.connectToServer(ip, port: port);
+  Future<bool> connectToServer({required String ip}) async {
+    return await _networkService.connectToServer(ip, port: _port);
   }
 
   @override
@@ -69,8 +63,12 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendMove(int row, int col, PlayerEnum player) {
-    _networkService.sendMove(row, col, player);
+  void sendMove({
+    required int row,
+    required int col,
+    required PlayerEnum player,
+  }) {
+    _networkService.sendMove(row: row, col: col, player: player);
   }
 
   @override
@@ -84,7 +82,7 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendConfig(int maxRounds) {
-    _networkService.sendConfig(maxRounds);
+  void sendConfig({required int maxRounds}) {
+    _networkService.sendConfig(maxRounds: maxRounds);
   }
 }

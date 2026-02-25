@@ -9,11 +9,15 @@ abstract class INetworkService {
   set onError(Function(String)? callback);
 
   Future<String?> getLocalIP();
-  Future<String?> startServer({int port = 8080});
-  Future<bool> connectToServer(String ip, {int port = 8080});
+  Future<String?> startServer({required int port});
+  Future<bool> connectToServer(String ip, {required int port});
   void disconnect();
-  void sendMove(int row, int col, PlayerEnum player);
+  void sendMove({
+    required int row,
+    required int col,
+    required PlayerEnum player,
+  });
   void sendReset();
   void sendNextRound();
-  void sendConfig(int maxRounds);
+  void sendConfig({required int maxRounds});
 }

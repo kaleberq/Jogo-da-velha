@@ -26,7 +26,9 @@ class _OnlineOptionsState extends State<OnlineOptions> {
 
   void _showError(String message, [Object? error, StackTrace? stackTrace]) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onViewModelChanged() {
@@ -40,10 +42,9 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     Future.microtask(() {
       if (!mounted) return;
       Navigator.pop(context);
-      Navigator.of(context).pushNamed(
-        RoutesEnum.onlineGame.path,
-        arguments: (isHost: isHost),
-      );
+      Navigator.of(
+        context,
+      ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));
     });
   }
 
@@ -58,9 +59,9 @@ class _OnlineOptionsState extends State<OnlineOptions> {
   Future<void> _createServer() async {
     final ip = await widget.viewModel.createServer();
     if (ip == null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.errorCreateServer)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.errorCreateServer)));
     }
   }
 
@@ -128,7 +129,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                               Icon(Icons.wifi, size: 48),
                               Expanded(
                                 child: Column(
-                                  spacing: 4,
+                                  spacing: DSSpacing.xs,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
@@ -222,8 +223,9 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton.icon(
-                                  onPressed:
-                                      state.isConnecting ? null : _openQrScanner,
+                                  onPressed: state.isConnecting
+                                      ? null
+                                      : _openQrScanner,
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: DSSpacing.md,

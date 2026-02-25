@@ -115,8 +115,12 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   // Métodos para enviar eventos de rede
-  void sendMove(int row, int col, PlayerEnum player) {
-    _gameRepository.sendMove(row, col, player);
+  void sendMove({
+    required int row,
+    required int col,
+    required PlayerEnum player,
+  }) {
+    _gameRepository.sendMove(row: row, col: col, player: player);
   }
 
   void sendReset() {
