@@ -163,7 +163,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   void _showRoundEnd() {
     String message;
     if (viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(viewModel.game.winner!.assetPath);
+      message = context.l10n.playerWonRound(viewModel.game.winner!.name);
     } else {
       message = context.l10n.drawRound;
     }
