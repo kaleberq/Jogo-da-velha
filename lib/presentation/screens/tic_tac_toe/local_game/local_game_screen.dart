@@ -131,14 +131,15 @@ class _LocalGameScreenState extends State<LocalGameScreen>
 
   void showRoundEnd() {
     String message;
-    if (viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(viewModel.game.winner!.name);
+    final PlayerEnum? winner = viewModel.game.winner;
+    if (winner != null) {
+      message = context.l10n.playerWonRound(winner.name);
     } else {
       message = context.l10n.drawRound;
     }
 
     setState(() {
-      _roundWinner = viewModel.game.winner;
+      _roundWinner = winner;
     });
 
     showDSModalBottomSheet(
