@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
@@ -72,7 +73,7 @@ class NetworkService implements INetworkService {
 
   /// Cria um servidor e retorna o IP local
   @override
-  Future<String?> startServer({int port = 8080}) async {
+  Future<String?> startServer({required int port}) async {
     try {
       _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
       final serverSocket = await ServerSocket.bind(
@@ -108,7 +109,7 @@ class NetworkService implements INetworkService {
 
   /// Conecta a um servidor
   @override
-  Future<bool> connectToServer(String ip, {int port = 8080}) async {
+  Future<bool> connectToServer(String ip, {required int port}) async {
     try {
       _onConnectionStatusChanged?.call(ConnectionStatusEnum.connecting.name);
       final socket = await Socket.connect(
@@ -152,7 +153,11 @@ class NetworkService implements INetworkService {
   }
 
   @override
-  void sendMove(int row, int col, PlayerEnum player) {
+  void sendMove({
+    required int row,
+    required int col,
+    required PlayerEnum player,
+  }) {
     _connectionManager?.sendMove(row, col, player);
   }
 
@@ -167,7 +172,7 @@ class NetworkService implements INetworkService {
   }
 
   @override
-  void sendConfig(int maxRounds) {
+  void sendConfig({required int maxRounds}) {
     _connectionManager?.sendConfig(maxRounds);
   }
 }
@@ -216,7 +221,7 @@ class NetworkConnectionManager {
         onError('Erro ao confirmar conexão: $e');
       }
     });
-    onMessageReceived('CONNECTED');
+    onMessageReceived(NetworkMessageConstants.peerConnected);
   }
 
   void _listenToClient(Socket socket) {

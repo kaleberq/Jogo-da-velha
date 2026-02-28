@@ -104,7 +104,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
 
     final playerWhoMoved = viewModel.game.currentPlayer;
     if (viewModel.makeMove(rowIndex, columnIndex)) {
-      viewModel.sendMove(rowIndex, columnIndex, playerWhoMoved);
+      viewModel.sendMove(
+        row: rowIndex,
+        col: columnIndex,
+        player: playerWhoMoved,
+      );
       _isMyTurn = false;
       _checkGameOver();
     }
@@ -159,7 +163,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
   void _showRoundEnd() {
     String message;
     if (viewModel.game.winner != null) {
-      message = context.l10n.playerWonRound(viewModel.game.winner!.assetPath);
+      message = context.l10n.playerWonRound(viewModel.game.winner!.name);
     } else {
       message = context.l10n.drawRound;
     }

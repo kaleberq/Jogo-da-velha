@@ -21,35 +21,36 @@ class _OnlineOptionsState extends State<OnlineOptions> {
   void initState() {
     super.initState();
     widget.viewModel.addListener(_onViewModelChanged);
-    widget.viewModel.onError = (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error)));
-      }
-    };
+    widget.viewModel.onError = _showError;
+  }
+
+  void _showError(String message, [Object? error, StackTrace? stackTrace]) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onViewModelChanged() {
     if (!mounted || _hasNavigated) return;
 
-    // Navega para o jogo quando conectado
-    if (widget.viewModel.onlineOptions.navigatingToGame) {
-      _hasNavigated = true;
-      final isHost = widget.viewModel.onlineOptions.qrCodeBytes != null;
-      Future.microtask(() {
-        if (mounted) {
-          Navigator.pop(context);
-          Navigator.of(
-            context,
-          ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));
-        }
-      });
-    }
+    final state = widget.viewModel.viewState;
+    if (!state.shouldNavigateToGame) return;
+
+    _hasNavigated = true;
+    final isHost = state.isHost;
+    Future.microtask(() {
+      if (!mounted) return;
+      Navigator.pop(context);
+      Navigator.of(
+        context,
+      ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));
+    });
   }
 
   @override
   void dispose() {
+    widget.viewModel.onError = null;
     widget.viewModel.removeListener(_onViewModelChanged);
     widget.viewModel.dispose();
     super.dispose();
@@ -92,6 +93,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     return ListenableBuilder(
       listenable: widget.viewModel,
       builder: (context, _) {
+        final state = widget.viewModel.viewState;
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -112,9 +114,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                 ),
                 Card(
                   child: GestureDetector(
-                    onTap:
-                        widget.viewModel.onlineOptions.isCreatingServer ||
-                            widget.viewModel.onlineOptions.qrCodeBytes != null
+                    onTap: state.isCreatingServer || state.hasQrCode
                         ? null
                         : _createServer,
                     child: Padding(
@@ -129,18 +129,14 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                               Icon(Icons.wifi, size: 48),
                               Expanded(
                                 child: Column(
-                                  spacing: 4,
+                                  spacing: DSSpacing.xs,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       context.l10n.createRoomTitle,
                                       style: DSTypographyMedium.labelLarge,
                                     ),
-                                    if (widget
-                                            .viewModel
-                                            .onlineOptions
-                                            .qrCodeBytes !=
-                                        null)
+                                    if (state.hasQrCode)
                                       Text(
                                         context.l10n.waitingPlayer,
                                         style: DSTypographyRegular.labelSmall,
@@ -153,13 +149,11 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                   ],
                                 ),
                               ),
-                              if (widget.viewModel.onlineOptions.qrCodeBytes ==
-                                  null)
+                              if (!state.hasQrCode)
                                 const Icon(Icons.arrow_forward_ios),
                             ],
                           ),
-                          if (widget.viewModel.onlineOptions.qrCodeBytes !=
-                              null)
+                          if (state.hasQrCode && state.qrCodeBytes != null)
                             Center(
                               child: Column(
                                 children: [
@@ -190,10 +184,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                       ],
                                     ),
                                     child: Image.memory(
-                                      widget
-                                          .viewModel
-                                          .onlineOptions
-                                          .qrCodeBytes!,
+                                      state.qrCodeBytes!,
                                       width: 250,
                                       height: 250,
                                       fit: BoxFit.contain,
@@ -207,7 +198,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                     ),
                   ),
                 ),
-                if (widget.viewModel.onlineOptions.qrCodeBytes == null)
+                if (!state.hasQrCode)
                   Column(
                     children: [
                       SizedBox(height: DSSpacing.md),
@@ -232,11 +223,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton.icon(
-                                  onPressed:
-                                      widget
-                                          .viewModel
-                                          .onlineOptions
-                                          .isConnecting
+                                  onPressed: state.isConnecting
                                       ? null
                                       : _openQrScanner,
                                   style: ElevatedButton.styleFrom(
@@ -249,11 +236,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                       ),
                                     ),
                                   ),
-                                  icon:
-                                      widget
-                                          .viewModel
-                                          .onlineOptions
-                                          .isConnecting
+                                  icon: state.isConnecting
                                       ? const SizedBox(
                                           width: 20,
                                           height: 20,
@@ -262,11 +245,7 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                                           ),
                                         )
                                       : const Icon(Icons.qr_code_scanner),
-                                  label:
-                                      widget
-                                          .viewModel
-                                          .onlineOptions
-                                          .isConnecting
+                                  label: state.isConnecting
                                       ? Text(
                                           context.l10n.connecting,
                                           style:

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/data/channels/qr_code_scanner_channel.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
+import 'package:qr_native_bridge/qr_native_bridge.dart';
 
 class QrScannerScreen extends StatefulWidget {
   final Function(String) onQrCodeScanned;
@@ -28,7 +28,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     });
 
     try {
-      final result = await NativeQrScannerChannel.scan();
+      final result = await QrNativeBridge().scanQr();
 
       if (!mounted) return;
 
