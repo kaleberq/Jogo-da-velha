@@ -3,10 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/extensions/player_turn_extension.dart';
 
 class LocalGameViewModel extends ChangeNotifier {
   late TicTacToeGameModel _game;
   static final Random _random = Random();
+  TicTacToeGameModel get game => _game;
 
   LocalGameViewModel({required int maxRounds, required int timeLimitSeconds}) {
     _game = TicTacToeGameModel(
@@ -15,36 +17,38 @@ class LocalGameViewModel extends ChangeNotifier {
     );
   }
 
-  TicTacToeGameModel get game => _game;
-
   void setMaxRounds(int maxRounds) {
-    _game.maxRounds = maxRounds;
+    _game = _game.copyWith(maxRounds: maxRounds);
     notifyListeners();
   }
 
   void setTimeLimitSeconds(int timeLimitSeconds) {
-    _game.timeLimitSeconds = timeLimitSeconds;
+    _game = _game.copyWith(timeLimitSeconds: timeLimitSeconds);
     notifyListeners();
   }
 
   void reset() {
-    _game.board = List.generate(
-      3,
-      (_) => List.generate(3, (_) => PlayerEnum.none),
+    _game = _game.copyWith(
+      board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
+      currentPlayer: PlayerEnum.x,
+      winner: null,
+      winningLine: null,
+      isGameOver: false,
     );
-    _game.currentPlayer = PlayerEnum.x;
-    _game.winner = null;
-    _game.winningLine = null;
-    _game.isGameOver = false;
+
     notifyListeners();
   }
 
   void resetAll() {
     reset();
-    _game.scoreX = 0;
-    _game.scoreO = 0;
-    _game.currentRound = 1;
-    _game.currentPlayer = _randomPlayer();
+
+    _game = _game.copyWith(
+      scoreX: 0,
+      scoreO: 0,
+      currentRound: 1,
+      currentPlayer: _randomPlayer(),
+    );
+
     notifyListeners();
   }
 
@@ -54,9 +58,9 @@ class LocalGameViewModel extends ChangeNotifier {
 
   void updateScore() {
     if (_game.winner == PlayerEnum.x) {
-      _game.scoreX++;
+      _game = _game.copyWith(scoreX: _game.scoreX + 1);
     } else if (_game.winner == PlayerEnum.o) {
-      _game.scoreO++;
+      _game = _game.copyWith(scoreO: _game.scoreO + 1);
     }
     notifyListeners();
   }
@@ -64,11 +68,15 @@ class LocalGameViewModel extends ChangeNotifier {
   void nextRound() {
     final PlayerEnum? previousWinner = _game.winner;
 
-    _game.currentRound++;
     reset();
 
     if (previousWinner != null) {
-      _game.currentPlayer = previousWinner;
+      _game = _game.copyWith(
+        currentPlayer: previousWinner,
+        currentRound: _game.currentRound + 1,
+      );
+    } else {
+      _game = _game.copyWith(currentRound: _game.currentRound + 1);
     }
     notifyListeners();
   }
@@ -93,24 +101,24 @@ class LocalGameViewModel extends ChangeNotifier {
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
-      _game.winner = _game.currentPlayer;
-      _game.winningLine = winningLineResult;
-      _game.isGameOver = true;
+      _game = _game.copyWith(
+        winner: _game.currentPlayer,
+        winningLine: winningLineResult,
+        isGameOver: true,
+      );
+      notifyListeners();
+      return true;
+    } else if (_checkDraw()) {
+      _game = _game.copyWith(isGameOver: true);
+
+      notifyListeners();
+      return true;
+    } else {
+      _game = _game.copyWith(currentPlayer: _game.currentPlayer.next);
+
       notifyListeners();
       return true;
     }
-
-    if (_checkDraw()) {
-      _game.isGameOver = true;
-      notifyListeners();
-      return true;
-    }
-
-    _game.currentPlayer = _game.currentPlayer == PlayerEnum.x
-        ? PlayerEnum.o
-        : PlayerEnum.x;
-    notifyListeners();
-    return true;
   }
 
   WinningLineModel? _checkWinner(int row, int col) {
@@ -145,9 +153,7 @@ class LocalGameViewModel extends ChangeNotifier {
 
   void endGameByTimeLimit() {
     if (!_game.isGameOver) {
-      _game.isGameOver = true;
-      _game.winner = null; // Empate
-      _game.winningLine = null;
+      _game = _game.copyWith(isGameOver: true, winner: null, winningLine: null);
       notifyListeners();
     }
   }

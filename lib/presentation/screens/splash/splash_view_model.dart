@@ -15,13 +15,13 @@ class SplashViewModel extends ChangeNotifier {
     {DirectionEnum.row: 1, DirectionEnum.col: 1},
     {DirectionEnum.row: 2, DirectionEnum.col: 2},
   ];
-  TicTacToeGameModel get game => _ticTacToeGameState;
+  TicTacToeGameModel get game => _game;
   SplashModel get state => _splashState;
   VoidCallback? onLineAnimationReady;
 
   late final IDeepLinkNavigator _deepLinkNavigator;
   late final IDeepLinkDataSourceChannel _deepLinkChannel;
-  late final TicTacToeGameModel _ticTacToeGameState;
+  late final TicTacToeGameModel _game;
 
   SplashViewModel({
     required IDeepLinkDataSourceChannel deeplinkDataSourceChannel,
@@ -30,7 +30,7 @@ class SplashViewModel extends ChangeNotifier {
   }) {
     _deepLinkChannel = deeplinkDataSourceChannel;
     _deepLinkNavigator = navigator;
-    _ticTacToeGameState = ticTacToeGame;
+    _game = ticTacToeGame;
   }
 
   @override
@@ -55,7 +55,7 @@ class SplashViewModel extends ChangeNotifier {
           notifyListeners();
         } else {
           timer.cancel();
-          game.winningLine = WinningLineModel.diagonalMain();
+          _game = _game.copyWith(winningLine: WinningLineModel.diagonalMain());
           notifyListeners();
           onLineAnimationReady?.call();
         }

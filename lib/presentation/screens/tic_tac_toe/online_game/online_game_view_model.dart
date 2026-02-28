@@ -25,6 +25,8 @@ class OnlineGameViewModel extends ChangeNotifier {
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
+  TicTacToeGameModel get game => _game;
+  PlayerEnum get _currentPlayer => isHost ? PlayerEnum.x : PlayerEnum.o;
 
   /// Constructor Injection: IGameRepository é obrigatório via construtor
   OnlineGameViewModel({
@@ -33,15 +35,10 @@ class OnlineGameViewModel extends ChangeNotifier {
     int? maxRounds,
   }) : _gameRepository = gameRepository {
     _game = TicTacToeGameModel(maxRounds: maxRounds);
-    if (isHost) {
-      _game.currentPlayer = PlayerEnum.x;
-    } else {
-      _game.currentPlayer = PlayerEnum.o;
-    }
+    _game = _game.copyWith(currentPlayer: _currentPlayer);
+    notifyListeners();
     _setupNetworkCallbacks();
   }
-
-  TicTacToeGameModel get game => _game;
 
   void _setupNetworkCallbacks() {
     _gameRepository.onMessageReceived = _handleNetworkMessage;
@@ -132,36 +129,37 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   void setMaxRounds(int maxRounds) {
-    _game.maxRounds = maxRounds;
+    _game = _game.copyWith(maxRounds: maxRounds);
     notifyListeners();
   }
 
   void reset() {
-    _game.board = List.generate(
-      3,
-      (_) => List.generate(3, (_) => PlayerEnum.none),
+    _game = _game.copyWith(
+      board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
+      currentPlayer: _currentPlayer,
+      winner: null,
+      winningLine: null,
+      isGameOver: false,
     );
-    _game.currentPlayer = isHost ? PlayerEnum.x : PlayerEnum.o;
-    _game.winner = null;
-    _game.winningLine = null;
-    _game.isGameOver = false;
     notifyListeners();
   }
 
   void resetAll() {
     reset();
-    _game.scoreX = 0;
-    _game.scoreO = 0;
-    _game.currentRound = 1;
-    _game.currentPlayer = isHost ? PlayerEnum.x : PlayerEnum.o;
+    _game = _game.copyWith(
+      scoreX: 0,
+      scoreO: 0,
+      currentRound: 1,
+      currentPlayer: _currentPlayer,
+    );
     notifyListeners();
   }
 
   void updateScore() {
     if (_game.winner == PlayerEnum.x) {
-      _game.scoreX++;
+      _game = _game.copyWith(scoreX: _game.scoreX + 1);
     } else if (_game.winner == PlayerEnum.o) {
-      _game.scoreO++;
+      _game = _game.copyWith(scoreO: _game.scoreO + 1);
     }
     notifyListeners();
   }
@@ -169,13 +167,18 @@ class OnlineGameViewModel extends ChangeNotifier {
   void nextRound() {
     final PlayerEnum? previousWinner = _game.winner;
 
-    _game.currentRound++;
     reset();
 
     if (previousWinner != null) {
-      _game.currentPlayer = previousWinner;
+      _game = _game.copyWith(
+        currentPlayer: previousWinner,
+        currentRound: _game.currentRound + 1,
+      );
     } else {
-      _game.currentPlayer = isHost ? PlayerEnum.x : PlayerEnum.o;
+      _game = _game.copyWith(
+        currentPlayer: _currentPlayer,
+        currentRound: _game.currentRound + 1,
+      );
     }
     notifyListeners();
   }
@@ -200,24 +203,23 @@ class OnlineGameViewModel extends ChangeNotifier {
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
-      _game.winner = _game.currentPlayer;
-      _game.winningLine = winningLineResult;
-      _game.isGameOver = true;
+      _game = _game.copyWith(
+        winner: _game.currentPlayer,
+        winningLine: winningLineResult,
+        isGameOver: true,
+      );
+      notifyListeners();
+      return true;
+    } else if (_checkDraw()) {
+      _game = _game.copyWith(isGameOver: true);
+      notifyListeners();
+      return true;
+    } else {
+      _game = _game.copyWith(currentPlayer: _currentPlayer);
+
       notifyListeners();
       return true;
     }
-
-    if (_checkDraw()) {
-      _game.isGameOver = true;
-      notifyListeners();
-      return true;
-    }
-
-    _game.currentPlayer = _game.currentPlayer == PlayerEnum.x
-        ? PlayerEnum.o
-        : PlayerEnum.x;
-    notifyListeners();
-    return true;
   }
 
   bool makeMoveWithPlayer(int row, int col, PlayerEnum player) {
@@ -228,24 +230,25 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
 
     _game.board[row][col] = player;
-    _game.currentPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
 
     final winningLineResult = _checkWinnerWithPlayer(row, col, player);
     if (winningLineResult != null) {
-      _game.winner = player;
-      _game.winningLine = winningLineResult;
-      _game.isGameOver = true;
+      _game = _game.copyWith(
+        winner: player,
+        winningLine: winningLineResult,
+        isGameOver: true,
+        currentPlayer: _currentPlayer,
+      );
+      notifyListeners();
+      return true;
+    } else if (_checkDraw()) {
+      _game = _game.copyWith(isGameOver: true, currentPlayer: _currentPlayer);
+      notifyListeners();
+      return true;
+    } else {
       notifyListeners();
       return true;
     }
-
-    if (_checkDraw()) {
-      _game.isGameOver = true;
-      notifyListeners();
-      return true;
-    }
-    notifyListeners();
-    return true;
   }
 
   WinningLineModel? _checkWinnerWithPlayer(
