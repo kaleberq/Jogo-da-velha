@@ -137,8 +137,8 @@ class OnlineGameViewModel extends ChangeNotifier {
     _game = _game.copyWith(
       board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer: _currentPlayer,
-      winner: null,
-      winningLine: null,
+      clearWinner: true,
+      clearWinningLine: true,
       isGameOver: false,
     );
     notifyListeners();

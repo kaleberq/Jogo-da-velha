@@ -21,7 +21,7 @@ class SplashViewModel extends ChangeNotifier {
 
   late final IDeepLinkNavigator _deepLinkNavigator;
   late final IDeepLinkDataSourceChannel _deepLinkChannel;
-  late final TicTacToeGameModel _game;
+  late TicTacToeGameModel _game;
 
   SplashViewModel({
     required IDeepLinkDataSourceChannel deeplinkDataSourceChannel,

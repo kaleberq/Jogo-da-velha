@@ -31,8 +31,8 @@ class LocalGameViewModel extends ChangeNotifier {
     _game = _game.copyWith(
       board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer: PlayerEnum.x,
-      winner: null,
-      winningLine: null,
+      clearWinner: true,
+      clearWinningLine: true,
       isGameOver: false,
     );
 
