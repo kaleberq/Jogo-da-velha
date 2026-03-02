@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
 import 'package:jogo_da_velha/domain/enums/online_options_flow_enum.dart';
+import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_state.dart';
@@ -113,7 +114,7 @@ class OnlineOptionsViewModel extends ChangeNotifier {
         flowState: OnlineOptionsFlowEnum.serverReady,
         qrCodeBytes: result.qrCodeBytes,
         serverIp: result.ip,
-        isHost: true,
+        playerRole: PlayerRole.host,
       ),
     );
     return result.ip;
@@ -133,7 +134,7 @@ class OnlineOptionsViewModel extends ChangeNotifier {
       _updateState(
         _viewState.copyWith(
           flowState: OnlineOptionsFlowEnum.connectedNavigating,
-          isHost: false,
+          playerRole: PlayerRole.guest,
         ),
       );
       return true;

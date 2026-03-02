@@ -38,13 +38,13 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     if (!state.shouldNavigateToGame) return;
 
     _hasNavigated = true;
-    final isHost = state.isHost;
+    final playerRole = state.playerRole;
     Future.microtask(() {
       if (!mounted) return;
       Navigator.pop(context);
       Navigator.of(
         context,
-      ).pushNamed(RoutesEnum.onlineGame.path, arguments: (isHost: isHost));
+      ).pushNamed(RoutesEnum.onlineGame.path, arguments: (playerRole: playerRole));
     });
   }
 

@@ -100,7 +100,7 @@ A injeção de dependências é feita manualmente no `main.dart` e em `onGenerat
 | `/` | Splash (inicialização e tratamento de deep link) |
 | `/menu` | Menu principal (local vs online) |
 | `/local-game` | Partida local (argumentos: `maxRounds`, `timeLimitSeconds`) |
-| `/online-game` | Partida online (argumentos: `isHost`) |
+| `/online-game` | Partida online (argumentos: `playerRole`: `PlayerRole.host` ou `PlayerRole.guest`) |
 
 ---
 

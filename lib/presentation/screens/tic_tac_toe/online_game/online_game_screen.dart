@@ -45,7 +45,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       ),
     );
 
-    _isMyTurn = viewModel.isHost;
+    _isMyTurn = viewModel.playerRole.isHost;
     _setupViewModelCallbacks();
   }
 
@@ -72,14 +72,14 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     viewModel.onResetReceived = () {
       if (mounted) {
         viewModel.resetAll();
-        _isMyTurn = viewModel.isHost;
+        _isMyTurn = viewModel.playerRole.isHost;
         setState(() {});
       }
     };
     viewModel.onNextRoundReceived = () {
       if (mounted) {
         viewModel.nextRound();
-        _isMyTurn = viewModel.isHost;
+        _isMyTurn = viewModel.playerRole.isHost;
         _hideRoundEndMessage();
         setState(() {});
       }
@@ -88,7 +88,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       if (mounted) {
         viewModel.setMaxRounds(maxRounds);
         setState(() {
-          _isMyTurn = viewModel.isHost;
+          _isMyTurn = viewModel.playerRole.isHost;
         });
       }
     };
@@ -179,13 +179,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       widget: RoundEnd(
         roundEndMessage: message,
         roundWinner: _roundWinner,
-        isHost: viewModel.isHost,
+        playerRole: viewModel.playerRole,
         onNextRound: () {
           _hideRoundEndMessage();
           _winningLineAnimationController.reset();
           viewModel.sendNextRound();
           viewModel.nextRound();
-          _isMyTurn = viewModel.isHost;
+          _isMyTurn = viewModel.playerRole.isHost;
 
           Navigator.of(context).pop();
           setState(() {});
@@ -204,7 +204,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
     _winningLineAnimationController.reset();
     viewModel.sendReset();
     viewModel.resetAll();
-    _isMyTurn = viewModel.isHost;
+          _isMyTurn = viewModel.playerRole.isHost;
     setState(() {});
   }
 
@@ -222,7 +222,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       builder: (context, _) {
         return Scaffold(
           appBar: AppBarComponent(
-            isHost: viewModel.isHost,
+            playerRole: viewModel.playerRole,
             isMyTurn: _isMyTurn,
             onResetPressed: resetAll,
           ),

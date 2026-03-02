@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
-  final bool isHost;
+  final PlayerRole playerRole;
   final bool isMyTurn;
   final VoidCallback? onResetPressed;
   final int? currentMaxRounds;
@@ -12,7 +13,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   const AppBarComponent({
     super.key,
 
-    this.isHost = false,
+    this.playerRole = PlayerRole.guest,
     required this.isMyTurn,
     this.onResetPressed,
     this.currentMaxRounds,

@@ -6,6 +6,7 @@ import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/repositories/game_repository.dart';
 import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/data/services/qr_code_generator_service.dart';
+import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/domain/enums/routes_enum.dart';
 import 'package:jogo_da_velha/l10n/app_localizations.dart';
 import 'package:jogo_da_velha/presentation/navigation/deeplink_navigator.dart';
@@ -69,12 +70,12 @@ class _MyAppState extends State<MyApp> {
             ),
           );
         } else if (settings.name == RoutesEnum.onlineGame.path) {
-          final args = settings.arguments as ({bool isHost});
+          final args = settings.arguments as ({PlayerRole playerRole});
 
           return MaterialPageRoute(
             builder: (_) => OnlineGameScreen(
               viewModel: OnlineGameViewModel(
-                isHost: args.isHost,
+                playerRole: args.playerRole,
                 gameRepository: GameRepository(
                   networkService: NetworkService(),
                   qrCodeGeneratorService: QrCodeGeneratorService(),
