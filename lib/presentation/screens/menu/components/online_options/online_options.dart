@@ -41,10 +41,10 @@ class _OnlineOptionsState extends State<OnlineOptions> {
     final playerRole = state.playerRole;
     Future.microtask(() {
       if (!mounted) return;
-      Navigator.pop(context);
-      Navigator.of(
-        context,
-      ).pushNamed(RoutesEnum.onlineGame.path, arguments: (playerRole: playerRole));
+      Navigator.of(context).pushNamed(
+        RoutesEnum.onlineGame.path,
+        arguments: (playerRole: playerRole),
+      );
     });
   }
 
