@@ -27,6 +27,12 @@ class OnlineGameViewModel extends ChangeNotifier {
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
   TicTacToeGameModel get game => _game;
+
+  void update(TicTacToeGameModel newState) {
+    _game = newState;
+    notifyListeners();
+  }
+
   PlayerEnum get _currentPlayer => playerRole.isHost ? PlayerEnum.x : PlayerEnum.o;
 
   /// Constructor Injection: IGameRepository é obrigatório via construtor
@@ -36,8 +42,7 @@ class OnlineGameViewModel extends ChangeNotifier {
     int? maxRounds,
   }) : _gameRepository = gameRepository {
     _game = TicTacToeGameModel(maxRounds: maxRounds);
-    _game = _game.copyWith(currentPlayer: _currentPlayer);
-    notifyListeners();
+    update(_game.copyWith(currentPlayer: _currentPlayer));
     _setupNetworkCallbacks();
   }
 
@@ -130,39 +135,35 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   void setMaxRounds(int maxRounds) {
-    _game = _game.copyWith(maxRounds: maxRounds);
-    notifyListeners();
+    update(_game.copyWith(maxRounds: maxRounds));
   }
 
   void reset() {
-    _game = _game.copyWith(
+    update(_game.copyWith(
       board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer: _currentPlayer,
       clearWinner: true,
       clearWinningLine: true,
       isGameOver: false,
-    );
-    notifyListeners();
+    ));
   }
 
   void resetAll() {
     reset();
-    _game = _game.copyWith(
+    update(_game.copyWith(
       scoreX: 0,
       scoreO: 0,
       currentRound: 1,
       currentPlayer: _currentPlayer,
-    );
-    notifyListeners();
+    ));
   }
 
   void updateScore() {
     if (_game.winner == PlayerEnum.x) {
-      _game = _game.copyWith(scoreX: _game.scoreX + 1);
+      update(_game.copyWith(scoreX: _game.scoreX + 1));
     } else if (_game.winner == PlayerEnum.o) {
-      _game = _game.copyWith(scoreO: _game.scoreO + 1);
+      update(_game.copyWith(scoreO: _game.scoreO + 1));
     }
-    notifyListeners();
   }
 
   void nextRound() {
@@ -171,17 +172,16 @@ class OnlineGameViewModel extends ChangeNotifier {
     reset();
 
     if (previousWinner != null) {
-      _game = _game.copyWith(
+      update(_game.copyWith(
         currentPlayer: previousWinner,
         currentRound: _game.currentRound + 1,
-      );
+      ));
     } else {
-      _game = _game.copyWith(
+      update(_game.copyWith(
         currentPlayer: _currentPlayer,
         currentRound: _game.currentRound + 1,
-      );
+      ));
     }
-    notifyListeners();
   }
 
   bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
@@ -204,21 +204,18 @@ class OnlineGameViewModel extends ChangeNotifier {
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
-      _game = _game.copyWith(
+      update(_game.copyWith(
         winner: _game.currentPlayer,
         winningLine: winningLineResult,
         isGameOver: true,
-      );
-      notifyListeners();
+      ));
       return true;
     } else if (_checkDraw()) {
-      _game = _game.copyWith(isGameOver: true);
-      notifyListeners();
+      update(_game.copyWith(isGameOver: true));
       return true;
     } else {
-      _game = _game.copyWith(currentPlayer: _currentPlayer);
+      update(_game.copyWith(currentPlayer: _currentPlayer));
 
-      notifyListeners();
       return true;
     }
   }
@@ -234,20 +231,18 @@ class OnlineGameViewModel extends ChangeNotifier {
 
     final winningLineResult = _checkWinnerWithPlayer(row, col, player);
     if (winningLineResult != null) {
-      _game = _game.copyWith(
+      update(_game.copyWith(
         winner: player,
         winningLine: winningLineResult,
         isGameOver: true,
         currentPlayer: _currentPlayer,
-      );
-      notifyListeners();
+      ));
       return true;
     } else if (_checkDraw()) {
-      _game = _game.copyWith(isGameOver: true, currentPlayer: _currentPlayer);
-      notifyListeners();
+      update(_game.copyWith(isGameOver: true, currentPlayer: _currentPlayer));
       return true;
     } else {
-      notifyListeners();
+      update(_game);
       return true;
     }
   }

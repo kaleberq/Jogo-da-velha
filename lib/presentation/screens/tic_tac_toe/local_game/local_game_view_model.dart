@@ -10,6 +10,11 @@ class LocalGameViewModel extends ChangeNotifier {
   static final Random _random = Random();
   TicTacToeGameModel get game => _game;
 
+  void _update(TicTacToeGameModel newState) {
+    _game = newState;
+    notifyListeners();
+  }
+
   LocalGameViewModel({required int maxRounds, required int timeLimitSeconds}) {
     _game = TicTacToeGameModel(
       maxRounds: maxRounds,
@@ -18,38 +23,39 @@ class LocalGameViewModel extends ChangeNotifier {
   }
 
   void setMaxRounds(int maxRounds) {
-    _game = _game.copyWith(maxRounds: maxRounds);
-    notifyListeners();
+    _update(_game.copyWith(maxRounds: maxRounds));
   }
 
   void setTimeLimitSeconds(int timeLimitSeconds) {
-    _game = _game.copyWith(timeLimitSeconds: timeLimitSeconds);
-    notifyListeners();
+    _update(_game.copyWith(timeLimitSeconds: timeLimitSeconds));
   }
 
   void reset() {
-    _game = _game.copyWith(
-      board: List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
-      currentPlayer: PlayerEnum.x,
-      clearWinner: true,
-      clearWinningLine: true,
-      isGameOver: false,
+    _update(
+      _game.copyWith(
+        board: List.generate(
+          3,
+          (_) => List.generate(3, (_) => PlayerEnum.none),
+        ),
+        currentPlayer: PlayerEnum.x,
+        clearWinner: true,
+        clearWinningLine: true,
+        isGameOver: false,
+      ),
     );
-
-    notifyListeners();
   }
 
   void resetAll() {
     reset();
 
-    _game = _game.copyWith(
-      scoreX: 0,
-      scoreO: 0,
-      currentRound: 1,
-      currentPlayer: _randomPlayer(),
+    _update(
+      _game.copyWith(
+        scoreX: 0,
+        scoreO: 0,
+        currentRound: 1,
+        currentPlayer: _randomPlayer(),
+      ),
     );
-
-    notifyListeners();
   }
 
   static PlayerEnum _randomPlayer() {
@@ -58,11 +64,10 @@ class LocalGameViewModel extends ChangeNotifier {
 
   void updateScore() {
     if (_game.winner == PlayerEnum.x) {
-      _game = _game.copyWith(scoreX: _game.scoreX + 1);
+      _update(_game.copyWith(scoreX: _game.scoreX + 1));
     } else if (_game.winner == PlayerEnum.o) {
-      _game = _game.copyWith(scoreO: _game.scoreO + 1);
+      _update(_game.copyWith(scoreO: _game.scoreO + 1));
     }
-    notifyListeners();
   }
 
   void nextRound() {
@@ -71,14 +76,15 @@ class LocalGameViewModel extends ChangeNotifier {
     reset();
 
     if (previousWinner != null) {
-      _game = _game.copyWith(
-        currentPlayer: previousWinner,
-        currentRound: _game.currentRound + 1,
+      _update(
+        _game.copyWith(
+          currentPlayer: previousWinner,
+          currentRound: _game.currentRound + 1,
+        ),
       );
     } else {
-      _game = _game.copyWith(currentRound: _game.currentRound + 1);
+      _update(_game.copyWith(currentRound: _game.currentRound + 1));
     }
-    notifyListeners();
   }
 
   bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
@@ -101,22 +107,21 @@ class LocalGameViewModel extends ChangeNotifier {
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
-      _game = _game.copyWith(
-        winner: _game.currentPlayer,
-        winningLine: winningLineResult,
-        isGameOver: true,
+      _update(
+        _game.copyWith(
+          winner: _game.currentPlayer,
+          winningLine: winningLineResult,
+          isGameOver: true,
+        ),
       );
-      notifyListeners();
       return true;
     } else if (_checkDraw()) {
-      _game = _game.copyWith(isGameOver: true);
+      _update(_game.copyWith(isGameOver: true));
 
-      notifyListeners();
       return true;
     } else {
-      _game = _game.copyWith(currentPlayer: _game.currentPlayer.next);
+      _update(_game.copyWith(currentPlayer: _game.currentPlayer.next));
 
-      notifyListeners();
       return true;
     }
   }
@@ -153,8 +158,9 @@ class LocalGameViewModel extends ChangeNotifier {
 
   void endGameByTimeLimit() {
     if (!_game.isGameOver) {
-      _game = _game.copyWith(isGameOver: true, winner: null, winningLine: null);
-      notifyListeners();
+      _update(
+        _game.copyWith(isGameOver: true, winner: null, winningLine: null),
+      );
     }
   }
 

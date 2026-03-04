@@ -9,7 +9,7 @@ import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_da
 import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_navigator_interface.dart';
 
 class SplashViewModel extends ChangeNotifier {
-  final SplashModel _splashState = SplashModel();
+  SplashModel _splashState = SplashModel();
   final List<Map<DirectionEnum, int>> _diagonalPositions = [
     {DirectionEnum.row: 0, DirectionEnum.col: 0},
     {DirectionEnum.row: 1, DirectionEnum.col: 1},
@@ -36,30 +36,44 @@ class SplashViewModel extends ChangeNotifier {
   @override
   void dispose() {
     _splashState.boardAnimationTimer?.cancel();
-    _splashState.boardAnimationTimer = null;
+    _splashState = _splashState.copyWith(clearBoardAnimationTimer: true);
     super.dispose();
+  }
+
+  void _update(TicTacToeGameModel newState) {
+    _game = newState;
+    notifyListeners();
+  }
+
+  void _updateSplash(SplashModel newState) {
+    _splashState = newState;
+    notifyListeners();
   }
 
   void startBoardAnimation() {
     if (_splashState.hasStartedBoardAnimation) return;
 
-    _splashState.hasStartedBoardAnimation = true;
-    _splashState.boardAnimationTimer = Timer.periodic(
-      const Duration(milliseconds: 500),
-      (timer) {
-        if (_splashState.currentIndex < _diagonalPositions.length) {
-          final pos = _diagonalPositions[_splashState.currentIndex];
-          game.board[pos[DirectionEnum.row]!][pos[DirectionEnum.col]!] =
-              PlayerEnum.x;
-          _splashState.currentIndex++;
-          notifyListeners();
-        } else {
-          timer.cancel();
-          _game = _game.copyWith(winningLine: WinningLineModel.diagonalMain());
-          notifyListeners();
-          onLineAnimationReady?.call();
-        }
-      },
+    final timer = Timer.periodic(const Duration(milliseconds: 500), (t) {
+      if (_splashState.currentIndex < _diagonalPositions.length) {
+        final pos = _diagonalPositions[_splashState.currentIndex];
+        final row = pos[DirectionEnum.row]!;
+        final col = pos[DirectionEnum.col]!;
+        _game.board[row][col] = PlayerEnum.x;
+        _update(_game);
+        _updateSplash(
+          _splashState.copyWith(currentIndex: _splashState.currentIndex + 1),
+        );
+      } else {
+        t.cancel();
+        _update(_game.copyWith(winningLine: WinningLineModel.diagonalMain()));
+        onLineAnimationReady?.call();
+      }
+    });
+    _updateSplash(
+      _splashState.copyWith(
+        hasStartedBoardAnimation: true,
+        boardAnimationTimer: timer,
+      ),
     );
   }
 
