@@ -36,6 +36,9 @@ class OnlineGameViewModel extends ChangeNotifier {
   PlayerEnum get _currentPlayer =>
       playerRole.isHost ? PlayerEnum.x : PlayerEnum.o;
 
+  /// Jogador que o usuário local está usando (X ou O).
+  PlayerEnum get myPlayer => _currentPlayer;
+
   /// Constructor Injection: IGameRepository é obrigatório via construtor
   OnlineGameViewModel({
     required this.playerRole,

@@ -9,12 +9,15 @@ class FinalScoreComponent extends StatelessWidget {
   final int scoreX;
   final int scoreO;
   final VoidCallback resetAll;
+  /// No jogo online: jogador que o usuário está usando (X ou O). Placar mostra esse jogador à esquerda.
+  final PlayerEnum? localPlayer;
 
   const FinalScoreComponent({
     required this.winnerMessage,
     required this.scoreX,
     required this.scoreO,
     required this.resetAll,
+    this.localPlayer,
     super.key,
   });
 
@@ -51,10 +54,15 @@ class FinalScoreComponent extends StatelessWidget {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    PlayerScore(player: PlayerEnum.x, score: scoreX),
-                    PlayerScore(player: PlayerEnum.o, score: scoreO),
-                  ],
+                  children: localPlayer == PlayerEnum.o
+                      ? [
+                          PlayerScore(player: PlayerEnum.o, score: scoreO),
+                          PlayerScore(player: PlayerEnum.x, score: scoreX),
+                        ]
+                      : [
+                          PlayerScore(player: PlayerEnum.x, score: scoreX),
+                          PlayerScore(player: PlayerEnum.o, score: scoreO),
+                        ],
                 ),
               ],
             ),

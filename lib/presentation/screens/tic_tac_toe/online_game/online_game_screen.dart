@@ -156,6 +156,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         scoreX: viewModel.game.scoreX,
         scoreO: viewModel.game.scoreO,
         resetAll: () => resetAll(),
+        localPlayer: viewModel.myPlayer,
       ),
     );
   }
@@ -239,7 +240,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                   currentRound: viewModel.game.currentRound,
                   totalRounds: viewModel.game.maxRounds,
                 ),
-                ScoreDisplayComponent(game: viewModel.game),
+                ScoreDisplayComponent(
+                  game: viewModel.game,
+                  localPlayer: viewModel.myPlayer,
+                ),
                 GameBoardComponent(
                   game: viewModel.game,
                   winningLineAnimation: _winningLineAnimation,

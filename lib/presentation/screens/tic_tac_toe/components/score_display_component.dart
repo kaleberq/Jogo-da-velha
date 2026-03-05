@@ -7,10 +7,23 @@ import 'package:flutter_svg/flutter_svg.dart';
 class ScoreDisplayComponent extends StatelessWidget {
   final TicTacToeGameModel game;
 
-  const ScoreDisplayComponent({super.key, required this.game});
+  /// No jogo online: jogador que o usuário está usando (X ou O). Placar mostra esse jogador à esquerda.
+  final PlayerEnum? localPlayer;
+
+  const ScoreDisplayComponent({
+    super.key,
+    required this.game,
+    this.localPlayer,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final bool oFirst = localPlayer == PlayerEnum.o;
+    final PlayerEnum leftPlayer = oFirst ? PlayerEnum.o : PlayerEnum.x;
+    final int leftScore = oFirst ? game.scoreO : game.scoreX;
+    final PlayerEnum rightPlayer = oFirst ? PlayerEnum.x : PlayerEnum.o;
+    final int rightScore = oFirst ? game.scoreX : game.scoreO;
+
     return IntrinsicHeight(
       child: Row(
         spacing: DSSpacing.md,
@@ -18,15 +31,15 @@ class ScoreDisplayComponent extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Container(
-              constraints: BoxConstraints(minHeight: 50),
+              constraints: const BoxConstraints(minHeight: 50),
               padding: const EdgeInsets.all(DSSpacing.xs),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(color: PlayerEnum.x.color, width: 5),
-                boxShadow: game.currentPlayer == PlayerEnum.x
+                border: Border.all(color: leftPlayer.color, width: 5),
+                boxShadow: game.currentPlayer == leftPlayer
                     ? [
                         BoxShadow(
-                          color: PlayerEnum.x.color.withValues(alpha: 0.3),
+                          color: leftPlayer.color.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -37,13 +50,13 @@ class ScoreDisplayComponent extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Wrap(
                   children: List.generate(
-                    game.scoreX,
+                    leftScore,
                     (_) => SvgPicture.asset(
-                      PlayerEnum.x.assetPath,
+                      leftPlayer.assetPath,
                       width: 24,
                       height: 24,
                       colorFilter: ColorFilter.mode(
-                        PlayerEnum.x.color,
+                        leftPlayer.color,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -63,15 +76,15 @@ class ScoreDisplayComponent extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Container(
-              constraints: BoxConstraints(minHeight: 50),
-              padding: EdgeInsets.all(DSSpacing.xs),
+              constraints: const BoxConstraints(minHeight: 50),
+              padding: const EdgeInsets.all(DSSpacing.xs),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DSRadius.md),
-                border: Border.all(color: PlayerEnum.o.color, width: 5),
-                boxShadow: game.currentPlayer == PlayerEnum.o
+                border: Border.all(color: rightPlayer.color, width: 5),
+                boxShadow: game.currentPlayer == rightPlayer
                     ? [
                         BoxShadow(
-                          color: PlayerEnum.o.color.withValues(alpha: 0.3),
+                          color: rightPlayer.color.withValues(alpha: 0.3),
                           blurRadius: 8,
                           spreadRadius: 2,
                         ),
@@ -82,13 +95,13 @@ class ScoreDisplayComponent extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Wrap(
                   children: List.generate(
-                    game.scoreO,
+                    rightScore,
                     (_) => SvgPicture.asset(
-                      PlayerEnum.o.assetPath,
+                      rightPlayer.assetPath,
                       width: 24,
                       height: 24,
                       colorFilter: ColorFilter.mode(
-                        PlayerEnum.o.color,
+                        rightPlayer.color,
                         BlendMode.srcIn,
                       ),
                     ),
