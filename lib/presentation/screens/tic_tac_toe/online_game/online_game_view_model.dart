@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/data/models/network_connection_model.dart';
+import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
-import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 
 /// ViewModel para jogo online
 /// Constructor Injection: recebe IGameRepository via construtor
 class OnlineGameViewModel extends ChangeNotifier {
-  late TicTacToeGameModel _game;
+  late OnlineTicTacToeGameModel _game;
   final PlayerRole playerRole;
   final IGameRepository _gameRepository;
 
@@ -26,9 +26,9 @@ class OnlineGameViewModel extends ChangeNotifier {
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
-  TicTacToeGameModel get game => _game;
+  OnlineTicTacToeGameModel get game => _game;
 
-  void _update(TicTacToeGameModel newState) {
+  void _update(OnlineTicTacToeGameModel newState) {
     _game = newState;
     notifyListeners();
   }
@@ -45,7 +45,7 @@ class OnlineGameViewModel extends ChangeNotifier {
     required IGameRepository gameRepository,
     int? maxRounds,
   }) : _gameRepository = gameRepository {
-    _game = TicTacToeGameModel(maxRounds: maxRounds);
+    _game = OnlineTicTacToeGameModel(maxRounds: maxRounds);
     _update(_game.copyWith(currentPlayer: _currentPlayer));
     _setupNetworkCallbacks();
   }

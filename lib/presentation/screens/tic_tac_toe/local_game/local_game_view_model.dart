@@ -1,22 +1,22 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:jogo_da_velha/data/models/local_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/extensions/player_turn_extension.dart';
 
 class LocalGameViewModel extends ChangeNotifier {
-  late TicTacToeGameModel _game;
+  late LocalTicTacToeGameModel _game;
   static final Random _random = Random();
-  TicTacToeGameModel get game => _game;
+  LocalTicTacToeGameModel get game => _game;
 
-  void _update(TicTacToeGameModel newState) {
+  void _update(LocalTicTacToeGameModel newState) {
     _game = newState;
     notifyListeners();
   }
 
   LocalGameViewModel({required int maxRounds, required int timeLimitSeconds}) {
-    _game = TicTacToeGameModel(
+    _game = LocalTicTacToeGameModel(
       maxRounds: maxRounds,
       timeLimitSeconds: timeLimitSeconds,
     );

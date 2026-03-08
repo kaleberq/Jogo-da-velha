@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:jogo_da_velha/data/models/local_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/data/models/splash_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_data_source_channel_interface.dart';
@@ -15,18 +15,18 @@ class SplashViewModel extends ChangeNotifier {
     {DirectionEnum.row: 1, DirectionEnum.col: 1},
     {DirectionEnum.row: 2, DirectionEnum.col: 2},
   ];
-  TicTacToeGameModel get game => _game;
+  LocalTicTacToeGameModel get game => _game;
   SplashModel get state => _splashState;
   VoidCallback? onLineAnimationReady;
 
   late final IDeepLinkNavigator _deepLinkNavigator;
   late final IDeepLinkDataSourceChannel _deepLinkChannel;
-  late TicTacToeGameModel _game;
+  late LocalTicTacToeGameModel _game;
 
   SplashViewModel({
     required IDeepLinkDataSourceChannel deeplinkDataSourceChannel,
     required IDeepLinkNavigator navigator,
-    required TicTacToeGameModel ticTacToeGame,
+    required LocalTicTacToeGameModel ticTacToeGame,
   }) {
     _deepLinkChannel = deeplinkDataSourceChannel;
     _deepLinkNavigator = navigator;
@@ -40,7 +40,7 @@ class SplashViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  void _update(TicTacToeGameModel newState) {
+  void _update(LocalTicTacToeGameModel newState) {
     _game = newState;
     notifyListeners();
   }

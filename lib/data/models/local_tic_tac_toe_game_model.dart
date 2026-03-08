@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
-class TicTacToeGameModel {
+class LocalTicTacToeGameModel {
   static final Random _random = Random();
   final List<List<PlayerEnum>> board;
   final PlayerEnum currentPlayer;
@@ -15,8 +15,9 @@ class TicTacToeGameModel {
   final int maxRounds;
   final int timeLimitSeconds;
 
-  TicTacToeGameModel({int? maxRounds, int? timeLimitSeconds})
+  LocalTicTacToeGameModel({int? maxRounds, int? timeLimitSeconds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
+      // Para jogo local, o primeiro jogador pode ser aleatório
       currentPlayer = _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
       winner = null,
       winningLine = null,
@@ -27,7 +28,7 @@ class TicTacToeGameModel {
       maxRounds = maxRounds ?? 5,
       timeLimitSeconds = timeLimitSeconds ?? 10;
 
-  TicTacToeGameModel._internal({
+  LocalTicTacToeGameModel._internal({
     required this.board,
     required this.currentPlayer,
     required this.winner,
@@ -40,7 +41,7 @@ class TicTacToeGameModel {
     required this.timeLimitSeconds,
   });
 
-  TicTacToeGameModel copyWith({
+  LocalTicTacToeGameModel copyWith({
     List<List<PlayerEnum>>? board,
     PlayerEnum? currentPlayer,
     PlayerEnum? winner,
@@ -54,7 +55,7 @@ class TicTacToeGameModel {
     int? maxRounds,
     int? timeLimitSeconds,
   }) {
-    return TicTacToeGameModel._internal(
+    return LocalTicTacToeGameModel._internal(
       board: board ?? this.board,
       currentPlayer: currentPlayer ?? this.currentPlayer,
       winner: clearWinner ? null : (winner ?? this.winner),
