@@ -244,11 +244,14 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                   totalRounds: viewModel.game.maxRounds,
                 ),
                 ScoreDisplayComponent(
-                  game: viewModel.game,
+                  scoreO: viewModel.game.scoreO,
+                  scoreX: viewModel.game.scoreX,
+                  currentPlayer: viewModel.game.currentPlayer,
                   localPlayer: viewModel.myPlayer,
                 ),
                 GameBoardComponent(
-                  game: viewModel.game,
+                  board: viewModel.game.board,
+                  winningLine: viewModel.game.winningLine,
                   winningLineAnimation: _winningLineAnimation,
                   onCellTap:
                       ({required int rowIndex, required int columnIndex}) =>

@@ -197,9 +197,14 @@ class _LocalGameScreenState extends State<LocalGameScreen>
                   currentRound: viewModel.game.currentRound,
                   totalRounds: viewModel.game.maxRounds,
                 ),
-                ScoreDisplayComponent(game: viewModel.game),
+                ScoreDisplayComponent(
+                  scoreO: viewModel.game.scoreO,
+                  scoreX: viewModel.game.scoreX,
+                  currentPlayer: viewModel.game.currentPlayer,
+                ),
                 GameBoardComponent(
-                  game: viewModel.game,
+                  board: viewModel.game.board,
+                  winningLine: viewModel.game.winningLine,
                   winningLineAnimation: _winningLineAnimation,
                   borderAnimation: _borderAnimation,
                   onCellTap:

@@ -2,23 +2,27 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/data/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/animated_border_painter.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_overlay_component.dart';
 
 class GameBoardComponent extends StatelessWidget {
-  final TicTacToeGameModel game;
   final Animation<double> winningLineAnimation;
   final Animation<double>? borderAnimation;
+  final List<List<PlayerEnum>> board;
+  final WinningLineModel? winningLine;
+
   final Function({required int rowIndex, required int columnIndex})? onCellTap;
 
   const GameBoardComponent({
     super.key,
-    required this.game,
     required this.winningLineAnimation,
     this.borderAnimation,
     this.onCellTap,
+    required this.board,
+    required this.winningLine,
   });
 
   @override
@@ -45,7 +49,7 @@ class GameBoardComponent extends StatelessWidget {
                 children: [
                   RowComponent(
                     rowIndex: 0,
-                    row: game.board[0],
+                    row: board[0],
                     onCellTap:
                         ({required int rowIndex, required int columnIndex}) =>
                             onCellTap?.call(
@@ -56,7 +60,7 @@ class GameBoardComponent extends StatelessWidget {
                   DsDivider(),
                   RowComponent(
                     rowIndex: 1,
-                    row: game.board[1],
+                    row: board[1],
                     onCellTap:
                         ({required int rowIndex, required int columnIndex}) =>
                             onCellTap?.call(
@@ -67,7 +71,7 @@ class GameBoardComponent extends StatelessWidget {
                   DsDivider(),
                   RowComponent(
                     rowIndex: 2,
-                    row: game.board[2],
+                    row: board[2],
                     onCellTap:
                         ({required int rowIndex, required int columnIndex}) =>
                             onCellTap?.call(
@@ -78,12 +82,12 @@ class GameBoardComponent extends StatelessWidget {
                 ],
               ),
             ),
-            if (game.winningLine != null)
+            if (winningLine != null)
               AnimatedBuilder(
                 animation: winningLineAnimation,
                 builder: (context, child) {
                   return WinningLineOverlayComponent(
-                    winningLine: game.winningLine,
+                    winningLine: winningLine,
                     boardSize: size,
                     animationProgress: winningLineAnimation.value,
                     lineColor: DSColors.resolveBackgroundColor(context),

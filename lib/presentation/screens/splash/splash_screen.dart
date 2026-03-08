@@ -103,7 +103,8 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ),
                       child: GameBoardComponent(
-                        game: widget.viewModel.game,
+                        board: widget.viewModel.game.board,
+                        winningLine: widget.viewModel.game.winningLine,
                         winningLineAnimation: _lineAnimation,
                       ),
                     );
