@@ -72,7 +72,6 @@
   "timeLimitSeconds": "Tempo Limite (segundos)",
   "chooseTimeLimitRange": "Escolha entre 10 e 60 segundos",
   "scanQrCodeToConnect": "Escaneie o QR Code para conectar",
-  "connecting": "Conectando...",
   "scanQrCode": "Escanear QR Code",
   "openingScanner": "Abrindo scanner..."
 }

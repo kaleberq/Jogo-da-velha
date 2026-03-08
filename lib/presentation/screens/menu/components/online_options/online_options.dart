@@ -199,70 +199,87 @@ class _OnlineOptionsState extends State<OnlineOptions> {
                   ),
                 ),
                 if (!state.hasQrCode)
-                  Column(
-                    children: [
-                      SizedBox(height: DSSpacing.md),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(DSSpacing.lg),
-                          child: Column(
-                            spacing: DSSpacing.md,
-                            children: [
-                              Row(
-                                spacing: DSSpacing.md,
-                                children: [
-                                  Icon(Icons.wifi_find, size: 48),
-                                  Expanded(
-                                    child: Text(
-                                      context.l10n.connectRoomTitle,
-                                      style: DSTypographyMedium.labelLarge,
-                                    ),
+                  Card(
+                    child: GestureDetector(
+                      onTap: () => _openQrScanner(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(DSSpacing.lg),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          spacing: DSSpacing.md,
+                          children: [
+                            Row(
+                              spacing: DSSpacing.md,
+                              children: [
+                                Icon(Icons.wifi_find, size: 48),
+                                Expanded(
+                                  child: Column(
+                                    spacing: DSSpacing.xs,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        context.l10n.connectRoomTitle,
+                                        style: DSTypographyMedium.labelLarge,
+                                      ),
+
+                                      Text(
+                                        context.l10n.scanQrCode,
+                                        style: DSTypographyRegular.labelSmall,
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: state.isConnecting
-                                      ? null
-                                      : _openQrScanner,
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: DSSpacing.md,
+                                ),
+                                if (!state.hasQrCode)
+                                  const Icon(Icons.arrow_forward_ios),
+                              ],
+                            ),
+                            if (state.hasQrCode && state.qrCodeBytes != null)
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      context.l10n.scanQrCodeToConnect,
+                                      style: DSTypographyMedium.labelMedium,
+                                      textAlign: TextAlign.center,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        DSRadius.sm,
+                                    const SizedBox(height: DSSpacing.md),
+                                    Container(
+                                      padding: const EdgeInsets.all(
+                                        DSSpacing.md,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(
+                                          DSRadius.md,
+                                        ),
+                                        border: Border.all(
+                                          color: DSColors.resolveGreyColor(
+                                            context,
+                                          ),
+                                          width: 2,
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Image.memory(
+                                        state.qrCodeBytes!,
+                                        width: 250,
+                                        height: 250,
+                                        fit: BoxFit.contain,
                                       ),
                                     ),
-                                  ),
-                                  icon: state.isConnecting
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(Icons.qr_code_scanner),
-                                  label: state.isConnecting
-                                      ? Text(
-                                          context.l10n.connecting,
-                                          style:
-                                              DSTypographyRegular.labelMedium,
-                                        )
-                                      : Text(
-                                          context.l10n.scanQrCode,
-                                          style:
-                                              DSTypographyRegular.labelMedium,
-                                        ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
               ],
             ),

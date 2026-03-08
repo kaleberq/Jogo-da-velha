@@ -377,12 +377,6 @@ abstract class AppLocalizations {
   /// **'Scan the QR Code to connect'**
   String get scanQrCodeToConnect;
 
-  /// No description provided for @connecting.
-  ///
-  /// In en, this message translates to:
-  /// **'Connecting...'**
-  String get connecting;
-
   /// No description provided for @scanQrCode.
   ///
   /// In en, this message translates to:

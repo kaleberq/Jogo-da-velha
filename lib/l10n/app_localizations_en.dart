@@ -156,9 +156,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanQrCodeToConnect => 'Scan the QR Code to connect';
 
   @override
-  String get connecting => 'Connecting...';
-
-  @override
   String get scanQrCode => 'Scan QR Code';
 
   @override
