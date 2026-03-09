@@ -13,9 +13,8 @@ class OnlineTicTacToeGameModel {
   final int scoreO;
   final int currentRound;
   final int maxRounds;
-  final int timeLimitSeconds;
 
-  OnlineTicTacToeGameModel({int? maxRounds, int? timeLimitSeconds})
+  OnlineTicTacToeGameModel({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
       currentPlayer = _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
       winner = null,
@@ -24,8 +23,7 @@ class OnlineTicTacToeGameModel {
       scoreX = 0,
       scoreO = 0,
       currentRound = 1,
-      maxRounds = maxRounds ?? 5,
-      timeLimitSeconds = timeLimitSeconds ?? 10;
+      maxRounds = maxRounds ?? 5;
 
   OnlineTicTacToeGameModel._internal({
     required this.board,
@@ -37,7 +35,6 @@ class OnlineTicTacToeGameModel {
     required this.scoreO,
     required this.currentRound,
     required this.maxRounds,
-    required this.timeLimitSeconds,
   });
 
   OnlineTicTacToeGameModel copyWith({
@@ -52,7 +49,6 @@ class OnlineTicTacToeGameModel {
     int? scoreO,
     int? currentRound,
     int? maxRounds,
-    int? timeLimitSeconds,
   }) {
     return OnlineTicTacToeGameModel._internal(
       board: board ?? this.board,
@@ -64,7 +60,6 @@ class OnlineTicTacToeGameModel {
       scoreO: scoreO ?? this.scoreO,
       currentRound: currentRound ?? this.currentRound,
       maxRounds: maxRounds ?? this.maxRounds,
-      timeLimitSeconds: timeLimitSeconds ?? this.timeLimitSeconds,
     );
   }
 }
