@@ -175,6 +175,16 @@ class NetworkService implements INetworkService {
   void sendConfig({required int maxRounds}) {
     _connectionManager?.sendConfig(maxRounds);
   }
+
+  @override
+  void sendGameState(Map<String, dynamic> state) {
+    _connectionManager?.sendGameState(state);
+  }
+
+  @override
+  void sendRequestMove(int row, int col) {
+    _connectionManager?.sendRequestMove(row, col);
+  }
 }
 
 /// Gerencia uma conexão de rede ativa
@@ -268,6 +278,23 @@ class NetworkConnectionManager {
       'col': col,
       'player':
           player.name, // Converte enum para String (retorna "x", "o" ou "none")
+    });
+    sendMessage(data);
+  }
+
+  void sendGameState(Map<String, dynamic> state) {
+    final data = jsonEncode({
+      'type': 'gameState',
+      ...state,
+    });
+    sendMessage(data);
+  }
+
+  void sendRequestMove(int row, int col) {
+    final data = jsonEncode({
+      'type': 'requestMove',
+      'row': row,
+      'col': col,
     });
     sendMessage(data);
   }

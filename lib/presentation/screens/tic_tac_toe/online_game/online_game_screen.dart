@@ -69,6 +69,13 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         _checkGameOver();
       }
     };
+    viewModel.onGameStateReceived = () {
+      if (mounted) {
+        _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
+        _checkGameOver();
+        setState(() {});
+      }
+    };
     viewModel.onResetReceived = () {
       if (mounted) {
         viewModel.resetAll();
@@ -105,15 +112,17 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       return;
     }
 
-    final playerWhoMoved = viewModel.game.currentPlayer;
-    if (viewModel.makeMove(rowIndex, columnIndex)) {
-      viewModel.sendMove(
-        row: rowIndex,
-        col: columnIndex,
-        player: playerWhoMoved,
-      );
+    if (viewModel.playerRole.isHost) {
+      // Host: aplica localmente e envia estado completo (autoridade).
+      if (viewModel.makeMove(rowIndex, columnIndex)) {
+        viewModel.sendCurrentGameState();
+        _isMyTurn = false;
+        _checkGameOver();
+      }
+    } else {
+      // Cliente: envia apenas a jogada; host valida e envia estado.
+      viewModel.sendRequestMove(rowIndex, columnIndex);
       _isMyTurn = false;
-      _checkGameOver();
     }
   }
 

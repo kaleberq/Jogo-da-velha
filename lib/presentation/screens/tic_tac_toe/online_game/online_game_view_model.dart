@@ -6,11 +6,11 @@ import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
+import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
-/// ViewModel para jogo online
-/// Constructor Injection: recebe IGameRepository via construtor
+/// ViewModel para jogo online.
+/// Não conhece serialização: envia/recebe apenas o modelo; o repositório serializa.
 class OnlineGameViewModel extends ChangeNotifier {
   late OnlineTicTacToeGameModel _game;
   final PlayerRole playerRole;
@@ -22,6 +22,7 @@ class OnlineGameViewModel extends ChangeNotifier {
   // Callbacks para a UI
   VoidCallback? onOpponentDisconnected;
   Function(String)? onError;
+  VoidCallback? onGameStateReceived;
   Function(int, int, PlayerEnum)? onMoveReceived;
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
@@ -39,7 +40,7 @@ class OnlineGameViewModel extends ChangeNotifier {
   /// Jogador que o usuário local está usando (X ou O).
   PlayerEnum get myPlayer => _currentPlayer;
 
-  /// Constructor Injection: IGameRepository é obrigatório via construtor
+  /// Constructor Injection: IOnlineGameRepository via construtor
   OnlineGameViewModel({
     required this.playerRole,
     required IGameRepository gameRepository,
@@ -52,6 +53,10 @@ class OnlineGameViewModel extends ChangeNotifier {
 
   void _setupNetworkCallbacks() {
     _gameRepository.onMessageReceived = _handleNetworkMessage;
+    _gameRepository.onGameStateReceived = (model) {
+      _update(model);
+      onGameStateReceived?.call();
+    };
     _gameRepository.onConnectionStatusChanged = (statusString) {
       final status = ConnectionStatusEnum.values.firstWhere(
         (e) => e.name == statusString,
@@ -93,6 +98,18 @@ class OnlineGameViewModel extends ChangeNotifier {
       final type = data['type'] as String;
 
       switch (type) {
+        case 'requestMove':
+          if (playerRole.isHost) {
+            final row = data['row'] as int;
+            final col = data['col'] as int;
+            if (_game.currentPlayer == PlayerEnum.o &&
+                !_game.isGameOver &&
+                _game.board[row][col] == PlayerEnum.none) {
+              makeMoveWithPlayer(row, col, PlayerEnum.o);
+              _gameRepository.sendCurrentGameState(_game);
+            }
+          }
+          break;
         case 'move':
           final row = data['row'] as int;
           final col = data['col'] as int;
@@ -128,6 +145,14 @@ class OnlineGameViewModel extends ChangeNotifier {
     required PlayerEnum player,
   }) {
     _gameRepository.sendMove(row: row, col: col, player: player);
+  }
+
+  void sendCurrentGameState() {
+    _gameRepository.sendCurrentGameState(_game);
+  }
+
+  void sendRequestMove(int row, int col) {
+    _gameRepository.sendRequestMove(row, col);
   }
 
   void sendReset() {
@@ -216,6 +241,9 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
 
     _game.board[row][col] = _game.currentPlayer;
+    final nextPlayer = _game.currentPlayer == PlayerEnum.x
+        ? PlayerEnum.o
+        : PlayerEnum.x;
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
@@ -224,14 +252,15 @@ class OnlineGameViewModel extends ChangeNotifier {
           winner: _game.currentPlayer,
           winningLine: winningLineResult,
           isGameOver: true,
+          currentPlayer: nextPlayer,
         ),
       );
       return true;
     } else if (_checkDraw()) {
-      _update(_game.copyWith(isGameOver: true));
+      _update(_game.copyWith(isGameOver: true, currentPlayer: nextPlayer));
       return true;
     } else {
-      _update(_game.copyWith(currentPlayer: _currentPlayer));
+      _update(_game.copyWith(currentPlayer: nextPlayer));
       return true;
     }
   }
@@ -244,6 +273,7 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
 
     _game.board[row][col] = player;
+    final nextPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
 
     final winningLineResult = _checkWinnerWithPlayer(row, col, player);
     if (winningLineResult != null) {
@@ -252,15 +282,15 @@ class OnlineGameViewModel extends ChangeNotifier {
           winner: player,
           winningLine: winningLineResult,
           isGameOver: true,
-          currentPlayer: _currentPlayer,
+          currentPlayer: nextPlayer,
         ),
       );
       return true;
     } else if (_checkDraw()) {
-      _update(_game.copyWith(isGameOver: true, currentPlayer: _currentPlayer));
+      _update(_game.copyWith(isGameOver: true, currentPlayer: nextPlayer));
       return true;
     } else {
-      _update(_game);
+      _update(_game.copyWith(currentPlayer: nextPlayer));
       return true;
     }
   }

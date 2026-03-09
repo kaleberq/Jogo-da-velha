@@ -20,4 +20,6 @@ abstract class INetworkService {
   void sendReset();
   void sendNextRound();
   void sendConfig({required int maxRounds});
+  void sendGameState(Map<String, dynamic> state);
+  void sendRequestMove(int row, int col);
 }

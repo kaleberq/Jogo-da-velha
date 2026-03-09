@@ -19,4 +19,8 @@ abstract class IGameRepository {
   void sendReset();
   void sendNextRound();
   void sendConfig({required int maxRounds});
+  void sendRequestMove(int row, int col);
+  void sendGameState(Map<String, dynamic> state);
+  set onGameStateReceived(void Function(dynamic)? callback);
+  void sendCurrentGameState(dynamic game);
 }
