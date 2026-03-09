@@ -62,13 +62,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         ).showSnackBar(SnackBar(content: Text(error)));
       }
     };
-    viewModel.onMoveReceived = (row, col, player) {
-      if (mounted) {
-        viewModel.makeMoveWithPlayer(row, col, player);
-        _isMyTurn = true;
-        _checkGameOver();
-      }
-    };
     viewModel.onGameStateReceived = () {
       if (mounted) {
         _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;

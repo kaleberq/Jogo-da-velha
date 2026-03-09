@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:jogo_da_velha/data/models/network_connection_model.dart';
 import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
@@ -23,7 +21,6 @@ class OnlineGameViewModel extends ChangeNotifier {
   VoidCallback? onOpponentDisconnected;
   Function(String)? onError;
   VoidCallback? onGameStateReceived;
-  Function(int, int, PlayerEnum)? onMoveReceived;
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
@@ -40,7 +37,7 @@ class OnlineGameViewModel extends ChangeNotifier {
   /// Jogador que o usuário local está usando (X ou O).
   PlayerEnum get myPlayer => _currentPlayer;
 
-  /// Constructor Injection: IOnlineGameRepository via construtor
+  /// Constructor Injection: IGameRepository via construtor
   OnlineGameViewModel({
     required this.playerRole,
     required IGameRepository gameRepository,
@@ -52,11 +49,16 @@ class OnlineGameViewModel extends ChangeNotifier {
   }
 
   void _setupNetworkCallbacks() {
-    _gameRepository.onMessageReceived = _handleNetworkMessage;
+    _gameRepository.onMessageReceived = _handleControlMessage;
     _gameRepository.onGameStateReceived = (model) {
       _update(model);
       onGameStateReceived?.call();
     };
+    _gameRepository.onRequestMove = _handleRequestMove;
+    _gameRepository.onResetReceived = () => onResetReceived?.call();
+    _gameRepository.onNextRoundReceived = () => onNextRoundReceived?.call();
+    _gameRepository.onConfigReceived = (maxRounds) =>
+        onConfigReceived?.call(maxRounds);
     _gameRepository.onConnectionStatusChanged = (statusString) {
       final status = ConnectionStatusEnum.values.firstWhere(
         (e) => e.name == statusString,
@@ -81,72 +83,24 @@ class OnlineGameViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _handleNetworkMessage(String message) {
+  void _handleControlMessage(String message) {
     if (message == 'DISCONNECTED') {
       onOpponentDisconnected?.call();
+    }
+  }
+
+  void _handleRequestMove(int row, int col) {
+    if (!playerRole.isHost) return;
+    if (_game.currentPlayer != PlayerEnum.o ||
+        _game.isGameOver ||
+        _game.board[row][col] != PlayerEnum.none) {
       return;
     }
-
-    if (message == 'SERVER_CONNECTED' ||
-        message == 'CLIENT_CONNECTED' ||
-        message == 'CONNECTED') {
-      return;
-    }
-
-    try {
-      final data = jsonDecode(message);
-      final type = data['type'] as String;
-
-      switch (type) {
-        case 'requestMove':
-          if (playerRole.isHost) {
-            final row = data['row'] as int;
-            final col = data['col'] as int;
-            if (_game.currentPlayer == PlayerEnum.o &&
-                !_game.isGameOver &&
-                _game.board[row][col] == PlayerEnum.none) {
-              makeMoveWithPlayer(row, col, PlayerEnum.o);
-              _gameRepository.sendCurrentGameState(_game);
-            }
-          }
-          break;
-        case 'move':
-          final row = data['row'] as int;
-          final col = data['col'] as int;
-          final playerStr = data['player'] as String;
-
-          // Converte String de volta para PlayerEnum usando byName
-          final player = PlayerEnum.values.byName(playerStr);
-
-          if (player != PlayerEnum.none) {
-            onMoveReceived?.call(row, col, player);
-          }
-          break;
-        case 'reset':
-          onResetReceived?.call();
-          break;
-        case 'nextRound':
-          onNextRoundReceived?.call();
-          break;
-        case 'config':
-          final maxRounds = data['maxRounds'] as int;
-          onConfigReceived?.call(maxRounds);
-          break;
-      }
-    } catch (e) {
-      // Ignora mensagens que não são JSON válido
-    }
+    makeMoveWithPlayer(row, col, PlayerEnum.o);
+    _gameRepository.sendCurrentGameState(_game);
   }
 
   // Métodos para enviar eventos de rede
-  void sendMove({
-    required int row,
-    required int col,
-    required PlayerEnum player,
-  }) {
-    _gameRepository.sendMove(row: row, col: col, player: player);
-  }
-
   void sendCurrentGameState() {
     _gameRepository.sendCurrentGameState(_game);
   }

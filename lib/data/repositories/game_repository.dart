@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
 import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
 import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
 /// Implementação concreta do IGameRepository.
-/// Usa toJson/fromJson do modelo (como gd-app-4), sem serializer separado.
+/// Serialização do estado do jogo fica no DTO; repositório usa DTO para enviar/receber.
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;
   final IQrCodeGeneratorService _qrCodeGeneratorService;
@@ -17,6 +17,10 @@ class GameRepository implements IGameRepository {
 
   Function(String)? _onMessageReceived;
   void Function(OnlineTicTacToeGameModel)? _onGameStateReceived;
+  void Function(int, int)? _onRequestMove;
+  void Function()? _onResetReceived;
+  void Function()? _onNextRoundReceived;
+  void Function(int)? _onConfigReceived;
 
   GameRepository({
     required INetworkService networkService,
@@ -38,10 +42,25 @@ class GameRepository implements IGameRepository {
       final data = jsonDecode(message);
       final type = data['type'] as String?;
       if (type == 'gameState') {
-        final model = OnlineTicTacToeGameModel.fromJson(
+        final model = OnlineTicTacToeGameDTO.fromJson(
           Map<String, dynamic>.from(data),
-        );
+        ).toModel();
         _onGameStateReceived?.call(model);
+      } else if (type == 'requestMove') {
+        final row = data['row'] as int?;
+        final col = data['col'] as int?;
+        if (row != null && col != null) {
+          _onRequestMove?.call(row, col);
+        }
+      } else if (type == 'reset') {
+        _onResetReceived?.call();
+      } else if (type == 'nextRound') {
+        _onNextRoundReceived?.call();
+      } else if (type == 'config') {
+        final maxRounds = data['maxRounds'] as int?;
+        if (maxRounds != null) {
+          _onConfigReceived?.call(maxRounds);
+        }
       } else {
         _onMessageReceived?.call(message);
       }
@@ -58,6 +77,26 @@ class GameRepository implements IGameRepository {
   @override
   set onGameStateReceived(void Function(OnlineTicTacToeGameModel)? callback) {
     _onGameStateReceived = callback;
+  }
+
+  @override
+  set onRequestMove(void Function(int row, int col)? callback) {
+    _onRequestMove = callback;
+  }
+
+  @override
+  set onResetReceived(void Function()? callback) {
+    _onResetReceived = callback;
+  }
+
+  @override
+  set onNextRoundReceived(void Function()? callback) {
+    _onNextRoundReceived = callback;
+  }
+
+  @override
+  set onConfigReceived(void Function(int maxRounds)? callback) {
+    _onConfigReceived = callback;
   }
 
   @override
@@ -100,15 +139,6 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendMove({
-    required int row,
-    required int col,
-    required PlayerEnum player,
-  }) {
-    _networkService.sendMove(row: row, col: col, player: player);
-  }
-
-  @override
   void sendReset() {
     _networkService.sendReset();
   }
@@ -134,9 +164,9 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendCurrentGameState(dynamic game) {
-    if (game is OnlineTicTacToeGameModel) {
-      _networkService.sendGameState(game.toJson());
-    }
+  void sendCurrentGameState(OnlineTicTacToeGameModel game) {
+    _networkService.sendGameState(
+      OnlineTicTacToeGameDTO.fromModel(game).toJson(),
+    );
   }
 }
