@@ -44,7 +44,8 @@ class OnlineGameViewModel extends ChangeNotifier {
     int? maxRounds,
   }) : _gameRepository = gameRepository {
     _game = OnlineTicTacToeGameModel(maxRounds: maxRounds);
-    _update(_game.copyWith(currentPlayer: _currentPlayer));
+    // Host sempre começa a primeira rodada (X).
+    _update(_game.copyWith(currentPlayer: PlayerEnum.x));
     _setupNetworkCallbacks();
   }
 
@@ -98,6 +99,8 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
     makeMoveWithPlayer(row, col, PlayerEnum.o);
     _gameRepository.sendCurrentGameState(_game);
+    // Notifica a UI do host (ela não recebe a mensagem que acabou de enviar).
+    onGameStateReceived?.call();
   }
 
   // Métodos para enviar eventos de rede

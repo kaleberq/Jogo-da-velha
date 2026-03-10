@@ -81,7 +81,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         Navigator.of(context).pop(); // fecha o modal no cliente
 
         viewModel.nextRound();
-        _isMyTurn = viewModel.playerRole.isHost;
+        _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
         _hideRoundEndMessage();
 
         setState(() {});
@@ -91,7 +91,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       if (mounted) {
         viewModel.setMaxRounds(maxRounds);
         setState(() {
-          _isMyTurn = viewModel.playerRole.isHost;
+          _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
         });
       }
     };
@@ -191,7 +191,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
           _winningLineAnimationController.reset();
           viewModel.sendNextRound();
           viewModel.nextRound();
-          _isMyTurn = viewModel.playerRole.isHost;
+          _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
 
           Navigator.of(context).pop();
           setState(() {});

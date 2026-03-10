@@ -1,9 +1,7 @@
-import 'dart:math';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
 class OnlineTicTacToeGameModel {
-  static final Random _random = Random();
   final List<List<PlayerEnum>> board;
   final PlayerEnum currentPlayer;
   final PlayerEnum? winner;
@@ -16,7 +14,7 @@ class OnlineTicTacToeGameModel {
 
   OnlineTicTacToeGameModel({int? maxRounds})
     : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
-      currentPlayer = _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
+      currentPlayer = PlayerEnum.x,
       winner = null,
       winningLine = null,
       isGameOver = false,
