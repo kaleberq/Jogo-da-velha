@@ -7,46 +7,55 @@ import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 
-/// ViewModel para jogo online.
-/// Não conhece serialização: envia/recebe apenas o modelo; o repositório serializa.
 class OnlineGameViewModel extends ChangeNotifier {
   late OnlineTicTacToeGameModel _game;
   final PlayerRole playerRole;
   final IGameRepository _gameRepository;
-
-  // Estado da conexão gerenciado pelo ViewModel
   final NetworkConnectionModel _connectionState = NetworkConnectionModel();
-
-  // Callbacks para a UI
   VoidCallback? onOpponentDisconnected;
   Function(String)? onError;
   VoidCallback? onGameStateReceived;
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
-  OnlineTicTacToeGameModel get game => _game;
-
-  void _update(OnlineTicTacToeGameModel newState) {
-    _game = newState;
-    notifyListeners();
-  }
 
   PlayerEnum get _currentPlayer =>
       playerRole.isHost ? PlayerEnum.x : PlayerEnum.o;
 
-  /// Jogador que o usuário local está usando (X ou O).
   PlayerEnum get myPlayer => _currentPlayer;
 
-  /// Constructor Injection: IGameRepository via construtor
+  OnlineTicTacToeGameModel get game => _game;
+
+  bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
+
+  PlayerEnum? get overallWinner {
+    if (_game.scoreX > _game.scoreO) {
+      return PlayerEnum.x;
+    } else if (_game.scoreO > _game.scoreX) {
+      return PlayerEnum.o;
+    }
+    return null;
+  }
+
   OnlineGameViewModel({
     required this.playerRole,
     required IGameRepository gameRepository,
     int? maxRounds,
   }) : _gameRepository = gameRepository {
     _game = OnlineTicTacToeGameModel(maxRounds: maxRounds);
-    // Host sempre começa a primeira rodada (X).
     _update(_game.copyWith(currentPlayer: PlayerEnum.x));
     _setupNetworkCallbacks();
+  }
+
+  @override
+  void dispose() {
+    _gameRepository.disconnect();
+    super.dispose();
+  }
+
+  void _update(OnlineTicTacToeGameModel newState) {
+    _game = newState;
+    notifyListeners();
   }
 
   void _setupNetworkCallbacks() {
@@ -99,11 +108,9 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
     makeMoveWithPlayer(row, col, PlayerEnum.o);
     _gameRepository.sendCurrentGameState(_game);
-    // Notifica a UI do host (ela não recebe a mensagem que acabou de enviar).
     onGameStateReceived?.call();
   }
 
-  // Métodos para enviar eventos de rede
   void sendCurrentGameState() {
     _gameRepository.sendCurrentGameState(_game);
   }
@@ -179,17 +186,6 @@ class OnlineGameViewModel extends ChangeNotifier {
         ),
       );
     }
-  }
-
-  bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
-
-  PlayerEnum? get overallWinner {
-    if (_game.scoreX > _game.scoreO) {
-      return PlayerEnum.x;
-    } else if (_game.scoreO > _game.scoreX) {
-      return PlayerEnum.o;
-    }
-    return null;
   }
 
   bool makeMove(int row, int col) {
@@ -329,11 +325,5 @@ class OnlineGameViewModel extends ChangeNotifier {
       }
     }
     return true;
-  }
-
-  @override
-  void dispose() {
-    _gameRepository.disconnect();
-    super.dispose();
   }
 }

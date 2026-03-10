@@ -8,13 +8,12 @@ import 'package:jogo_da_velha/domain/interfaces/services/network_service_interfa
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
 import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
-/// Implementação concreta do IGameRepository.
-/// Serialização do estado do jogo fica no DTO; repositório usa DTO para enviar/receber.
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;
   final IQrCodeGeneratorService _qrCodeGeneratorService;
   final int _port = 8080;
 
+  //TODO pra que serve esses metodos abaixo?
   Function(String)? _onMessageReceived;
   void Function(OnlineTicTacToeGameModel)? _onGameStateReceived;
   void Function(int, int)? _onRequestMove;
