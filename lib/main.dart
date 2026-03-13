@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_design_system/themes/ds_theme.dart';
 import 'package:jogo_da_velha/data/channels/deep_link_data_source_channel.dart';
-import 'package:jogo_da_velha/data/models/local_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/local_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/data/repositories/game_repository.dart';
 import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/data/services/qr_code_generator_service.dart';

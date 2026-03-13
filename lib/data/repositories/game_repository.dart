@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
-import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
-import 'package:jogo_da_velha/data/models/host_room_model.dart';
+import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;

@@ -1,5 +1,5 @@
 import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 
@@ -96,16 +96,11 @@ class OnlineTicTacToeGameModel {
   /// Converte modelo para DTO (ex.: para enviar pela rede).
   OnlineTicTacToeGameDTO toDto() {
     return OnlineTicTacToeGameDTO(
-      board: board
-          .map((row) => row.map((c) => c.name).toList())
-          .toList(),
+      board: board.map((row) => row.map((c) => c.name).toList()).toList(),
       currentPlayer: currentPlayer.name,
       winner: winner?.name,
       winningLine: winningLine != null
-          ? {
-              'type': winningLine!.type.name,
-              'index': winningLine!.index,
-            }
+          ? {'type': winningLine!.type.name, 'index': winningLine!.index}
           : null,
       isGameOver: isGameOver,
       scoreX: scoreX,

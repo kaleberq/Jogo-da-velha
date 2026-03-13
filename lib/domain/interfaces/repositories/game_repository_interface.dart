@@ -1,5 +1,5 @@
-import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/data/models/host_room_model.dart';
+import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/host_room_model.dart';
 
 /// Interface/abstração do Repository
 abstract class IGameRepository {
