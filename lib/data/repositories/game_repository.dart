@@ -41,9 +41,10 @@ class GameRepository implements IGameRepository {
       final data = jsonDecode(message);
       final type = data['type'] as String?;
       if (type == 'gameState') {
-        final model = OnlineTicTacToeGameDTO.fromJson(
+        final dto = OnlineTicTacToeGameDTO.fromJson(
           Map<String, dynamic>.from(data),
-        ).toModel();
+        );
+        final model = OnlineTicTacToeGameModel.fromDto(dto);
         _onGameStateReceived?.call(model);
       } else if (type == 'requestMove') {
         final row = data['row'] as int?;
@@ -165,7 +166,7 @@ class GameRepository implements IGameRepository {
   @override
   void sendCurrentGameState(OnlineTicTacToeGameModel game) {
     _networkService.sendGameState(
-      OnlineTicTacToeGameDTO.fromModel(game).toJson(),
+      game.toDto().toJson(),
     );
   }
 }

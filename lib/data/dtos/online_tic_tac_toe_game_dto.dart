@@ -1,9 +1,4 @@
-import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
-
-/// DTO do estado do jogo online. Responsável por toJson/fromJson (transporte).
+/// DTO do estado do jogo online. Responsável apenas por toJson/fromJson (transporte).
 class OnlineTicTacToeGameDTO {
   final List<List<String>> board;
   final String currentPlayer;
@@ -67,57 +62,6 @@ class OnlineTicTacToeGameDTO {
       scoreO: json['scoreO'] as int,
       currentRound: json['currentRound'] as int,
       maxRounds: json['maxRounds'] as int,
-    );
-  }
-
-  /// Cria DTO a partir do modelo (para enviar).
-  factory OnlineTicTacToeGameDTO.fromModel(OnlineTicTacToeGameModel model) {
-    return OnlineTicTacToeGameDTO(
-      board: model.board.map((row) => row.map((c) => c.name).toList()).toList(),
-      currentPlayer: model.currentPlayer.name,
-      winner: model.winner?.name,
-      winningLine: model.winningLine != null
-          ? {
-              'type': model.winningLine!.type.name,
-              'index': model.winningLine!.index,
-            }
-          : null,
-      isGameOver: model.isGameOver,
-      scoreX: model.scoreX,
-      scoreO: model.scoreO,
-      currentRound: model.currentRound,
-      maxRounds: model.maxRounds,
-    );
-  }
-
-  /// Converte DTO para modelo (ao receber).
-  OnlineTicTacToeGameModel toModel() {
-    final boardModel = board
-        .map<List<PlayerEnum>>(
-          (row) =>
-              row.map<PlayerEnum>((c) => PlayerEnum.values.byName(c)).toList(),
-        )
-        .toList();
-
-    WinningLineModel? winningLineModel;
-    if (winningLine != null) {
-      final type = WinningLineEnum.values.byName(
-        winningLine!['type'] as String,
-      );
-      final index = winningLine!['index'] as int?;
-      winningLineModel = WinningLineModel(type: type, index: index);
-    }
-
-    return OnlineTicTacToeGameModel.fromValues(
-      board: boardModel,
-      currentPlayer: PlayerEnum.values.byName(currentPlayer),
-      winner: winner != null ? PlayerEnum.values.byName(winner!) : null,
-      winningLine: winningLineModel,
-      isGameOver: isGameOver,
-      scoreX: scoreX,
-      scoreO: scoreO,
-      currentRound: currentRound,
-      maxRounds: maxRounds,
     );
   }
 }

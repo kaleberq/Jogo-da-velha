@@ -1,5 +1,7 @@
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
 import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 
 class OnlineTicTacToeGameModel {
   final List<List<PlayerEnum>> board;
@@ -52,6 +54,59 @@ class OnlineTicTacToeGameModel {
       currentPlayer: currentPlayer,
       winner: winner,
       winningLine: winningLine,
+      isGameOver: isGameOver,
+      scoreX: scoreX,
+      scoreO: scoreO,
+      currentRound: currentRound,
+      maxRounds: maxRounds,
+    );
+  }
+
+  /// Cria modelo a partir do DTO (ex.: ao receber da rede).
+  factory OnlineTicTacToeGameModel.fromDto(OnlineTicTacToeGameDTO dto) {
+    final boardModel = dto.board
+        .map<List<PlayerEnum>>(
+          (row) =>
+              row.map<PlayerEnum>((c) => PlayerEnum.values.byName(c)).toList(),
+        )
+        .toList();
+
+    WinningLineModel? winningLineModel;
+    if (dto.winningLine != null) {
+      final type = WinningLineEnum.values.byName(
+        dto.winningLine!['type'] as String,
+      );
+      final index = dto.winningLine!['index'] as int?;
+      winningLineModel = WinningLineModel(type: type, index: index);
+    }
+
+    return OnlineTicTacToeGameModel.fromValues(
+      board: boardModel,
+      currentPlayer: PlayerEnum.values.byName(dto.currentPlayer),
+      winner: dto.winner != null ? PlayerEnum.values.byName(dto.winner!) : null,
+      winningLine: winningLineModel,
+      isGameOver: dto.isGameOver,
+      scoreX: dto.scoreX,
+      scoreO: dto.scoreO,
+      currentRound: dto.currentRound,
+      maxRounds: dto.maxRounds,
+    );
+  }
+
+  /// Converte modelo para DTO (ex.: para enviar pela rede).
+  OnlineTicTacToeGameDTO toDto() {
+    return OnlineTicTacToeGameDTO(
+      board: board
+          .map((row) => row.map((c) => c.name).toList())
+          .toList(),
+      currentPlayer: currentPlayer.name,
+      winner: winner?.name,
+      winningLine: winningLine != null
+          ? {
+              'type': winningLine!.type.name,
+              'index': winningLine!.index,
+            }
+          : null,
       isGameOver: isGameOver,
       scoreX: scoreX,
       scoreO: scoreO,
