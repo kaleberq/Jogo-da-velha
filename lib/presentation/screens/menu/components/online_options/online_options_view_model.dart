@@ -6,7 +6,7 @@ import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
 import 'package:jogo_da_velha/domain/enums/online_options_flow_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
-import 'package:jogo_da_velha/domain/models/host_room_model.dart';
+import 'package:jogo_da_velha/data/models/host_room_model.dart';
 import 'package:jogo_da_velha/presentation/screens/menu/components/online_options/online_options_state.dart';
 
 /// Callback de erro da UI. Recebe mensagem e opcionalmente stackTrace.

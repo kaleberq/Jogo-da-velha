@@ -6,7 +6,7 @@ import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
-import 'package:jogo_da_velha/domain/models/host_room_model.dart';
+import 'package:jogo_da_velha/data/models/host_room_model.dart';
 
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;
@@ -165,8 +165,6 @@ class GameRepository implements IGameRepository {
 
   @override
   void sendCurrentGameState(OnlineTicTacToeGameModel game) {
-    _networkService.sendGameState(
-      game.toDto().toJson(),
-    );
+    _networkService.sendGameState(game.toDto().toJson());
   }
 }
