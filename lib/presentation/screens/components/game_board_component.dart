@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
-import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/presentation/screens/components/animated_border_painter.dart';
 import 'package:jogo_da_velha/presentation/screens/components/row_component.dart';

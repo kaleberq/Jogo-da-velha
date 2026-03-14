@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jogo_da_velha/presentation/screens/components/winning_line_painter_component.dart';
-import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 
 class WinningLineOverlayComponent extends StatelessWidget {
   final WinningLineModel? winningLine;

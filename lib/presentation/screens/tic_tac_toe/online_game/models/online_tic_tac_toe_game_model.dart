@@ -1,5 +1,5 @@
 import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
-import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
 

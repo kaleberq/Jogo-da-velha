@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:jogo_da_velha/domain/models/local_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/models/local_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/direction_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/domain/models/winning_line_model.dart';
-import 'package:jogo_da_velha/domain/models/splash_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/screens/splash/models/splash_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_data_source_channel_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/channels/deep_links/deep_link_navigator_interface.dart';
 
