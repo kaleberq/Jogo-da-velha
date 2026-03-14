@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_design_system/themes/ds_theme.dart';
 import 'package:jogo_da_velha/data/channels/deep_link_data_source_channel.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/models/local_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/presentation/screens/splash/models/splash_model.dart';
 import 'package:jogo_da_velha/data/repositories/game_repository.dart';
 import 'package:jogo_da_velha/data/services/network_service.dart';
 import 'package:jogo_da_velha/data/services/qr_code_generator_service.dart';
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
           viewModel: SplashViewModel(
             deeplinkDataSourceChannel: DeepLinkDataSourceChannel(),
             navigator: DeepLinkNavigator(),
-            ticTacToeGame: LocalTicTacToeGameModel(),
+            ticTacToeGame: SplashModel(),
           ),
         ),
         RoutesEnum.menu.path: (context) => MenuScreen(),

@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _startBoardAnimation(AnimationStatus status) {
     if (status != AnimationStatus.completed) return;
     if (!mounted) return;
-    if (widget.viewModel.state.hasStartedBoardAnimation) return;
+    if (widget.viewModel.game.hasStartedBoardAnimation) return;
 
     widget.viewModel.startBoardAnimation();
   }
