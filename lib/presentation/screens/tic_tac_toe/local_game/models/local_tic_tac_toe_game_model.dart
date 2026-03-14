@@ -1,45 +1,51 @@
 import 'dart:math';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 
-class LocalTicTacToeGameModel {
+class LocalTicTacToeGameModel extends TicTacToeGameModel {
   static final Random _random = Random();
-  final List<List<PlayerEnum>> board;
-  final PlayerEnum currentPlayer;
-  final PlayerEnum? winner;
-  final WinningLineModel? winningLine;
-  final bool isGameOver;
-  final int scoreX;
-  final int scoreO;
-  final int currentRound;
-  final int maxRounds;
   final int timeLimitSeconds;
 
   LocalTicTacToeGameModel({int? maxRounds, int? timeLimitSeconds})
-    : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
-      // Para jogo local, o primeiro jogador pode ser aleatório
-      currentPlayer = _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
-      winner = null,
-      winningLine = null,
-      isGameOver = false,
-      scoreX = 0,
-      scoreO = 0,
-      currentRound = 1,
-      maxRounds = maxRounds ?? 5,
-      timeLimitSeconds = timeLimitSeconds ?? 10;
+    : this._internal(
+        board: List.generate(
+          3,
+          (_) => List.generate(3, (_) => PlayerEnum.none),
+        ),
+        currentPlayer: _random.nextBool() ? PlayerEnum.x : PlayerEnum.o,
+        winner: null,
+        winningLine: null,
+        isGameOver: false,
+        scoreX: 0,
+        scoreO: 0,
+        currentRound: 1,
+        maxRounds: maxRounds ?? 5,
+        timeLimitSeconds: timeLimitSeconds ?? 10,
+      );
 
   LocalTicTacToeGameModel._internal({
-    required this.board,
-    required this.currentPlayer,
-    required this.winner,
-    required this.winningLine,
-    required this.isGameOver,
-    required this.scoreX,
-    required this.scoreO,
-    required this.currentRound,
-    required this.maxRounds,
+    required List<List<PlayerEnum>> board,
+    required PlayerEnum currentPlayer,
+    required PlayerEnum? winner,
+    required WinningLineModel? winningLine,
+    required bool isGameOver,
+    required int scoreX,
+    required int scoreO,
+    required int currentRound,
+    required int maxRounds,
     required this.timeLimitSeconds,
-  });
+  }) : super(
+         board: board,
+         currentPlayer: currentPlayer,
+         winner: winner,
+         winningLine: winningLine,
+         isGameOver: isGameOver,
+         scoreX: scoreX,
+         scoreO: scoreO,
+         currentRound: currentRound,
+         maxRounds: maxRounds,
+       );
 
   LocalTicTacToeGameModel copyWith({
     List<List<PlayerEnum>>? board,

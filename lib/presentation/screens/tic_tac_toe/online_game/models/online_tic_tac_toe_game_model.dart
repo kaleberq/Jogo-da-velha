@@ -1,41 +1,47 @@
 import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
-import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/winning_line_enum.dart';
+import 'package:jogo_da_velha/presentation/models/tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 
-class OnlineTicTacToeGameModel {
-  final List<List<PlayerEnum>> board;
-  final PlayerEnum currentPlayer;
-  final PlayerEnum? winner;
-  final WinningLineModel? winningLine;
-  final bool isGameOver;
-  final int scoreX;
-  final int scoreO;
-  final int currentRound;
-  final int maxRounds;
-
+class OnlineTicTacToeGameModel extends TicTacToeGameModel {
   OnlineTicTacToeGameModel({int? maxRounds})
-    : board = List.generate(3, (_) => List.generate(3, (_) => PlayerEnum.none)),
-      currentPlayer = PlayerEnum.x,
-      winner = null,
-      winningLine = null,
-      isGameOver = false,
-      scoreX = 0,
-      scoreO = 0,
-      currentRound = 1,
-      maxRounds = maxRounds ?? 5;
+    : super(
+        board: List.generate(
+          3,
+          (_) => List.generate(3, (_) => PlayerEnum.none),
+        ),
+        currentPlayer: PlayerEnum.x,
+        winner: null,
+        winningLine: null,
+        isGameOver: false,
+        scoreX: 0,
+        scoreO: 0,
+        currentRound: 1,
+        maxRounds: maxRounds ?? 5,
+      );
 
   OnlineTicTacToeGameModel._internal({
-    required this.board,
-    required this.currentPlayer,
-    required this.winner,
-    required this.winningLine,
-    required this.isGameOver,
-    required this.scoreX,
-    required this.scoreO,
-    required this.currentRound,
-    required this.maxRounds,
-  });
+    required List<List<PlayerEnum>> board,
+    required PlayerEnum currentPlayer,
+    required PlayerEnum? winner,
+    required WinningLineModel? winningLine,
+    required bool isGameOver,
+    required int scoreX,
+    required int scoreO,
+    required int currentRound,
+    required int maxRounds,
+  }) : super(
+         board: board,
+         currentPlayer: currentPlayer,
+         winner: winner,
+         winningLine: winningLine,
+         isGameOver: isGameOver,
+         scoreX: scoreX,
+         scoreO: scoreO,
+         currentRound: currentRound,
+         maxRounds: maxRounds,
+       );
 
   /// Construtor para reconstruir o estado a partir de valores.
   factory OnlineTicTacToeGameModel.fromValues({
