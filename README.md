@@ -28,6 +28,76 @@ O jogo da velha é um jogo de estratégia para dois jogadores em um tabuleiro 3�
 
 ---
 
+## Como funciona o modo online (host autoritativo)
+
+No modo online, o jogo opera em **rede local (Wi‑Fi)** usando **TCP sockets**. O fluxo foi desenhado no modelo **host autoritativo**:
+
+- **Host (X)**: é o “dono” do estado do jogo. Ele **valida** e **aplica** todas as jogadas (as dele e as do cliente), atualiza placar/rodadas e **envia o estado completo** para o outro dispositivo.
+- **Cliente (O)**: não altera o estado do jogo localmente. Ele apenas **solicita jogadas** ao host e **renderiza** o estado que o host envia.
+
+### Componentes e responsabilidades
+
+- **UI**: `OnlineGameScreen`
+  - Controla interação do usuário (toque no tabuleiro) e exibe “**Sua vez**”/“**Aguardando**”.
+  - Mantém um booleano local `_isMyTurn` para bloquear cliques fora do turno.
+- **Regras do jogo + coordenação**: `OnlineGameViewModel`
+  - Aplica regras de jogada (`makeMove`, `makeMoveWithPlayer`), detecta vitória/empate e troca `currentPlayer`.
+  - Recebe eventos da rede via callbacks do repositório e atualiza o modelo `_game`.
+- **Transporte/serialização**: `GameRepository` (+ DTO)
+  - Converte mensagens JSON ↔️ modelo (`OnlineTicTacToeGameDTO`).
+  - Roteia mensagens por `type` para callbacks: `gameState`, `requestMove`, `reset`, `nextRound`, `config`.
+- **Socket TCP**: `NetworkService`
+  - Host abre um servidor TCP na porta `8080`.
+  - Cliente conecta no IP do host e recebe/envia mensagens.
+
+### Mensagens trocadas na rede
+
+As mensagens são strings JSON com o campo `type`:
+
+- **`gameState`**: estado completo do jogo (tabuleiro, `currentPlayer`, placares, rodada, etc.).
+- **`requestMove`**: pedido do cliente para jogar em `row`/`col`.
+- **`reset`**: reinicia placar e rodada.
+- **`nextRound`**: avança para a próxima rodada.
+- **`config`**: configuração (ex.: `maxRounds`).
+
+### Fluxo de jogadas (passo a passo)
+
+#### Quando é a vez do host (X)
+
+1. Host toca na célula.
+2. A UI chama `viewModel.makeMove(row, col)` (a jogada é aplicada no host).
+3. Host envia `gameState` com `sendCurrentGameState()`.
+4. Cliente recebe `gameState` → `onGameStateReceived` → atualiza o tabuleiro e o placar.
+
+#### Quando é a vez do cliente (O)
+
+1. Cliente toca na célula.
+2. A UI **não** aplica localmente; ela envia `requestMove` via `sendRequestMove(row, col)`.
+3. Host recebe `requestMove` → valida se é válido (vez do O, casa vazia, jogo não acabou).
+4. Host aplica a jogada com `makeMoveWithPlayer(row, col, PlayerEnum.o)` e envia `gameState`.
+5. Cliente recebe `gameState` e atualiza a UI.
+
+> Importante: o host **não recebe** a própria mensagem `gameState` que ele acabou de enviar. Por isso, quando o host processa `requestMove`, o ViewModel também dispara `onGameStateReceived` localmente para manter a UI do host sincronizada.
+
+### “Sua vez” vs “Aguardando” (como o app decide)
+
+Em ambos os dispositivos, a vez é derivada de:
+
+- `myPlayer` (X no host, O no cliente)
+- `game.currentPlayer` (quem deve jogar agora)
+
+A regra usada pela UI é:
+
+> `_isMyTurn = (game.currentPlayer == myPlayer)`
+
+Isso evita inconsistência entre o AppBar/placar e o bloqueio de cliques, inclusive em transições como `nextRound`, `reset` e recebimento de `gameState`.
+
+### Início da partida
+
+Na primeira rodada, quem começa é sempre o **Host (X)**. O estado inicial do jogo é configurado para `currentPlayer = X` em ambos os dispositivos para que o placar já destaque corretamente quem inicia.
+
+---
+
 ## Stack e requisitos
 
 - **Flutter** (SDK **Dart ^3.9.2**)

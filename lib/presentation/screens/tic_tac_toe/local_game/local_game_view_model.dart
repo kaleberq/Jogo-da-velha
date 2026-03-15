@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:jogo_da_velha/data/models/local_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/models/local_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 import 'package:jogo_da_velha/extensions/player_turn_extension.dart';
 
 class LocalGameViewModel extends ChangeNotifier {

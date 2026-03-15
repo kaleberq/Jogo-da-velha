@@ -62,11 +62,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         ).showSnackBar(SnackBar(content: Text(error)));
       }
     };
-    viewModel.onMoveReceived = (row, col, player) {
+    viewModel.onGameStateReceived = () {
       if (mounted) {
-        viewModel.makeMoveWithPlayer(row, col, player);
-        _isMyTurn = true;
+        _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
         _checkGameOver();
+        setState(() {});
       }
     };
     viewModel.onResetReceived = () {
@@ -81,7 +81,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
         Navigator.of(context).pop(); // fecha o modal no cliente
 
         viewModel.nextRound();
-        _isMyTurn = viewModel.playerRole.isHost;
+        _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
         _hideRoundEndMessage();
 
         setState(() {});
@@ -91,7 +91,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       if (mounted) {
         viewModel.setMaxRounds(maxRounds);
         setState(() {
-          _isMyTurn = viewModel.playerRole.isHost;
+          _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
         });
       }
     };
@@ -105,15 +105,17 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       return;
     }
 
-    final playerWhoMoved = viewModel.game.currentPlayer;
-    if (viewModel.makeMove(rowIndex, columnIndex)) {
-      viewModel.sendMove(
-        row: rowIndex,
-        col: columnIndex,
-        player: playerWhoMoved,
-      );
+    if (viewModel.playerRole.isHost) {
+      // Host: aplica localmente e envia estado completo (autoridade).
+      if (viewModel.makeMove(rowIndex, columnIndex)) {
+        viewModel.sendCurrentGameState();
+        _isMyTurn = false;
+        _checkGameOver();
+      }
+    } else {
+      // Cliente: envia apenas a jogada; host valida e envia estado.
+      viewModel.sendRequestMove(rowIndex, columnIndex);
       _isMyTurn = false;
-      _checkGameOver();
     }
   }
 
@@ -189,7 +191,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
           _winningLineAnimationController.reset();
           viewModel.sendNextRound();
           viewModel.nextRound();
-          _isMyTurn = viewModel.playerRole.isHost;
+          _isMyTurn = viewModel.game.currentPlayer == viewModel.myPlayer;
 
           Navigator.of(context).pop();
           setState(() {});

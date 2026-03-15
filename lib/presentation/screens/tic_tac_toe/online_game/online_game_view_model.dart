@@ -1,57 +1,74 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:jogo_da_velha/data/models/network_connection_model.dart';
-import 'package:jogo_da_velha/data/models/online_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/models/network_connection_model.dart';
+import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
-import 'package:jogo_da_velha/data/models/winning_line_model.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
+import 'package:jogo_da_velha/presentation/models/winning_line_model.dart';
 
-/// ViewModel para jogo online
-/// Constructor Injection: recebe IGameRepository via construtor
 class OnlineGameViewModel extends ChangeNotifier {
   late OnlineTicTacToeGameModel _game;
   final PlayerRole playerRole;
   final IGameRepository _gameRepository;
-
-  // Estado da conexão gerenciado pelo ViewModel
   final NetworkConnectionModel _connectionState = NetworkConnectionModel();
-
-  // Callbacks para a UI
   VoidCallback? onOpponentDisconnected;
   Function(String)? onError;
-  Function(int, int, PlayerEnum)? onMoveReceived;
+  VoidCallback? onGameStateReceived;
   VoidCallback? onResetReceived;
   VoidCallback? onNextRoundReceived;
   Function(int)? onConfigReceived;
-  OnlineTicTacToeGameModel get game => _game;
-
-  void _update(OnlineTicTacToeGameModel newState) {
-    _game = newState;
-    notifyListeners();
-  }
 
   PlayerEnum get _currentPlayer =>
       playerRole.isHost ? PlayerEnum.x : PlayerEnum.o;
 
-  /// Jogador que o usuário local está usando (X ou O).
   PlayerEnum get myPlayer => _currentPlayer;
 
-  /// Constructor Injection: IGameRepository é obrigatório via construtor
+  OnlineTicTacToeGameModel get game => _game;
+
+  bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
+
+  PlayerEnum? get overallWinner {
+    if (_game.scoreX > _game.scoreO) {
+      return PlayerEnum.x;
+    } else if (_game.scoreO > _game.scoreX) {
+      return PlayerEnum.o;
+    }
+    return null;
+  }
+
   OnlineGameViewModel({
     required this.playerRole,
     required IGameRepository gameRepository,
     int? maxRounds,
   }) : _gameRepository = gameRepository {
     _game = OnlineTicTacToeGameModel(maxRounds: maxRounds);
-    _update(_game.copyWith(currentPlayer: _currentPlayer));
+    _update(_game.copyWith(currentPlayer: PlayerEnum.x));
     _setupNetworkCallbacks();
   }
 
+  @override
+  void dispose() {
+    _gameRepository.disconnect();
+    super.dispose();
+  }
+
+  void _update(OnlineTicTacToeGameModel newState) {
+    _game = newState;
+    notifyListeners();
+  }
+
   void _setupNetworkCallbacks() {
-    _gameRepository.onMessageReceived = _handleNetworkMessage;
+    _gameRepository.onMessageReceived = _handleControlMessage;
+    _gameRepository.onGameStateReceived = (model) {
+      _update(model);
+      onGameStateReceived?.call();
+    };
+    _gameRepository.onRequestMove = _handleRequestMove;
+    _gameRepository.onResetReceived = () => onResetReceived?.call();
+    _gameRepository.onNextRoundReceived = () => onNextRoundReceived?.call();
+    _gameRepository.onConfigReceived = (maxRounds) =>
+        onConfigReceived?.call(maxRounds);
     _gameRepository.onConnectionStatusChanged = (statusString) {
       final status = ConnectionStatusEnum.values.firstWhere(
         (e) => e.name == statusString,
@@ -76,58 +93,30 @@ class OnlineGameViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _handleNetworkMessage(String message) {
+  void _handleControlMessage(String message) {
     if (message == 'DISCONNECTED') {
       onOpponentDisconnected?.call();
-      return;
-    }
-
-    if (message == 'SERVER_CONNECTED' ||
-        message == 'CLIENT_CONNECTED' ||
-        message == 'CONNECTED') {
-      return;
-    }
-
-    try {
-      final data = jsonDecode(message);
-      final type = data['type'] as String;
-
-      switch (type) {
-        case 'move':
-          final row = data['row'] as int;
-          final col = data['col'] as int;
-          final playerStr = data['player'] as String;
-
-          // Converte String de volta para PlayerEnum usando byName
-          final player = PlayerEnum.values.byName(playerStr);
-
-          if (player != PlayerEnum.none) {
-            onMoveReceived?.call(row, col, player);
-          }
-          break;
-        case 'reset':
-          onResetReceived?.call();
-          break;
-        case 'nextRound':
-          onNextRoundReceived?.call();
-          break;
-        case 'config':
-          final maxRounds = data['maxRounds'] as int;
-          onConfigReceived?.call(maxRounds);
-          break;
-      }
-    } catch (e) {
-      // Ignora mensagens que não são JSON válido
     }
   }
 
-  // Métodos para enviar eventos de rede
-  void sendMove({
-    required int row,
-    required int col,
-    required PlayerEnum player,
-  }) {
-    _gameRepository.sendMove(row: row, col: col, player: player);
+  void _handleRequestMove(int row, int col) {
+    if (!playerRole.isHost) return;
+    if (_game.currentPlayer != PlayerEnum.o ||
+        _game.isGameOver ||
+        _game.board[row][col] != PlayerEnum.none) {
+      return;
+    }
+    makeMoveWithPlayer(row, col, PlayerEnum.o);
+    _gameRepository.sendCurrentGameState(_game);
+    onGameStateReceived?.call();
+  }
+
+  void sendCurrentGameState() {
+    _gameRepository.sendCurrentGameState(_game);
+  }
+
+  void sendRequestMove(int row, int col) {
+    _gameRepository.sendRequestMove(row, col);
   }
 
   void sendReset() {
@@ -199,23 +188,15 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
   }
 
-  bool get isAllRoundsFinished => _game.currentRound >= _game.maxRounds;
-
-  PlayerEnum? get overallWinner {
-    if (_game.scoreX > _game.scoreO) {
-      return PlayerEnum.x;
-    } else if (_game.scoreO > _game.scoreX) {
-      return PlayerEnum.o;
-    }
-    return null;
-  }
-
   bool makeMove(int row, int col) {
     if (_game.isGameOver || _game.board[row][col] != PlayerEnum.none) {
       return false;
     }
 
     _game.board[row][col] = _game.currentPlayer;
+    final nextPlayer = _game.currentPlayer == PlayerEnum.x
+        ? PlayerEnum.o
+        : PlayerEnum.x;
 
     final winningLineResult = _checkWinner(row, col);
     if (winningLineResult != null) {
@@ -224,14 +205,15 @@ class OnlineGameViewModel extends ChangeNotifier {
           winner: _game.currentPlayer,
           winningLine: winningLineResult,
           isGameOver: true,
+          currentPlayer: nextPlayer,
         ),
       );
       return true;
     } else if (_checkDraw()) {
-      _update(_game.copyWith(isGameOver: true));
+      _update(_game.copyWith(isGameOver: true, currentPlayer: nextPlayer));
       return true;
     } else {
-      _update(_game.copyWith(currentPlayer: _currentPlayer));
+      _update(_game.copyWith(currentPlayer: nextPlayer));
       return true;
     }
   }
@@ -244,6 +226,7 @@ class OnlineGameViewModel extends ChangeNotifier {
     }
 
     _game.board[row][col] = player;
+    final nextPlayer = player == PlayerEnum.x ? PlayerEnum.o : PlayerEnum.x;
 
     final winningLineResult = _checkWinnerWithPlayer(row, col, player);
     if (winningLineResult != null) {
@@ -252,15 +235,15 @@ class OnlineGameViewModel extends ChangeNotifier {
           winner: player,
           winningLine: winningLineResult,
           isGameOver: true,
-          currentPlayer: _currentPlayer,
+          currentPlayer: nextPlayer,
         ),
       );
       return true;
     } else if (_checkDraw()) {
-      _update(_game.copyWith(isGameOver: true, currentPlayer: _currentPlayer));
+      _update(_game.copyWith(isGameOver: true, currentPlayer: nextPlayer));
       return true;
     } else {
-      _update(_game);
+      _update(_game.copyWith(currentPlayer: nextPlayer));
       return true;
     }
   }
@@ -342,11 +325,5 @@ class OnlineGameViewModel extends ChangeNotifier {
       }
     }
     return true;
-  }
-
-  @override
-  void dispose() {
-    _gameRepository.disconnect();
-    super.dispose();
   }
 }

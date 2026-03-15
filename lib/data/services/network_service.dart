@@ -1,20 +1,24 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
+import 'package:jogo_da_velha/data/datasources/network_connection_datasource.dart';
+import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
+import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
-import 'package:jogo_da_velha/domain/enums/player_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_payload_key_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-/// Service que executa operações de rede
-/// Singleton que mantém estado da conexão
+/// Service que executa operações de rede.
+/// Recebe/envia DTO e faz toJson/fromJson; não conhece modelo de domínio.
+/// Usa [NetworkConnectionDatasource] (camada Data) para I/O de socket.
 class NetworkService implements INetworkService {
-  NetworkConnectionManager? _connectionManager;
+  NetworkConnectionDatasource? _connectionDatasource;
 
-  // Callbacks - serão definidos pelo Repository
   Function(String)? _onMessageReceived;
   Function(String)? _onConnectionStatusChanged;
   Function(String)? _onError;
+  void Function(OnlineTicTacToeGameDTO)? _onGameStateReceived;
 
   // --- Singleton Setup ---
   static final NetworkService _instance = NetworkService._internal();
@@ -26,40 +30,64 @@ class NetworkService implements INetworkService {
   NetworkService._internal();
   // -----------------------
 
-  // Configurar callbacks
   @override
   set onMessageReceived(Function(String)? callback) {
     _onMessageReceived = callback;
-    _updateConnectionManagerCallbacks();
+    _updateConnectionDatasourceCallbacks();
   }
 
   @override
   set onConnectionStatusChanged(Function(String)? callback) {
     _onConnectionStatusChanged = callback;
-    _updateConnectionManagerCallbacks();
+    _updateConnectionDatasourceCallbacks();
   }
 
   @override
   set onError(Function(String)? callback) {
     _onError = callback;
-    _updateConnectionManagerCallbacks();
+    _updateConnectionDatasourceCallbacks();
   }
 
-  void _updateConnectionManagerCallbacks() {
-    if (_connectionManager != null) {
-      _connectionManager!.onMessageReceived = (message) {
-        _onMessageReceived?.call(message);
-      };
-      _connectionManager!.onStatusChanged = (status) {
+  @override
+  set onGameStateReceived(void Function(OnlineTicTacToeGameDTO)? callback) {
+    _onGameStateReceived = callback;
+  }
+
+  void _updateConnectionDatasourceCallbacks() {
+    if (_connectionDatasource != null) {
+      _connectionDatasource!.onMessageReceived = _handleIncomingMessage;
+      _connectionDatasource!.onStatusChanged = (status) {
         _onConnectionStatusChanged?.call(status.name);
       };
-      _connectionManager!.onError = (error) {
+      _connectionDatasource!.onError = (error) {
         _onError?.call(error);
       };
     }
   }
 
-  // Obter o IP local do dispositivo
+  void _handleIncomingMessage(String message) {
+    if (ConnectionMessageEnum.tryParse(message) != null) {
+      _onMessageReceived?.call(message);
+      return;
+    }
+    try {
+      final data = jsonDecode(message) as Map<String, dynamic>;
+      final typeStr = data[GameMessagePayloadKeyEnum.type.key] as String?;
+      final type = GameMessageTypeEnum.tryParse(typeStr);
+
+      if (type == GameMessageTypeEnum.gameState) {
+        final dto = OnlineTicTacToeGameDTO.fromJson(
+          Map<String, dynamic>.from(data),
+        );
+        _onGameStateReceived?.call(dto);
+      } else {
+        _onMessageReceived?.call(message);
+      }
+    } catch (_) {
+      _onMessageReceived?.call(message);
+    }
+  }
+
   @override
   Future<String?> getLocalIP() async {
     try {
@@ -71,7 +99,6 @@ class NetworkService implements INetworkService {
     }
   }
 
-  /// Cria um servidor e retorna o IP local
   @override
   Future<String?> startServer({required int port}) async {
     try {
@@ -81,21 +108,19 @@ class NetworkService implements INetworkService {
         port,
       );
 
-      _connectionManager = NetworkConnectionManager(
+      _connectionDatasource = NetworkConnectionDatasource(
         serverSocket: serverSocket,
         onStatusChanged: (status) {
           _onConnectionStatusChanged?.call(status.name);
         },
-        onMessageReceived: (message) {
-          _onMessageReceived?.call(message);
-        },
+        onMessageReceived: _handleIncomingMessage,
         onError: (error) {
           _onError?.call(error);
         },
       );
 
       serverSocket.listen((Socket socket) {
-        _connectionManager!.setClientSocket(socket);
+        _connectionDatasource!.setClientSocket(socket);
       });
 
       final ip = await getLocalIP();
@@ -107,7 +132,6 @@ class NetworkService implements INetworkService {
     }
   }
 
-  /// Conecta a um servidor
   @override
   Future<bool> connectToServer(String ip, {required int port}) async {
     try {
@@ -121,21 +145,19 @@ class NetworkService implements INetworkService {
       socket.setOption(SocketOption.tcpNoDelay, true);
       _onConnectionStatusChanged?.call(ConnectionStatusEnum.connected.name);
 
-      _connectionManager = NetworkConnectionManager(
+      _connectionDatasource = NetworkConnectionDatasource(
         clientSocket: socket,
         onStatusChanged: (status) {
           _onConnectionStatusChanged?.call(status.name);
         },
-        onMessageReceived: (message) {
-          _onMessageReceived?.call(message);
-        },
+        onMessageReceived: _handleIncomingMessage,
         onError: (error) {
           _onError?.call(error);
         },
       );
 
       Future.delayed(const Duration(milliseconds: 100), () {
-        _connectionManager?.sendMessage('CLIENT_CONNECTED');
+        _connectionDatasource?.sendMessage('CLIENT_CONNECTED');
       });
 
       return true;
@@ -148,155 +170,32 @@ class NetworkService implements INetworkService {
 
   @override
   void disconnect() {
-    _connectionManager?.disconnect();
-    _connectionManager = null;
-  }
-
-  @override
-  void sendMove({
-    required int row,
-    required int col,
-    required PlayerEnum player,
-  }) {
-    _connectionManager?.sendMove(row, col, player);
+    _connectionDatasource?.disconnect();
+    _connectionDatasource = null;
   }
 
   @override
   void sendReset() {
-    _connectionManager?.sendReset();
+    _connectionDatasource?.sendReset();
   }
 
   @override
   void sendNextRound() {
-    _connectionManager?.sendNextRound();
+    _connectionDatasource?.sendNextRound();
   }
 
   @override
   void sendConfig({required int maxRounds}) {
-    _connectionManager?.sendConfig(maxRounds);
-  }
-}
-
-/// Gerencia uma conexão de rede ativa
-/// Mantém os recursos (sockets) mas o estado é notificado via callbacks
-class NetworkConnectionManager {
-  ServerSocket? _serverSocket;
-  Socket? _clientSocket;
-  String _buffer = '';
-  Function(ConnectionStatusEnum) onStatusChanged;
-  Function(String) onMessageReceived;
-  Function(String) onError;
-
-  NetworkConnectionManager({
-    ServerSocket? serverSocket,
-    Socket? clientSocket,
-    required this.onStatusChanged,
-    required this.onMessageReceived,
-    required this.onError,
-  }) : _serverSocket = serverSocket,
-       _clientSocket = clientSocket {
-    if (_clientSocket != null) {
-      _listenToClient(_clientSocket!);
-    }
+    _connectionDatasource?.sendConfig(maxRounds);
   }
 
-  void setClientSocket(Socket socket) {
-    if (_clientSocket != null) {
-      try {
-        _clientSocket!.destroy();
-      } catch (e) {
-        // Ignora erros
-      }
-    }
-
-    socket.setOption(SocketOption.tcpNoDelay, true);
-    _clientSocket = socket;
-    onStatusChanged(ConnectionStatusEnum.connected);
-    _listenToClient(socket);
-
-    Future.microtask(() {
-      try {
-        socket.add(utf8.encode('SERVER_CONNECTED\n'));
-      } catch (e) {
-        onError('Erro ao confirmar conexão: $e');
-      }
-    });
-    onMessageReceived(NetworkMessageConstants.peerConnected);
+  @override
+  void sendGameState(OnlineTicTacToeGameDTO dto) {
+    _connectionDatasource?.sendGameState(dto.toJson());
   }
 
-  void _listenToClient(Socket socket) {
-    socket.listen(
-      (data) {
-        _buffer += utf8.decode(data);
-        final lines = _buffer.split('\n');
-        _buffer = lines.removeLast();
-
-        for (final line in lines) {
-          if (line.trim().isNotEmpty) {
-            onMessageReceived(line.trim());
-          }
-        }
-      },
-      onError: (error) {
-        onStatusChanged(ConnectionStatusEnum.error);
-        onError('Erro na conexão: $error');
-      },
-      onDone: () {
-        onStatusChanged(ConnectionStatusEnum.disconnected);
-        _buffer = '';
-        onMessageReceived('DISCONNECTED');
-      },
-      cancelOnError: false,
-    );
-  }
-
-  void sendMessage(String message) {
-    if (_clientSocket != null) {
-      try {
-        _clientSocket!.add(utf8.encode('$message\n'));
-      } catch (e) {
-        onStatusChanged(ConnectionStatusEnum.error);
-        onError('Erro ao enviar mensagem: $e');
-      }
-    }
-  }
-
-  void sendMove(int row, int col, PlayerEnum player) {
-    final data = jsonEncode({
-      'type': 'move',
-      'row': row,
-      'col': col,
-      'player':
-          player.name, // Converte enum para String (retorna "x", "o" ou "none")
-    });
-    sendMessage(data);
-  }
-
-  void sendReset() {
-    final data = jsonEncode({'type': 'reset'});
-    sendMessage(data);
-  }
-
-  void sendNextRound() {
-    final data = jsonEncode({'type': 'nextRound'});
-    sendMessage(data);
-  }
-
-  void sendConfig(int maxRounds) {
-    final data = jsonEncode({'type': 'config', 'maxRounds': maxRounds});
-    sendMessage(data);
-  }
-
-  void disconnect() {
-    try {
-      _clientSocket?.destroy();
-      _serverSocket?.close();
-    } catch (e) {
-      // Ignora erros
-    }
-    _clientSocket = null;
-    _serverSocket = null;
-    _buffer = '';
-    onStatusChanged(ConnectionStatusEnum.disconnected);
+  @override
+  void sendRequestMove(int row, int col) {
+    _connectionDatasource?.sendRequestMove(row, col);
   }
 }
