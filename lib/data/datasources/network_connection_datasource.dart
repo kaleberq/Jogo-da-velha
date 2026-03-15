@@ -11,7 +11,6 @@ import 'package:jogo_da_velha/domain/enums/request_move_data_key_enum.dart';
 
 /// Data source que gerencia uma conexão de rede ativa (socket).
 /// Responsável por: buffer de leitura (linhas), envio de mensagens, formato do protocolo.
-/// Fica na camada Data (Clean Architecture) como fonte de dados remota.
 class NetworkConnectionDatasource {
   ServerSocket? _serverSocket;
   Socket? _clientSocket;
