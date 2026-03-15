@@ -3,6 +3,10 @@ import 'dart:typed_data';
 
 import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
 import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
+import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
+import 'package:jogo_da_velha/domain/enums/config_data_key_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
+import 'package:jogo_da_velha/domain/enums/request_move_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
@@ -13,7 +17,7 @@ class GameRepository implements IGameRepository {
   final IQrCodeGeneratorService _qrCodeGeneratorService;
   final int _port = 8080;
 
-  //TODO pra que serve esses metodos abaixo?
+  /// Callbacks registrados pelo ViewModel; o Repository chama ao receber mensagens da rede.
   Function(String)? _onMessageReceived;
   void Function(OnlineTicTacToeGameModel)? _onGameStateReceived;
   void Function(int, int)? _onRequestMove;
@@ -30,39 +34,45 @@ class GameRepository implements IGameRepository {
   }
 
   void _handleIncomingMessage(String message) {
-    if (message == 'DISCONNECTED' ||
-        message == 'SERVER_CONNECTED' ||
-        message == 'CLIENT_CONNECTED' ||
-        message == 'CONNECTED') {
+    if (ConnectionMessageEnum.tryParse(message) != null) {
       _onMessageReceived?.call(message);
       return;
     }
     try {
       final data = jsonDecode(message);
-      final type = data['type'] as String?;
-      if (type == 'gameState') {
-        final dto = OnlineTicTacToeGameDTO.fromJson(
-          Map<String, dynamic>.from(data),
-        );
-        final model = OnlineTicTacToeGameModel.fromDto(dto);
-        _onGameStateReceived?.call(model);
-      } else if (type == 'requestMove') {
-        final row = data['row'] as int?;
-        final col = data['col'] as int?;
-        if (row != null && col != null) {
-          _onRequestMove?.call(row, col);
-        }
-      } else if (type == 'reset') {
-        _onResetReceived?.call();
-      } else if (type == 'nextRound') {
-        _onNextRoundReceived?.call();
-      } else if (type == 'config') {
-        final maxRounds = data['maxRounds'] as int?;
-        if (maxRounds != null) {
-          _onConfigReceived?.call(maxRounds);
-        }
-      } else {
-        _onMessageReceived?.call(message);
+      final typeStr = data[GameMessageTypeEnum.gameState.value] as String?;
+      final type = GameMessageTypeEnum.tryParse(typeStr);
+
+      switch (type) {
+        case GameMessageTypeEnum.gameState:
+          final dto = OnlineTicTacToeGameDTO.fromJson(
+            Map<String, dynamic>.from(data),
+          );
+          final model = OnlineTicTacToeGameModel.fromDto(dto);
+          _onGameStateReceived?.call(model);
+          break;
+        case GameMessageTypeEnum.requestMove:
+          final row = data[RequestMoveDataKeyEnum.row.key] as int?;
+          final col = data[RequestMoveDataKeyEnum.col.key] as int?;
+          if (row != null && col != null) {
+            _onRequestMove?.call(row, col);
+          }
+          break;
+        case GameMessageTypeEnum.reset:
+          _onResetReceived?.call();
+          break;
+        case GameMessageTypeEnum.nextRound:
+          _onNextRoundReceived?.call();
+          break;
+        case GameMessageTypeEnum.config:
+          final maxRounds = data[ConfigDataKeyEnum.maxRounds.key] as int?;
+          if (maxRounds != null) {
+            _onConfigReceived?.call(maxRounds);
+          }
+          break;
+        case null:
+          _onMessageReceived?.call(message);
+          break;
       }
     } catch (_) {
       _onMessageReceived?.call(message);

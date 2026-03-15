@@ -1,7 +1,11 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
+import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
+import 'package:jogo_da_velha/domain/enums/config_data_key_enum.dart';
+import 'package:jogo_da_velha/domain/enums/request_move_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
@@ -244,7 +248,7 @@ class NetworkConnectionManager {
       onDone: () {
         onStatusChanged(ConnectionStatusEnum.disconnected);
         _buffer = '';
-        onMessageReceived('DISCONNECTED');
+        onMessageReceived(ConnectionMessageEnum.disconnected.value);
       },
       cancelOnError: false,
     );
@@ -262,34 +266,34 @@ class NetworkConnectionManager {
   }
 
   void sendGameState(Map<String, dynamic> state) {
-    final data = jsonEncode({
-      'type': 'gameState',
-      ...state,
-    });
+    final data = jsonEncode({'type': 'gameState', ...state});
     sendMessage(data);
   }
 
   void sendRequestMove(int row, int col) {
     final data = jsonEncode({
-      'type': 'requestMove',
-      'row': row,
-      'col': col,
+      'type': GameMessageTypeEnum.requestMove.value,
+      RequestMoveDataKeyEnum.row.key: row,
+      RequestMoveDataKeyEnum.col.key: col,
     });
     sendMessage(data);
   }
 
   void sendReset() {
-    final data = jsonEncode({'type': 'reset'});
+    final data = jsonEncode({'type': GameMessageTypeEnum.reset.value});
     sendMessage(data);
   }
 
   void sendNextRound() {
-    final data = jsonEncode({'type': 'nextRound'});
+    final data = jsonEncode({'type': GameMessageTypeEnum.nextRound.value});
     sendMessage(data);
   }
 
   void sendConfig(int maxRounds) {
-    final data = jsonEncode({'type': 'config', 'maxRounds': maxRounds});
+    final data = jsonEncode({
+      'type': GameMessageTypeEnum.config.value,
+      ConfigDataKeyEnum.maxRounds.key: maxRounds,
+    });
     sendMessage(data);
   }
 
