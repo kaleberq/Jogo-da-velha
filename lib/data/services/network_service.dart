@@ -1,24 +1,25 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
 import 'package:jogo_da_velha/domain/constants/network_message_constants.dart';
 import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
 import 'package:jogo_da_velha/domain/enums/connection_status_enum.dart';
-import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
 import 'package:jogo_da_velha/domain/enums/config_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/enums/game_message_payload_key_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
 import 'package:jogo_da_velha/domain/enums/request_move_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
-/// Service que executa operações de rede
-/// Singleton que mantém estado da conexão
+/// Service que executa operações de rede.
+/// Recebe/envia DTO e faz toJson/fromJson; não conhece modelo de domínio.
 class NetworkService implements INetworkService {
   NetworkConnectionManager? _connectionManager;
 
-  // Callbacks - serão definidos pelo Repository
   Function(String)? _onMessageReceived;
   Function(String)? _onConnectionStatusChanged;
   Function(String)? _onError;
+  void Function(OnlineTicTacToeGameDTO)? _onGameStateReceived;
 
   // --- Singleton Setup ---
   static final NetworkService _instance = NetworkService._internal();
@@ -30,7 +31,6 @@ class NetworkService implements INetworkService {
   NetworkService._internal();
   // -----------------------
 
-  // Configurar callbacks
   @override
   set onMessageReceived(Function(String)? callback) {
     _onMessageReceived = callback;
@@ -49,17 +49,43 @@ class NetworkService implements INetworkService {
     _updateConnectionManagerCallbacks();
   }
 
+  @override
+  set onGameStateReceived(void Function(OnlineTicTacToeGameDTO)? callback) {
+    _onGameStateReceived = callback;
+  }
+
   void _updateConnectionManagerCallbacks() {
     if (_connectionManager != null) {
-      _connectionManager!.onMessageReceived = (message) {
-        _onMessageReceived?.call(message);
-      };
+      _connectionManager!.onMessageReceived = _handleIncomingMessage;
       _connectionManager!.onStatusChanged = (status) {
         _onConnectionStatusChanged?.call(status.name);
       };
       _connectionManager!.onError = (error) {
         _onError?.call(error);
       };
+    }
+  }
+
+  void _handleIncomingMessage(String message) {
+    if (ConnectionMessageEnum.tryParse(message) != null) {
+      _onMessageReceived?.call(message);
+      return;
+    }
+    try {
+      final data = jsonDecode(message) as Map<String, dynamic>;
+      final typeStr = data[GameMessagePayloadKeyEnum.type.key] as String?;
+      final type = GameMessageTypeEnum.tryParse(typeStr);
+
+      if (type == GameMessageTypeEnum.gameState) {
+        final dto = OnlineTicTacToeGameDTO.fromJson(
+          Map<String, dynamic>.from(data),
+        );
+        _onGameStateReceived?.call(dto);
+      } else {
+        _onMessageReceived?.call(message);
+      }
+    } catch (_) {
+      _onMessageReceived?.call(message);
     }
   }
 
@@ -90,9 +116,7 @@ class NetworkService implements INetworkService {
         onStatusChanged: (status) {
           _onConnectionStatusChanged?.call(status.name);
         },
-        onMessageReceived: (message) {
-          _onMessageReceived?.call(message);
-        },
+        onMessageReceived: _handleIncomingMessage,
         onError: (error) {
           _onError?.call(error);
         },
@@ -130,9 +154,7 @@ class NetworkService implements INetworkService {
         onStatusChanged: (status) {
           _onConnectionStatusChanged?.call(status.name);
         },
-        onMessageReceived: (message) {
-          _onMessageReceived?.call(message);
-        },
+        onMessageReceived: _handleIncomingMessage,
         onError: (error) {
           _onError?.call(error);
         },
@@ -172,8 +194,8 @@ class NetworkService implements INetworkService {
   }
 
   @override
-  void sendGameState(Map<String, dynamic> state) {
-    _connectionManager?.sendGameState(state);
+  void sendGameState(OnlineTicTacToeGameDTO dto) {
+    _connectionManager?.sendGameState(dto.toJson());
   }
 
   @override

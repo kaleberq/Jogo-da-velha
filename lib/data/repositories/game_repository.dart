@@ -1,8 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
-import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
-import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
 import 'package:jogo_da_velha/domain/enums/config_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/enums/game_message_payload_key_enum.dart';
@@ -12,13 +9,13 @@ import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_int
 import 'package:jogo_da_velha/domain/interfaces/services/network_service_interface.dart';
 import 'package:jogo_da_velha/domain/interfaces/services/qr_code_generator_service_interface.dart';
 import 'package:jogo_da_velha/domain/models/host_room_model.dart';
+import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
 
 class GameRepository implements IGameRepository {
   final INetworkService _networkService;
   final IQrCodeGeneratorService _qrCodeGeneratorService;
   final int _port = 8080;
 
-  /// Callbacks registrados pelo ViewModel; o Repository chama ao receber mensagens da rede.
   Function(String)? _onMessageReceived;
   void Function(OnlineTicTacToeGameModel)? _onGameStateReceived;
   void Function(int, int)? _onRequestMove;
@@ -31,26 +28,25 @@ class GameRepository implements IGameRepository {
     required IQrCodeGeneratorService qrCodeGeneratorService,
   }) : _networkService = networkService,
        _qrCodeGeneratorService = qrCodeGeneratorService {
-    _networkService.onMessageReceived = _handleIncomingMessage;
+    _networkService.onMessageReceived = _handleOtherMessages;
+    _networkService.onGameStateReceived = (dto) {
+      _onGameStateReceived?.call(OnlineTicTacToeGameModel.fromDto(dto));
+    };
   }
 
-  void _handleIncomingMessage(String message) {
+  /// Trata mensagens que não são gameState (service já fez fromJson para gameState).
+  void _handleOtherMessages(String message) {
     if (ConnectionMessageEnum.tryParse(message) != null) {
       _onMessageReceived?.call(message);
       return;
     }
     try {
-      final data = jsonDecode(message);
+      final data = jsonDecode(message) as Map<String, dynamic>;
       final typeStr = data[GameMessagePayloadKeyEnum.type.key] as String?;
       final type = GameMessageTypeEnum.tryParse(typeStr);
 
       switch (type) {
         case GameMessageTypeEnum.gameState:
-          final dto = OnlineTicTacToeGameDTO.fromJson(
-            Map<String, dynamic>.from(data),
-          );
-          final model = OnlineTicTacToeGameModel.fromDto(dto);
-          _onGameStateReceived?.call(model);
           break;
         case GameMessageTypeEnum.requestMove:
           final row = data[RequestMoveDataKeyEnum.row.key] as int?;
@@ -170,12 +166,7 @@ class GameRepository implements IGameRepository {
   }
 
   @override
-  void sendGameState(Map<String, dynamic> state) {
-    _networkService.sendGameState(state);
-  }
-
-  @override
   void sendCurrentGameState(OnlineTicTacToeGameModel game) {
-    _networkService.sendGameState(game.toDto().toJson());
+    _networkService.sendGameState(game.toDto());
   }
 }

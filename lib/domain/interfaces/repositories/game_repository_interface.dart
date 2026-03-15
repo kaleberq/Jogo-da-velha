@@ -20,6 +20,5 @@ abstract class IGameRepository {
   void sendNextRound();
   void sendConfig({required int maxRounds});
   void sendRequestMove(int row, int col);
-  void sendGameState(Map<String, dynamic> state);
   void sendCurrentGameState(OnlineTicTacToeGameModel game);
 }
