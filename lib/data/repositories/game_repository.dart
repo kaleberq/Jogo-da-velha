@@ -5,6 +5,7 @@ import 'package:jogo_da_velha/data/dtos/online_tic_tac_toe_game_dto.dart';
 import 'package:jogo_da_velha/domain/models/online_tic_tac_toe_game_model.dart';
 import 'package:jogo_da_velha/domain/enums/connection_message_enum.dart';
 import 'package:jogo_da_velha/domain/enums/config_data_key_enum.dart';
+import 'package:jogo_da_velha/domain/enums/game_message_payload_key_enum.dart';
 import 'package:jogo_da_velha/domain/enums/game_message_type_enum.dart';
 import 'package:jogo_da_velha/domain/enums/request_move_data_key_enum.dart';
 import 'package:jogo_da_velha/domain/interfaces/repositories/game_repository_interface.dart';
@@ -40,7 +41,7 @@ class GameRepository implements IGameRepository {
     }
     try {
       final data = jsonDecode(message);
-      final typeStr = data[GameMessageTypeEnum.gameState.value] as String?;
+      final typeStr = data[GameMessagePayloadKeyEnum.type.key] as String?;
       final type = GameMessageTypeEnum.tryParse(typeStr);
 
       switch (type) {
