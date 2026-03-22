@@ -426,7 +426,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "1d38f30c2a948b066e80f1650eb6c1413a3e3649"
+      resolved-ref: e912dc6f1c6984744298d6ff73a2a0f6bc9d7427
       url: "git@github.com:kaleberq/qr-native-bridge"
     source: git
     version: "0.0.1"
