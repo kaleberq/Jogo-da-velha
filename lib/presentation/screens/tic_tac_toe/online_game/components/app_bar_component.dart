@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
+import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/domain/enums/player_role_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
 
@@ -22,31 +23,41 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PlayerEnum myPlayer = playerRole.isHost ? PlayerEnum.x : PlayerEnum.o;
+    final PlayerEnum opponentPlayer = playerRole.isHost
+        ? PlayerEnum.o
+        : PlayerEnum.x;
+    final Color badgeColor = isMyTurn ? myPlayer.color : opponentPlayer.color;
+
     return AppBar(
       centerTitle: true,
       title: isMyTurn
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: badgeColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 context.l10n.yourTurn,
                 textAlign: TextAlign.center,
-                style: DSTypographySemiBold.labelLarge,
+                style: DSTypographySemiBold.labelLarge.copyWith(
+                  color: DSColors.onPrimary,
+                ),
               ),
             )
           : Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: badgeColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 context.l10n.waiting,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white),
+                style: DSTypographySemiBold.labelLarge.copyWith(
+                  color: DSColors.onPrimary,
+                ),
               ),
             ),
     );
