@@ -23,6 +23,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: isMyTurn
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -32,6 +33,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
               ),
               child: Text(
                 context.l10n.yourTurn,
+                textAlign: TextAlign.center,
                 style: DSTypographySemiBold.labelLarge,
               ),
             )
@@ -43,6 +45,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
               ),
               child: Text(
                 context.l10n.waiting,
+                textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white),
               ),
             ),

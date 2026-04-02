@@ -110,10 +110,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get resetAll => 'Reiniciar Tudo';
 
   @override
-  String get yourTurn => 'Sua Vez';
+  String get yourTurn => 'Sua vez de jogar';
 
   @override
-  String get waiting => 'Aguardando...';
+  String get waiting => 'Vez do adversário';
 
   @override
   String get waitYourTurn => 'Aguarde sua vez!';

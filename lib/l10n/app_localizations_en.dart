@@ -110,10 +110,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetAll => 'Reset All';
 
   @override
-  String get yourTurn => 'Your Turn';
+  String get yourTurn => 'Your turn to play';
 
   @override
-  String get waiting => 'Waiting...';
+  String get waiting => "Opponent's turn";
 
   @override
   String get waitYourTurn => 'Wait your turn!';
