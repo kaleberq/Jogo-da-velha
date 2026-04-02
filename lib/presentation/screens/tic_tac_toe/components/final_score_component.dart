@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_design_system/flutter_design_system.dart';
 import 'package:jogo_da_velha/domain/enums/player_enum.dart';
 import 'package:jogo_da_velha/extensions/app_location_extension.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/local_game/components/player_score_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/player_score_component.dart';
 
 class FinalScoreComponent extends StatelessWidget {
   final String winnerMessage;
   final int scoreX;
   final int scoreO;
   final VoidCallback resetAll;
+
   /// No jogo online: jogador que o usuário está usando (X ou O). Placar mostra esse jogador à esquerda.
   final PlayerEnum? localPlayer;
 
@@ -56,12 +57,24 @@ class FinalScoreComponent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: localPlayer == PlayerEnum.o
                       ? [
-                          PlayerScore(player: PlayerEnum.o, score: scoreO),
-                          PlayerScore(player: PlayerEnum.x, score: scoreX),
+                          PlayerScoreComponent(
+                            player: PlayerEnum.o,
+                            score: scoreO,
+                          ),
+                          PlayerScoreComponent(
+                            player: PlayerEnum.x,
+                            score: scoreX,
+                          ),
                         ]
                       : [
-                          PlayerScore(player: PlayerEnum.x, score: scoreX),
-                          PlayerScore(player: PlayerEnum.o, score: scoreO),
+                          PlayerScoreComponent(
+                            player: PlayerEnum.x,
+                            score: scoreX,
+                          ),
+                          PlayerScoreComponent(
+                            player: PlayerEnum.o,
+                            score: scoreO,
+                          ),
                         ],
                 ),
               ],

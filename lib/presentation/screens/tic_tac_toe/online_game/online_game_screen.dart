@@ -7,7 +7,7 @@ import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/final_
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_end_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/round_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/components/score_display_component.dart';
-import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/app_bar_component.dart';
+import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/components/turn_indicator_component.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/online_game_view_model.dart';
 import 'package:jogo_da_velha/presentation/screens/tic_tac_toe/online_game/dialogs/disconnected_dialog.dart';
 
@@ -227,11 +227,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
       listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
-          appBar: AppBarComponent(
-            playerRole: viewModel.playerRole,
-            isMyTurn: _isMyTurn,
-            onResetPressed: resetAll,
-          ),
+          appBar: AppBar(),
           body: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: DSSpacing.lg,
@@ -244,6 +240,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                 RoundIndicatorComponent(
                   currentRound: viewModel.game.currentRound,
                   totalRounds: viewModel.game.maxRounds,
+                ),
+                TurnIndicatorComponent(
+                  playerRole: viewModel.playerRole,
+                  isMyTurn: _isMyTurn,
                 ),
                 ScoreDisplayComponent(
                   scoreO: viewModel.game.scoreO,
