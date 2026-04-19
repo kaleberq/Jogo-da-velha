@@ -1,0 +1,85 @@
+name: Git Agent
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  quality-guard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        id: pubget
+        continue-on-error: true
+        run: flutter pub get
+
+      - name: Run flutter analyze
+        id: analyze
+        continue-on-error: true
+        run: flutter analyze
+
+      - name: Run flutter test
+        id: test
+        continue-on-error: true
+        run: flutter test
+
+      - name: Build agent summary
+        id: summary
+        run: |
+          pubget_status="${{ steps.pubget.outcome }}"
+          analyze_status="${{ steps.analyze.outcome }}"
+          test_status="${{ steps.test.outcome }}"
+
+          echo "## Git Agent Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- pub get: ${pubget_status}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- analyze: ${analyze_status}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- test: ${test_status}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ "$pubget_status" == "success" && "$analyze_status" == "success" && "$test_status" == "success" ]]; then
+            echo "result=success" >> "$GITHUB_OUTPUT"
+            echo "message=✅ Tudo certo: dependencias, analyze e testes passaram." >> "$GITHUB_OUTPUT"
+          else
+            echo "result=failure" >> "$GITHUB_OUTPUT"
+            echo "message=❌ Falha detectada. Verifique os logs dos passos pub get/analyze/test." >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = [
+              "## Git Agent (Quality Guard)",
+              "",
+              `- pub get: **${{ steps.pubget.outcome }}**`,
+              `- analyze: **${{ steps.analyze.outcome }}**`,
+              `- test: **${{ steps.test.outcome }}**`,
+              "",
+              "${{ steps.summary.outputs.message }}"
+            ].join("\n");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });
+
+      - name: Fail workflow when checks fail
+        if: steps.summary.outputs.result == 'failure'
+        run: exit 1
