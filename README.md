@@ -183,6 +183,25 @@ A injeção de dependências é feita manualmente no `main.dart` e em `onGenerat
 
 ---
 
+## Agentes DevOps (Cursor/CI/Git)
+
+O projeto agora possui uma base de automacao para acelerar desenvolvimento com seguranca:
+
+- **CI de qualidade:** workflow em `.github/workflows/ci.yml` executa `flutter pub get`, `flutter analyze` e `flutter test` em PR/push para `main`.
+- **Regra de qualidade:** `.cursor/rules/quality-guard/RULE.md` orienta o guardiao a reportar falhas objetivas e manter correcoes de baixo risco.
+- **Regra arquitetural:** `.cursor/rules/architecture-check/RULE.md` valida separacao `domain/data/presentation` e uso de ViewModel.
+- **Checklist de revisao:** `docs/agent-checklists/architecture.md` padroniza revisao de arquitetura antes de merge.
+- **Skill de scaffold:** `.cursor/skills/feature-scaffold/SKILL.md` gera `screen + view_model + rota + wiring` no modo seguro.
+- **Template de uso:** `docs/templates/feature-scaffold.md` traz prompt e criterios de aceite para novas features.
+
+### Sequencia recomendada no dia a dia
+1. Criar/atualizar feature com a skill `feature-scaffold`.
+2. Validar arquitetura com checklist em `docs/agent-checklists/architecture.md`.
+3. Abrir PR e deixar o CI bloquear regressao basica.
+4. Fazer ajustes pequenos sugeridos pelos agentes antes do merge.
+
+---
+
 ## Licença
 
 Este projeto não está publicado no pub.dev (`publish_to: "none"` no `pubspec.yaml`). Consulte o repositório para informações de uso e licença.
