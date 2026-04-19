@@ -244,6 +244,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen>
                 TurnIndicatorComponent(
                   playerRole: viewModel.playerRole,
                   isMyTurn: _isMyTurn,
+                  currentPlayer: viewModel.game.currentPlayer,
                 ),
                 ScoreDisplayComponent(
                   scoreO: viewModel.game.scoreO,
