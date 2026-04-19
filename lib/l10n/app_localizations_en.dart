@@ -95,6 +95,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get drawRound => 'Draw';
 
   @override
+  String get timeExpiredRound => 'Time is up! No one won this round.';
+
+  @override
   String get settings => 'Settings';
 
   @override

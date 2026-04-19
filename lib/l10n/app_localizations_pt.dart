@@ -95,6 +95,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get drawRound => 'Deu Velha';
 
   @override
+  String get timeExpiredRound => 'Tempo esgotado! Ninguém venceu esta rodada.';
+
+  @override
   String get settings => 'Configurações';
 
   @override

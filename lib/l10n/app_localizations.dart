@@ -263,6 +263,12 @@ abstract class AppLocalizations {
   /// **'Draw'**
   String get drawRound;
 
+  /// No description provided for @timeExpiredRound.
+  ///
+  /// In en, this message translates to:
+  /// **'Time is up! No one won this round.'**
+  String get timeExpiredRound;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

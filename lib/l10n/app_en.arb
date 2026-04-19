@@ -39,6 +39,7 @@
     }
   },
   "drawRound": "Draw",
+  "timeExpiredRound": "Time is up! No one won this round.",
   "settings": "Settings",
   "numberOfRounds": "Number of Rounds",
   "chooseRoundsRange": "Choose between 1 and 20 rounds",

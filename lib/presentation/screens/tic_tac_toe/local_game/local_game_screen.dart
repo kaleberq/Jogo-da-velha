@@ -134,8 +134,10 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     final PlayerEnum? winner = viewModel.game.winner;
     if (winner != null) {
       message = context.l10n.playerWonRound(winner.name);
-    } else {
+    } else if (_isBoardFull()) {
       message = context.l10n.drawRound;
+    } else {
+      message = context.l10n.timeExpiredRound;
     }
 
     setState(() {
@@ -166,6 +168,17 @@ class _LocalGameScreenState extends State<LocalGameScreen>
     setState(() {
       _roundWinner = null;
     });
+  }
+
+  bool _isBoardFull() {
+    for (final row in viewModel.game.board) {
+      for (final cell in row) {
+        if (cell == PlayerEnum.none) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   @override
